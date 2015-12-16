@@ -134,7 +134,9 @@ mp_obj_dict_t *mp_obj_module_get_globals(mp_obj_t self_in) {
 // Global module table and related functions
 
 STATIC const mp_rom_map_elem_t mp_builtin_module_table[] = {
+    #if !defined(MP_STATE_PTR)
     { MP_ROM_QSTR(MP_QSTR___main__), MP_ROM_PTR(&mp_module___main__) },
+    #endif
     { MP_ROM_QSTR(MP_QSTR_builtins), MP_ROM_PTR(&mp_module_builtins) },
     { MP_ROM_QSTR(MP_QSTR_micropython), MP_ROM_PTR(&mp_module_micropython) },
 
@@ -247,6 +249,12 @@ mp_obj_t mp_module_get(qstr module_name) {
         // module not found, look for builtin module names
         el = mp_map_lookup((mp_map_t*)&mp_builtin_module_map, MP_OBJ_NEW_QSTR(module_name), MP_MAP_LOOKUP);
         if (el == NULL) {
+            #if defined(MP_STATE_PTR)
+            // __main__ module is not in static list if state is not singleton
+            if (module_name == MP_QSTR___main__) {
+                return MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_module___main__));
+            }
+            #endif
             return MP_OBJ_NULL;
         }
 

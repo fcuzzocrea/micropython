@@ -150,6 +150,11 @@ typedef struct _mp_state_vm_t {
     mp_obj_base_t *cur_exception;
     #endif
 
+    // __main__ module (only needed if state is not singleton)
+    #if defined(MP_STATE_PTR)
+    mp_obj_module_t mp_module___main__;
+    #endif
+
     // dictionary for the __main__ module
     mp_obj_dict_t dict_main;
 
@@ -236,6 +241,7 @@ typedef struct _mp_state_ctx_t {
     mp_state_mem_t mem;
 } mp_state_ctx_t;
 
+#if !defined(MP_STATE_PTR)
 extern mp_state_ctx_t mp_state_ctx;
 
 #define MP_STATE_VM(x) (mp_state_ctx.vm.x)
@@ -246,6 +252,7 @@ extern mp_state_thread_t *mp_thread_get_state(void);
 #define MP_STATE_THREAD(x) (mp_thread_get_state()->x)
 #else
 #define MP_STATE_THREAD(x) (mp_state_ctx.thread.x)
+#endif
 #endif
 
 #endif // __MICROPY_INCLUDED_PY_MPSTATE_H__

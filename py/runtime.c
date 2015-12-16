@@ -53,10 +53,12 @@
 #define DEBUG_OP_printf(...) (void)0
 #endif
 
+#if !defined(MP_STATE_PTR)
 const mp_obj_module_t mp_module___main__ = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&MP_STATE_VM(dict_main),
 };
+#endif
 
 void mp_init(void) {
     qstr_init();
@@ -93,6 +95,10 @@ void mp_init(void) {
     mp_obj_dict_init(&MP_STATE_VM(mp_loaded_modules_dict), 3);
 
     // initialise the __main__ module
+    #if defined(MP_STATE_PTR)
+    MP_STATE_VM(mp_module___main__).base.type = &mp_type_module;
+    MP_STATE_VM(mp_module___main__).globals = &MP_STATE_VM(dict_main);
+    #endif
     mp_obj_dict_init(&MP_STATE_VM(dict_main), 1);
     mp_obj_dict_store(MP_OBJ_FROM_PTR(&MP_STATE_VM(dict_main)), MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR___main__));
 

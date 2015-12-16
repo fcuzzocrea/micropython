@@ -30,4 +30,6 @@
 mp_dynamic_compiler_t mp_dynamic_compiler = {0};
 #endif
 
+#if !defined(MP_STATE_PTR)
 mp_state_ctx_t mp_state_ctx;
+#endif
