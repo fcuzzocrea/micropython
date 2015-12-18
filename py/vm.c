@@ -540,6 +540,7 @@ dispatch_loop:
                 }
 
                 ENTRY(MP_BC_JUMP): {
+                bc_jump:;
                     DECODE_SLABEL;
                     ip += slab;
                     DISPATCH_WITH_PEND_EXC_CHECK();
@@ -861,7 +862,9 @@ unwind_jump:;
                         sp--;
                     #endif
                     }
-                    DISPATCH();
+                    // next opcode is always JUMP
+                    ip += 1;
+                    goto bc_jump;
                 }
 
                 ENTRY(MP_BC_UNPACK_SEQUENCE): {
@@ -1010,6 +1013,11 @@ unwind_jump:;
                     }
                     #endif
                     SET_TOP(mp_call_method_n_kw(unum & 0xff, (unum >> 8) & 0xff, sp));
+                    // about 50% of the time the next opcode is POP_TOP
+                    if (*ip == MP_BC_POP_TOP) {
+                        ip += 1;
+                        sp -= 1;
+                    }
                     DISPATCH();
                 }
 
