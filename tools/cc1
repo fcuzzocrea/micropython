@@ -23,8 +23,9 @@ import re
 # TODO somehow make them externally configurable
 
 # this is the path to the true C compiler
-cc1_path = '/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/cc1'
+#cc1_path = '/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/cc1'
 #cc1_path = '/usr/lib/gcc/arm-none-eabi/5.3.0/cc1'
+cc1_path = '/home/notroot/Download/rtems-4.8/libexec/gcc/sparc-rtems/4.2.4/cc1'
 
 # this must be the same as MICROPY_QSTR_BYTES_IN_HASH
 bytes_in_qstr_hash = 2
