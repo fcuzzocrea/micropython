@@ -33,7 +33,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 
-#if MICROPY_ENABLE_GC
+#if MICROPY_ENABLE_GC && !MICROPY_ENABLE_IMMORTAL_GC
 
 #if 0 // print debugging info
 #define DEBUG_PRINT (1)
@@ -919,4 +919,4 @@ void gc_test(void) {
 }
 #endif
 
-#endif // MICROPY_ENABLE_GC
+#endif // MICROPY_ENABLE_GC && !MICROPY_ENABLE_IMMORTAL_GC

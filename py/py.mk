@@ -108,6 +108,7 @@ PY_O_BASENAME = \
 	nlrsetjmp.o \
 	malloc.o \
 	gc.o \
+	gcimmortal.o \
 	qstr.o \
 	vstr.o \
 	mpprint.o \

@@ -429,6 +429,11 @@
 #define MICROPY_ENABLE_GC (0)
 #endif
 
+// Whether to use the immortal memory manager instead of the stardard GC
+#ifndef MICROPY_ENABLE_IMMORTAL_GC
+#define MICROPY_ENABLE_IMMORTAL_GC (0)
+#endif
+
 // Whether to enable finalisers in the garbage collector (ie call __del__)
 #ifndef MICROPY_ENABLE_FINALISER
 #define MICROPY_ENABLE_FINALISER (0)
