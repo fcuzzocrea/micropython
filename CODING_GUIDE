@@ -1,0 +1,263 @@
+GRL-MPLEON-SW2-USAGE-GUIDE
+For ESA Contract No. 4000114080/15/NL/FE/as
+Porting of MicroPython to LEON platforms
+Task 2: Implementation and Testing of the MicroPython VM for LEON
+
+================================================================================
+Overview
+================================================================================
+
+This is the port of MicroPython to LEON platforms.
+
+This document provide some guidance on programming Python scripts for the LEON
+port of MicroPython.
+
+================================================================================
+Development environment
+================================================================================
+
+The most efficient work flow is to use a unix-like command line.  This will
+allow to easily compile Python scripts to bytecode and then execute them in
+the LEON simulator.
+
+To develop Python scripts there are three recommended options:
+
+1. For the command line, use vim/emacs/other to edit .py files.
+   Use pylint (http://www.pylint.org/) to check Python scripts for errors
+   before executing (not all errors can be caught but it helps to find basic
+   mistakes and speeds up development).
+
+2. For a powerful stand-alone IDE, use PyCharm (https://www.jetbrains.com/pycharm/)
+
+3. For integration with Eclipse, use PyDev (http://www.pydev.org/)
+
+To speed up the development cycle one can use standard Python (also known as
+CPython) to execute the Python scripts before they are run on LEON.  One should
+use CPython version 3.3 or later.  Running under CPython will allow to test
+features of the script that are generic Python code and don't require special
+LEON-only modules.  To enable more code to be tested this way, it is recommended
+to split the script into parts that are generic (eg some functions, some classes)
+and isolate parts that are LEON specific.  One could also consider writing dummy
+LEON modules that execute on the host machine so that scripts can be tested to
+a larger extent with CPython, before running on the LEON platform.
+
+================================================================================
+Using MicroPython without the heap
+================================================================================
+
+If heap allocation is allowed then one can use all features of Python to write
+scripts.
+
+If heap allocation is not allowed during the main executing of the script then
+one must use a restricted set of language features.  The general idea is to
+allocate the required memory at the start of the script, then lock the heap, and
+then execute the main loop using the restricted set of features outlined below.
+
+Heap locking can be done using the heap_lock() function of the micropython
+module.
+
+Examples
+========
+
+A simple example to demonstrate the structure of a script that needs to lock the
+heap during execution:
+
+    # import all needed modules
+    import micropython
+    import time
+    import math
+    import rtems
+
+    # create global variables
+    lst = [1, 2, 3, 4]
+    dct = {'x':[1, 2], 'y':[3, 4]}
+
+    # define functions
+    def foo(x, y=1):
+        print(x, y)
+
+    # define main function
+    def main():
+        # create local objects
+        l = 100 * [0]
+        buf = bytearray(100)
+
+        # lock the heap; from now on we are restricted in what we can do
+        # any attempt to allocate on the heap will raise a MemoryError
+        micropython.heap_lock()
+
+        # execute the main loop
+        while True:
+            buf[0] += 1
+            # and so on
+
+    # run the main function
+    main()
+
+Further examples can be found by looking at the LEON-specific test scripts.
+Most of them use the heap_lock() function.
+
+Tips and Tricks
+===============
+
+It is good practice to execute the main part of a script in a function (eg
+main).  This is because local variables in a function are more efficient to
+access than global variables, and they are stored on the stack rather than
+on the heap in a dictionary.
+
+If integers grow beyond the limit of -2^30 or 2^30-1 then they require the
+heap to be stored.  It is best to prevent such "overflow" by guarantee of
+the algorithm, or by using bit masking to keep within a set range, eg:
+
+    x = (x + 1) & 0xffff
+
+If a function needs some local state then it can be pre-allocated by using
+default arguments.  Default arguments are evaluated only when the function
+is first defined, not when the function is called.  Eg, the following two
+functions do not allocate on the heap when called:
+
+    def foo(localstate=[0,0,0,0]):
+        localstate[0] += 1
+
+    def bar(localbuf=bytearray(10)):
+        n = queue.receive(localbuf)
+
+Language features that do not need the heap
+===========================================
+
+- expressions
+- accessing variables
+- assignment to existing global variables
+- assignment to local variables
+- loading attributes
+- storing to existing (writable) attributes
+- calling functions (except use of * or **)
+- calling methods (except use of * or **)
+- if statements
+- while statements
+- for statements
+- try/except blocks
+- raise (will use emergency exception buffer to create exception object)
+
+Basic types that do not need the heap
+=====================================
+
+bool:
+- immediate construction (eg having "True" in the code)
+- all logic operations
+
+str/bytes:
+- immediate construction (eg having 'abc' or b'abc' in the code)
+- access character using []
+- binary comparison: == < > <= >=
+- built-in functions: bool, hash, len, print
+- iterate over in a for loop
+
+bytearray:
+- load element using []
+- store element using []
+- inplace operators accessing elements using [] (eg b[0] += 2)
+- built-in functions: print, bool, len
+- iterate over in a for loop
+
+int (must be between -2^30 and 2^30-1 inclusive):
+- immediate construction (eg having "123" in the code)
+- conversion from string
+- unary operators: + - ~
+- binary logic: & | ^ << >>
+- binary arithmetic: + - * // / % **
+- binary comparison: == < > <= >=
+- built-in functions: all, any, abs, bool, min, max, print, sum
+
+float:
+- immediate construction (eg having "1.23" in the code)
+- conversion from int, string
+- unary operators: + -
+- binary arithmetic: + - * // / % **
+- binary comparison: == < > <= >=
+- built-in functions: all, any, abs, bool, min, max, print, round, sum
+
+tuple:
+- create empty tuple
+- load element using []
+- binary comparison: == < > <= >=
+- methods: count, index
+- built-in functions: print, bool, hash, len
+- iterate over in a for loop
+
+list:
+- load element using []
+- store element using []
+- inplace operators accessing elements using [] (eg l[0] += 2)
+- binary comparison: == < > <= >=
+- methods: count, index, reverse, sort
+- built-in functions: print, bool, len
+- iterate over in a for loop
+
+dict:
+- load element using []
+- store to existing element using []
+- methods: get, setdefault (with existing element), update (with existing elements)
+- built-in functions: print, len
+- iterate over in a for loop
+- iterate over keys and values if these methods are called prior to locking the heap
+
+Built-in functions that do not need the heap
+============================================
+
+- abs
+- all (with tuple, list, iterator, comprehension)
+- any (with tuple, list, iterator, comprehension)
+- callable
+- getattr
+- globals
+- hasattr
+- hash
+- isinstance
+- issubclass
+- len
+- locals
+- max (with args, tuple, list, iterator, comprehension)
+- min (with args, tuple, list, iterator, comprehension)
+- ord
+- pow
+- print
+- sum (with tuple, list, iterator, comprehension)
+
+Some common things that need heap allocation
+============================================
+
+- importing
+    workaround: import all modules before locking the heap
+
+- assiging global variables for the first time
+    workaround: create all global variables by assigning None to them
+    before locking the heap
+
+- defining functions
+    workaround: define all functions before locking the heap
+
+- defining classes
+    workaround: define all classes before locking the heap
+
+- creating instances of objects
+    workaround: create all instances before locking the heap
+
+- creating tuples
+    workaround: create before locking the heap, or use a pre-created
+    list instead
+
+- creating lists
+    workaround: create list of desired size before locking the heap
+
+- extending lists
+    workaround: none
+
+- creating dicts
+    workaround: create dict with desired keys before locking the heap
+
+- adding new elements to dicts
+    workaround: none
+
+- formatting strings
+    workaround: none

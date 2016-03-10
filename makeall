@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# This script will build all components and run all tests.
+
+make -C leon-compiler
+make -C leon-ex-minimal
+make -C leon-ex-tasks
+make -C leon-ex-manager
+make -C leon-for-tests
+
+(cd leon-tests && ./run-tests.sh CORE_BASICS/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_UNICODE/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_FLOAT/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_EXTMOD/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_MISC/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_MICROPYTHON/*.exp)
+(cd leon-tests && ./run-tests.sh leon_t1/*.exp)
+(cd leon-tests && ./run-tests.sh -t 2 leon_t2/*.exp)
+(cd leon-tests && ./run-tests.sh -t 10 leon_t10/*.exp)
+(cd leon-tests && ./run-tests.sh -o leon_perf/*.exp)
+(cd leon-ex-manager && ./run-test.sh)

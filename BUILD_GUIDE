@@ -1,0 +1,141 @@
+GRL-MPLEON-SW2-BUILD-GUIDE
+For ESA Contract No. 4000114080/15/NL/FE/as
+Porting of MicroPython to LEON platforms
+Task 2: Implementation and Testing of the MicroPython VM for LEON
+
+================================================================================
+Overview
+================================================================================
+
+This is the port of MicroPython to LEON platforms.
+
+This document describes the directory structure and building and running the
+example code.
+
+================================================================================
+Directory structure
+================================================================================
+
+There are 2 main components in this package, the existing MicroPython code
+with patches to make improvements for LEON, and the LEON specific directories.
+
+Existing MicroPython code with patches includes:
+
+    py/         core MicroPython source
+    extmod/     extension modules
+    lib/        generic C libraries
+    tools/      miscellaneous helper scripts
+    docs/       includes conf.py to get version number
+
+LEON specific directories:
+
+    leon-common/        common code for leon port
+    leon-compiler/      MicroPython cross compiler for leon
+    leon-ex-minimal/    a minimal example of MicroPython
+    leon-ex-tasks/      an example of MicroPython using multiple tasks
+    leon-ex-manager/    an example of MicroPython that uses the VM manager
+    leon-for-tests/     a version of MicroPython for running LEON tests
+    leon-tests/         the LEON tests
+
+================================================================================
+Building
+================================================================================
+
+The first thing to build is the cross compiler which is used to turn Python
+scripts (.py) into precompiled MicroPython bytecode (.mpy).  Build using:
+
+    $ cd leon-compiler
+    $ make
+
+Next you can build and run the minimal example:
+
+    $ cd ../leon-ex-minimal
+    $ make
+
+You can then run the example scripts:
+
+    $ make run
+
+The example scripts are ex1.py and ex2.py in the leon-ex-minimal directory.
+These can be edited and then `make run` executed again to see the changes.
+The scripts are run one after the other.  The Makefile will convert the scripts
+to .mpy first, and then convert the .mpy files into a C header file so they
+can be compiled into the binary.  To perform these steps by hand you can do:
+
+    $ ../leon-compiler/micropython ex1.py
+    $ ../leon-compiler/micropython ex2.py
+    $ ../tools/mpytool.py tohdr ex1.mpy ex2.mpy > build/scripts.h
+
+The file scripts.h is included in main.c and the bytecode is accessed simply
+as an array of bytes.
+
+In the directory leon-ex-tasks is an example that spawns 4 scripts.  Build
+and run using:
+
+    $ cd../leon-ex-tasks
+    $ make
+    $ make run
+
+In this example the scripts are not compiled into the binary but are instead
+loaded into RAM directly using a .srec file (see build/scripts.srec).  To
+build the .mpy files and scripts.srec file by hand use (this is done
+automatically by the Makefile):
+
+    $ ../leon-compiler/micropython ex1.py
+    $ ../leon-compiler/micropython ex2.py
+    $ ../leon-compiler/micropython ex3.py
+    $ ../leon-compiler/micropython ex4.py
+    $ ../tools/mpytool.py tosrec 0x40100000 ex1.mpy 0x40110000 ex2.mpy \
+        0x40120000 ex3.mpy 0x40130000 ex4.mpy > build/scripts.srec
+
+Another example is given using the VM manager.  To build and run do:
+
+    $ cd ../leon-ex-manager
+    $ make
+    $ make run
+
+Look at the main.c file, in the function mp_manager_task, to see how the
+manager task can manage the worker scripts.
+
+To build the binary for the test framework do:
+
+    $ cd ../leon-for-tests
+    $ make
+
+To run the core tests do:
+
+    $ cd ../leon-tests
+    $ ./run-tests.sh
+
+================================================================================
+Configuration
+================================================================================
+
+MicroPython has many configuration variables found in mpconfigport.h.  They have
+been chosen to provide a good balance of features and performance.  One to
+notice is:
+
+    #define MICROPY_ENABLE_IMMORTAL_GC (0)
+
+If this is defined to (0) then the normal garbage collector is used.  If this
+variable is (1) then a simpler memory manager is used which does not include a
+garbage collector, but rather just has a simple immortal heap whereby only
+allocation is possible.  Allocation is implemented as incrementing a pointer
+to the heap.
+
+In main.c there are also some configuration variables of note:
+
+    #define MICROPY_RTEMS_STACK_SIZE (RTEMS_MINIMUM_STACK_SIZE * 2)
+    #define MICROPY_RTEMS_HEAP_SIZE (16 * 1024)
+    #define MICROPY_RTEMS_NUM_TASKS (1)
+
+These can be used to adjust the stack and heap size (per task) as well as the
+number of tasks.
+
+================================================================================
+Code size
+================================================================================
+
+Code size for a bare LEON binary with RTEMS but no MicroPython is about 100k.
+MicroPython with 64-bit NaN boxing costs about 200k extra (so 300k total for the
+binary).  Without 64-bit NaN boxing MicroPython costs about 166k extra.
