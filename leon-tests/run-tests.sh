@@ -9,7 +9,7 @@
 ######## settings
 
 RM="rm -f"
-MPC="../leon-compiler/micropython"
+MPC="../mpy-cross/mpy-cross"
 MPYTOOL="../tools/mpytool.py"
 UNHEXLIFY="../tools/unhexlify.py"
 

@@ -96,7 +96,7 @@ main.c: scripts.h
 
 $(BUILD)/%.mpy: %.py
 	$(ECHO) "PY $<"
-	$(Q)../leon-compiler/micropython -o $@ $<
+	$(Q)../mpy-cross/mpy-cross -o $@ $<
 
 scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "MPY $@"

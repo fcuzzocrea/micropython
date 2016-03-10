@@ -26,11 +26,11 @@ Existing MicroPython code with patches includes:
     lib/        generic C libraries
     tools/      miscellaneous helper scripts
     docs/       includes conf.py to get version number
+    mpy-cross/  MicroPython cross compiler to produce .mpy files
 
 LEON specific directories:
 
     leon-common/        common code for leon port
-    leon-compiler/      MicroPython cross compiler for leon
     leon-ex-minimal/    a minimal example of MicroPython
     leon-ex-tasks/      an example of MicroPython using multiple tasks
     leon-ex-manager/    an example of MicroPython that uses the VM manager
@@ -45,7 +45,7 @@ Building
 The first thing to build is the cross compiler which is used to turn Python
 scripts (.py) into precompiled MicroPython bytecode (.mpy).  Build using:
 
-    $ cd leon-compiler
+    $ cd mpy-cross
     $ make
 
 Next you can build and run the minimal example:
@@ -63,8 +63,8 @@ The scripts are run one after the other.  The Makefile will convert the scripts
 to .mpy first, and then convert the .mpy files into a C header file so they
 can be compiled into the binary.  To perform these steps by hand you can do:
 
-    $ ../leon-compiler/micropython ex1.py
-    $ ../leon-compiler/micropython ex2.py
+    $ ../mpy-cross/mpy-cross ex1.py
+    $ ../mpy-cross/mpy-cross ex2.py
     $ ../tools/mpytool.py tohdr ex1.mpy ex2.mpy > build/scripts.h
 
 The file scripts.h is included in main.c and the bytecode is accessed simply
@@ -82,10 +82,10 @@ loaded into RAM directly using a .srec file (see build/scripts.srec).  To
 build the .mpy files and scripts.srec file by hand use (this is done
 automatically by the Makefile):
 
-    $ ../leon-compiler/micropython ex1.py
-    $ ../leon-compiler/micropython ex2.py
-    $ ../leon-compiler/micropython ex3.py
-    $ ../leon-compiler/micropython ex4.py
+    $ ../mpy-cross/mpy-cross ex1.py
+    $ ../mpy-cross/mpy-cross ex2.py
+    $ ../mpy-cross/mpy-cross ex3.py
+    $ ../mpy-cross/mpy-cross ex4.py
     $ ../tools/mpytool.py tosrec 0x40100000 ex1.mpy 0x40110000 ex2.mpy \
         0x40120000 ex3.mpy 0x40130000 ex4.mpy > build/scripts.srec
 

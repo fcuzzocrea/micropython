@@ -2,7 +2,7 @@
 #
 # This script will build all components and run all tests.
 
-make -C leon-compiler
+make -C mpy-cross
 make -C leon-ex-minimal
 make -C leon-ex-tasks
 make -C leon-ex-manager

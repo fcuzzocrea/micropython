@@ -96,7 +96,7 @@ $(BUILD)/firmware.tab: $(BUILD)/firmware.elf
 
 $(BUILD)/%.mpy: %.py
 	$(ECHO) "PY $<"
-	$(Q)../leon-compiler/micropython -o $@ $<
+	$(Q)../mpy-cross/mpy-cross -o $@ $<
 
 $(BUILD)/scripts.srec: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "MPY $@"
