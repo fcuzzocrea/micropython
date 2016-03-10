@@ -18,3 +18,8 @@ q.send('message')
 print(q.get_number_pending())
 print(q.receive(buf))
 print(buf)
+
+buf[0] = ord('M')
+q.send(buf)
+print(q.receive(buf))
+print(buf)

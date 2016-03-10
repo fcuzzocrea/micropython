@@ -2,3 +2,5 @@ ValueError('name must be 4 bytes long',)
 1
 7
 bytearray(b'message\x00\x00\x00')
+10
+bytearray(b'Message\x00\x00\x00')

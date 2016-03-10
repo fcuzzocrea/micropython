@@ -35,9 +35,9 @@ typedef rtems_status_code (*queue_submit_t)(Objects_Id, void*, size_t);
 
 STATIC mp_obj_t rtems_queue_submit(mp_obj_t self_in, mp_obj_t msg_in, queue_submit_t queue_submit) {
     rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_uint_t msg_len;
-    const char *msg = mp_obj_str_get_data(msg_in, &msg_len);
-    rtems_status_code status = queue_submit(self->id, (void*)msg, msg_len);
+    mp_buffer_info_t bufinfo;
+    mp_get_buffer_raise(msg_in, &bufinfo, MP_BUFFER_READ);
+    rtems_status_code status = queue_submit(self->id, bufinfo.buf, bufinfo.len);
     mod_rtems_status_code_check(status);
     return mp_const_none;
 }
@@ -54,10 +54,10 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_urgent_obj, rtems_queue_urgent);
 
 STATIC mp_obj_t rtems_queue_broadcast(mp_obj_t self_in, mp_obj_t msg_in) {
     rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_uint_t msg_len;
-    const char *msg = mp_obj_str_get_data(msg_in, &msg_len);
+    mp_buffer_info_t bufinfo;
+    mp_get_buffer_raise(msg_in, &bufinfo, MP_BUFFER_READ);
     uint32_t count;
-    rtems_status_code status = rtems_message_queue_broadcast(self->id, (void*)msg, msg_len, &count);
+    rtems_status_code status = rtems_message_queue_broadcast(self->id, bufinfo.buf, bufinfo.len, &count);
     mod_rtems_status_code_check(status);
     return mp_obj_new_int(count);
 }

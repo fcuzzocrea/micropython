@@ -16,4 +16,5 @@ micropython.heap_lock()
 
 print(script_id, 'queue receive:', mq.receive(buf))
 print(script_id, 'queue buf:', buf)
-print(script_id, 'queue broadcast:', mq.broadcast('broadcast3'))
+buf[9] = ord('3')
+print(script_id, 'queue broadcast:', mq.broadcast(buf))
