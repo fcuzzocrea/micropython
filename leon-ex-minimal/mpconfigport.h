@@ -129,7 +129,7 @@ typedef long mp_off_t;
 #define MP_STATE_PORT MP_STATE_VM
 
 // Hook for the VM
-#define MICROPY_VM_HOOK_COUNT (1)
+#define MICROPY_VM_HOOK_COUNT (8)
 #define MICROPY_VM_HOOK_INIT uint vm_hook_count = MICROPY_VM_HOOK_COUNT;
 #define MICROPY_VM_HOOK_LOOP \
     if (--vm_hook_count == 0) { \
