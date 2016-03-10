@@ -1,0 +1,4 @@
+1
+got ValueError from upstream!
+str1
+got TypeError from downstream!

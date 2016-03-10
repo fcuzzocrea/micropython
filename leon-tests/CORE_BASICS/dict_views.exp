@@ -1,0 +1,6 @@
+dict_items([(1, 2)])
+[(1, 2)]
+dict_values([2])
+[2]
+dict_keys([1])
+[1]

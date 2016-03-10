@@ -1,0 +1,41 @@
+(1+0j)
+(1.2+0j)
+1.2j
+(1+0j)
+(1.2+0j)
+1.2j
+(1+2j)
+(-2+1j)
+True
+1j
+(-1-2j)
+1j
+(1+1j)
+(2+1j)
+3j
+(-2+1j)
+-1j
+2j
+(-2+0j)
+0.5j
+0.5
+(0.4+0.2j)
+1 0
+1 0
+-0.70711 -0.70711
+0.019703 0
+False
+True
+1.0
+2.2361
+(1.2+3j)
+(nan+nanj)
+(inf+infj)
+(-inf-infj)
+1.1806e+21 1
+TypeError
+TypeError
+TypeError
+TypeError
+ZeroDivisionError
+ZeroDivisionError

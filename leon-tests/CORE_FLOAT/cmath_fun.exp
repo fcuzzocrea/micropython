@@ -1,0 +1,362 @@
+2.7183
+3.1416
+[0j, 0.5j, -0.5j, 1.2345j, -1.2345j, 10j, -10j, (0.5+0j), (-0.5+0j), (0.5+0.5j), (-0.5+0.5j), (0.5-0.5j), (-0.5-0.5j), (0.5+1.2345j), (-0.5+1.2345j), (0.5-1.2345j), (-0.5-1.2345j), (0.5+10j), (-0.5+10j), (0.5-10j), (-0.5-10j), (1.2345+0j), (-1.2345+0j), (1.2345+0.5j), (-1.2345+0.5j), (1.2345-0.5j), (-1.2345-0.5j), (1.2345+1.2345j), (-1.2345+1.2345j), (1.2345-1.2345j), (-1.2345-1.2345j), (1.2345+10j), (-1.2345+10j), (1.2345-10j), (-1.2345-10j), (10+0j), (-10+0j), (10+0.5j), (-10+0.5j), (10-0.5j), (-10-0.5j), (10+1.2345j), (-10+1.2345j), (10-1.2345j), (-10-1.2345j), (10+10j), (-10+10j), (10-10j), (-10-10j)]
+phase
+0
+1.5708
+-1.5708
+1.5708
+-1.5708
+1.5708
+-1.5708
+0
+3.1416
+0.7854
+2.3562
+-0.7854
+-2.3562
+1.186
+1.9556
+-1.186
+-1.9556
+1.5208
+1.6208
+-1.5208
+-1.6208
+0
+3.1416
+0.38483
+2.7568
+-0.38483
+-2.7568
+0.7854
+2.3562
+-0.7854
+-2.3562
+1.448
+1.6936
+-1.448
+-1.6936
+0
+3.1416
+0.049958
+3.0916
+-0.049958
+-3.0916
+0.12283
+3.0188
+-0.12283
+-3.0188
+0.7854
+2.3562
+-0.7854
+-2.3562
+polar
+0 0
+0.5 1.5708
+0.5 -1.5708
+1.2345 1.5708
+1.2345 -1.5708
+10 1.5708
+10 -1.5708
+0.5 0
+0.5 3.1416
+0.70711 0.7854
+0.70711 2.3562
+0.70711 -0.7854
+0.70711 -2.3562
+1.3319 1.186
+1.3319 1.9556
+1.3319 -1.186
+1.3319 -1.9556
+10.012 1.5208
+10.012 1.6208
+10.012 -1.5208
+10.012 -1.6208
+1.2345 0
+1.2345 3.1416
+1.3319 0.38483
+1.3319 2.7568
+1.3319 -0.38483
+1.3319 -2.7568
+1.7458 0.7854
+1.7458 2.3562
+1.7458 -0.7854
+1.7458 -2.3562
+10.076 1.448
+10.076 1.6936
+10.076 -1.448
+10.076 -1.6936
+10 0
+10 3.1416
+10.012 0.049958
+10.012 3.0916
+10.012 -0.049958
+10.012 -3.0916
+10.076 0.12283
+10.076 3.0188
+10.076 -0.12283
+10.076 -3.0188
+14.142 0.7854
+14.142 2.3562
+14.142 -0.7854
+14.142 -2.3562
+rect
+complex(0, 0)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0.84147)
+complex(0, -0.84147)
+complex(0, -0.84147)
+complex(0, 55.602)
+exp
+complex(0, 0)
+complex(0, 0.47943)
+complex(0, -0.47943)
+complex(0, 0.94398)
+complex(0, -0.94398)
+complex(0, -0.54402)
+complex(0, 0.54402)
+complex(0, 0)
+complex(0, 0)
+complex(0, 0.79044)
+complex(0, 0.29079)
+complex(0, -0.79044)
+complex(0, -0.29079)
+complex(0, 1.5564)
+complex(0, 0.57255)
+complex(0, -1.5564)
+complex(0, -0.57255)
+complex(0, -0.89694)
+complex(0, -0.32997)
+complex(0, 0.89694)
+complex(0, 0.32997)
+complex(0, 0)
+complex(0, 0)
+complex(0, 1.6476)
+complex(0, 0.1395)
+complex(0, -1.6476)
+complex(0, -0.1395)
+complex(0, 3.2441)
+complex(0, 0.27468)
+complex(0, -3.2441)
+complex(0, -0.27468)
+complex(0, -1.8696)
+complex(0, -0.1583)
+complex(0, 1.8696)
+complex(0, 0.1583)
+complex(0, 0)
+complex(0, 0)
+complex(0, 10560)
+complex(0, 2.1766e-05)
+complex(0, -10560)
+complex(0, -2.1766e-05)
+complex(0, 20793)
+complex(0, 4.2857e-05)
+complex(0, -20793)
+complex(0, -4.2857e-05)
+complex(0, -11983)
+complex(0, -2.4699e-05)
+complex(0, 11983)
+complex(0, 2.4699e-05)
+log
+complex(0, 1.5708)
+complex(0, -1.5708)
+complex(0, 1.5708)
+complex(0, -1.5708)
+complex(0, 1.5708)
+complex(0, -1.5708)
+complex(0, 0)
+complex(0, 3.1416)
+complex(0, 0.7854)
+complex(0, 2.3562)
+complex(0, -0.7854)
+complex(0, -2.3562)
+complex(0, 1.186)
+complex(0, 1.9556)
+complex(0, -1.186)
+complex(0, -1.9556)
+complex(0, 1.5208)
+complex(0, 1.6208)
+complex(0, -1.5208)
+complex(0, -1.6208)
+complex(0, 0)
+complex(0, 3.1416)
+complex(0, 0.38483)
+complex(0, 2.7568)
+complex(0, -0.38483)
+complex(0, -2.7568)
+complex(0, 0.7854)
+complex(0, 2.3562)
+complex(0, -0.7854)
+complex(0, -2.3562)
+complex(0, 1.448)
+complex(0, 1.6936)
+complex(0, -1.448)
+complex(0, -1.6936)
+complex(0, 0)
+complex(0, 3.1416)
+complex(0, 0.049958)
+complex(0, 3.0916)
+complex(0, -0.049958)
+complex(0, -3.0916)
+complex(0, 0.12283)
+complex(0, 3.0188)
+complex(0, -0.12283)
+complex(0, -3.0188)
+complex(0, 0.7854)
+complex(0, 2.3562)
+complex(0, -0.7854)
+complex(0, -2.3562)
+sqrt
+complex(0, 0)
+complex(0, 0.5)
+complex(0, -0.5)
+complex(0, 0.78565)
+complex(0, -0.78565)
+complex(0, 2.2361)
+complex(0, -2.2361)
+complex(0, 0)
+complex(0, 0.70711)
+complex(0, 0.3218)
+complex(0, 0.77689)
+complex(0, -0.3218)
+complex(0, -0.77689)
+complex(0, 0.64495)
+complex(0, 0.95706)
+complex(0, -0.64495)
+complex(0, -0.95706)
+complex(0, 2.1809)
+complex(0, 2.2927)
+complex(0, -2.1809)
+complex(0, -2.2927)
+complex(0, 0)
+complex(0, 1.1111)
+complex(0, 0.22069)
+complex(0, 1.1328)
+complex(0, -0.22069)
+complex(0, -1.1328)
+complex(0, 0.50564)
+complex(0, 1.2207)
+complex(0, -0.50564)
+complex(0, -1.2207)
+complex(0, 2.1025)
+complex(0, 2.3781)
+complex(0, -2.1025)
+complex(0, -2.3781)
+complex(0, 0)
+complex(0, 3.1623)
+complex(0, 0.079032)
+complex(0, 3.1633)
+complex(0, -0.079032)
+complex(0, -3.1633)
+complex(0, 0.19482)
+complex(0, 3.1683)
+complex(0, -0.19482)
+complex(0, -3.1683)
+complex(0, 1.4391)
+complex(0, 3.4743)
+complex(0, -1.4391)
+complex(0, -3.4743)
+cos
+complex(0, -0)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0.24983)
+complex(0, 0.24983)
+complex(0, 0.24983)
+complex(0, -0.24983)
+complex(0, -0.75406)
+complex(0, 0.75406)
+complex(0, 0.75406)
+complex(0, -0.75406)
+complex(0, -5280)
+complex(0, 5280)
+complex(0, 5280)
+complex(0, -5280)
+complex(0, -0)
+complex(0, 0)
+complex(0, -0.49191)
+complex(0, 0.49191)
+complex(0, 0.49191)
+complex(0, -0.49191)
+complex(0, -1.4847)
+complex(0, 1.4847)
+complex(0, 1.4847)
+complex(0, -1.4847)
+complex(0, -10396)
+complex(0, 10396)
+complex(0, 10396)
+complex(0, -10396)
+complex(0, 0)
+complex(0, -0)
+complex(0, 0.28349)
+complex(0, -0.28349)
+complex(0, -0.28349)
+complex(0, 0.28349)
+complex(0, 0.85566)
+complex(0, -0.85566)
+complex(0, -0.85566)
+complex(0, 0.85566)
+complex(0, 5991.4)
+complex(0, -5991.4)
+complex(0, -5991.4)
+complex(0, 5991.4)
+sin
+complex(0, 0)
+complex(0, 0.5211)
+complex(0, -0.5211)
+complex(0, 1.5728)
+complex(0, -1.5728)
+complex(0, 11013)
+complex(0, -11013)
+complex(0, 0)
+complex(0, 0)
+complex(0, 0.4573)
+complex(0, 0.4573)
+complex(0, -0.4573)
+complex(0, -0.4573)
+complex(0, 1.3803)
+complex(0, 1.3803)
+complex(0, -1.3803)
+complex(0, -1.3803)
+complex(0, 9665)
+complex(0, 9665)
+complex(0, -9665)
+complex(0, -9665)
+complex(0, 0)
+complex(0, 0)
+complex(0, 0.17196)
+complex(0, 0.17196)
+complex(0, -0.17196)
+complex(0, -0.17196)
+complex(0, 0.51903)
+complex(0, 0.51903)
+complex(0, -0.51903)
+complex(0, -0.51903)
+complex(0, 3634.3)
+complex(0, 3634.3)
+complex(0, -3634.3)
+complex(0, -3634.3)
+complex(0, -0)
+complex(0, -0)
+complex(0, -0.43724)
+complex(0, -0.43724)
+complex(0, 0.43724)
+complex(0, 0.43724)
+complex(0, -1.3197)
+complex(0, -1.3197)
+complex(0, 1.3197)
+complex(0, 1.3197)
+complex(0, -9240.9)
+complex(0, -9240.9)
+complex(0, 9240.9)
+complex(0, 9240.9)

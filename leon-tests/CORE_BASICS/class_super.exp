@@ -1,0 +1,3 @@
+in Sub meth
+in Base meth 1
+<super: <class 'A'

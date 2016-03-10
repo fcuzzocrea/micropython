@@ -1,0 +1,6 @@
+(100, 'Some error')
+MyExc(100, 'Some error')
+(100, 'Some error')
+Caught exception: MyExc('Some error',)
+Caught exception: MyExc('Some error2',)
+Caught user exception

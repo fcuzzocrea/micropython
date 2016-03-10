@@ -1,0 +1,5 @@
+[T1] queue pending: 2
+[T2] queue receive: 10
+[T2] queue buf: bytearray(b'urgent msg')
+[T2] queue receive: 10
+[T2] queue buf: bytearray(b'normal msg')

@@ -1,0 +1,6 @@
+['foo', 'bar']
+['foo', 'bar']
+['foo\n', 'bar']
+['foo\n', 'bar\n']
+['foo\n', 'bar']
+['foo\n', 'bar\n']

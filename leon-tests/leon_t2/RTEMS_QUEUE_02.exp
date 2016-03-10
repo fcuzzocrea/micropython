@@ -1,0 +1,3 @@
+[T1] queue pending: 1
+[T2] queue receive: 10
+[T2] queue buf: bytearray(b'hello leon')

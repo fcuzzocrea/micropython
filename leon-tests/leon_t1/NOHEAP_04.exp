@@ -1,0 +1,19 @@
+{'three': 3, 'one': 1, 'two': 2}
+3
+2
+{'three': 3, 'one': 1, 'two': 22}
+three
+one
+two
+three
+one
+two
+3
+1
+22
+3
+444
+22
+{'three': 3, 'one': 11, 'two': 22}
+{'three': 3, 'one': 1, 'two': 22}
+{'three': 3, 'one': 11, 'two': 22}

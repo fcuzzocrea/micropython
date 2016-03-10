@@ -1,0 +1,40 @@
+Caught ArithmeticError via Exception
+Caught ArithmeticError
+Caught AssertionError via Exception
+Caught AssertionError
+Caught AttributeError via Exception
+Caught AttributeError
+Caught EOFError via Exception
+Caught EOFError
+Caught Exception via BaseException
+Caught Exception
+Caught ImportError via Exception
+Caught ImportError
+Caught IndentationError via SyntaxError
+Caught IndentationError
+Caught IndexError via LookupError
+Caught IndexError
+Caught KeyError via LookupError
+Caught KeyError
+Caught LookupError via Exception
+Caught LookupError
+Caught MemoryError via Exception
+Caught MemoryError
+Caught NameError via Exception
+Caught NameError
+Caught NotImplementedError via RuntimeError
+Caught NotImplementedError
+Caught OSError via Exception
+Caught OSError
+Caught OverflowError via ArithmeticError
+Caught OverflowError
+Caught RuntimeError via Exception
+Caught RuntimeError
+Caught SyntaxError via Exception
+Caught SyntaxError
+Caught TypeError via Exception
+Caught TypeError
+Caught ValueError via Exception
+Caught ValueError
+Caught ZeroDivisionError via ArithmeticError
+Caught ZeroDivisionError

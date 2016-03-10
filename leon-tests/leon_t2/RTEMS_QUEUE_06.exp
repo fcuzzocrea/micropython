@@ -1,0 +1,3 @@
+[T2] queue receive: 10
+[T2] queue buf: bytearray(b'hello leon')
+[T2] queue error: INVALID_ID
