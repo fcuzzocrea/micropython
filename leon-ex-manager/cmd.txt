@@ -1,0 +1,6 @@
+load /srec "build/firmware.srec"
+load /symtab "build/firmware.tab"
+set pc=0x40000000
+set i6=0x41000000
+set o6=0x40FFFE80
+step 5000000

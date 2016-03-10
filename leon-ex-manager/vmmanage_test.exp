@@ -1,0 +1,43 @@
+UART A sent : MicroPython manager task started
+UART A sent : MicroPython script 1
+UART A sent : 0
+UART A sent : 1
+UART A sent : 2
+UART A sent : Manager got line 8
+UART A sent : 3
+UART A sent : Manager got line 8
+UART A sent : 4
+UART A sent : Manager got line 8
+UART A sent : 5
+UART A sent : Manager got line 8
+UART A sent : 6
+UART A sent : 7
+UART A sent : 8
+UART A sent : 9
+UART A sent : 10
+UART A sent : 11
+UART A sent : 12
+UART A sent : 13
+UART A sent : 14
+UART A sent : retval = 170
+UART A sent : MicroPython script 2
+UART A sent : 1.0000
+UART A sent : 0.5000
+UART A sent : 0.3333
+UART A sent : Manager got line 8
+UART A sent : 0.2500
+UART A sent : Manager got line 8
+UART A sent : 0.2000
+UART A sent : Manager got line 8
+UART A sent : 0.1667
+UART A sent : Manager got line 8
+UART A sent : 0.1429
+UART A sent : 0.1250
+UART A sent : 0.1111
+UART A sent : 0.1000
+UART A sent : 0.0909
+UART A sent : 0.0833
+UART A sent : 0.0769
+UART A sent : 0.0714
+UART A sent : 0.0667
+UART A sent : retval = 170
