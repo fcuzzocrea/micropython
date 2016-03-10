@@ -1242,6 +1242,24 @@ yield:
                     MARK_EXC_IP_SELECTIVE();
                     mp_obj_t rhs = POP();
                     mp_obj_t lhs = TOP();
+                    if (mp_obj_is_float(lhs)) {
+                        // fast-path for float on LHS; see objfloat.c/float_binary_op()
+                        uint op = ip[-1] - MP_BC_BINARY_OP_MULTI;
+                        mp_float_t lhs_val = mp_obj_float_get(lhs);
+                        mp_obj_t ans;
+                        #if MICROPY_PY_BUILTINS_COMPLEX
+                        if (MP_OBJ_IS_TYPE(rhs, &mp_type_complex)) {
+                            ans = mp_obj_complex_binary_op(op, lhs_val, 0, rhs);
+                        } else
+                        #endif
+                        {
+                            ans = mp_obj_float_binary_op(op, mp_obj_float_get(lhs), rhs);
+                        }
+                        if (ans != MP_OBJ_NULL) {
+                            SET_TOP(ans);
+                            DISPATCH();
+                        }
+                    }
                     SET_TOP(mp_binary_op(ip[-1] - MP_BC_BINARY_OP_MULTI, lhs, rhs));
                     DISPATCH();
                 }
