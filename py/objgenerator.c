@@ -203,7 +203,9 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(gen_instance_throw_obj, 2, 4, gen_ins
 
 STATIC mp_obj_t gen_instance_close(mp_obj_t self_in) {
     mp_obj_t ret;
-    switch (mp_obj_gen_resume(self_in, mp_const_none, MP_OBJ_FROM_PTR(&mp_const_GeneratorExit_obj), &ret)) {
+    mp_obj_t send_value = mp_const_none;
+    mp_obj_t throw_value = MP_OBJ_FROM_PTR(&mp_const_GeneratorExit_obj);
+    switch (mp_obj_gen_resume(self_in, send_value, throw_value, &ret)) {
         case MP_VM_RETURN_YIELD:
             mp_raise_msg(&mp_type_RuntimeError, "generator ignored GeneratorExit");
 

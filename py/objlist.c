@@ -378,7 +378,8 @@ STATIC mp_obj_t list_insert(mp_obj_t self_in, mp_obj_t idx, mp_obj_t obj) {
          index = self->len;
     }
 
-    mp_obj_list_append(self_in, mp_const_none);
+    mp_obj_t item = mp_const_none;
+    mp_obj_list_append(self_in, item);
 
     for (mp_int_t i = self->len-1; i > index; i--) {
          self->items[i] = self->items[i-1];
