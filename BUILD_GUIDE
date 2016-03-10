@@ -34,6 +34,7 @@ LEON specific directories:
     leon-ex-minimal/    a minimal example of MicroPython
     leon-ex-tasks/      an example of MicroPython using multiple tasks
     leon-ex-manager/    an example of MicroPython that uses the VM manager
+    leon-ex-pystone/    an example of MicroPython that runs pystone benchmark
     leon-for-tests/     a version of MicroPython for running LEON tests
     leon-tests/         the LEON tests
 
