@@ -1,0 +1,7 @@
+0xabcd1234
+0xffffffff
+0x31323334
+0x35363738
+bytearray(b'\xab\xcd\x124\xff\xff\xff\xff\x00')
+0xabcd1234
+0xffffffff
