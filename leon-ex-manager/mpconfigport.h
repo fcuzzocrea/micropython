@@ -74,8 +74,10 @@
 
 // builtin modules
 extern const struct _mp_obj_module_t mp_module_rtems;
+extern const struct _mp_obj_module_t mp_module_mem;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_rtems), MP_ROM_PTR(&mp_module_rtems) }, \
+    { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
 
 // definitions specific to SPARC
 #define MP_ENDIANNESS_BIG (1)

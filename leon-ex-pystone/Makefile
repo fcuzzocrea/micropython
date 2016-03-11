@@ -68,6 +68,7 @@ SRC_C = \
 	$(LEON_COMMON)/modrtemstask.c \
 	$(LEON_COMMON)/modrtemsqueue.c \
 	$(LEON_COMMON)/modrtemstimer.c \
+	$(LEON_COMMON)/modmem.c \
 
 SRC_S = \
 	$(LEON_COMMON)/gchelper.s \
