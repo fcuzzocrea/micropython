@@ -10,7 +10,7 @@
 
 // initialisation functions
 
-void datapool_init(void);
+void datapool_init(void *datapool_heap, size_t datapool_heap_size);
 void datapool_deinit(void);
 
 // C API

@@ -14,15 +14,12 @@
 #include "py/obj.h"
 #include "moddatapool.h"
 
-#define DATAPOOL_HEAP_SIZE (8 * 1024)
-
 #define DATAPOOL_OBJ_TO_ID(o) ((uint32_t)MP_OBJ_TO_PTR(o))
 #define DATAPOOL_OBJ_FROM_ID(id) (MP_OBJ_FROM_PTR((void*)(id)))
 
 STATIC rtems_id datapool_sem;
 STATIC uint32_t datapool_old_state;
 STATIC mp_state_ctx_t datapool_state_ctx;
-STATIC byte datapool_heap[DATAPOOL_HEAP_SIZE];
 
 // these 2 function do a mini thread switch to the datapool state
 STATIC void datapool_enter(void) {
@@ -48,7 +45,7 @@ STATIC void datapool_exit(void) {
     rtems_semaphore_release(datapool_sem);
 }
 
-void datapool_init(void) {
+void datapool_init(void *datapool_heap, size_t datapool_heap_size) {
     rtems_name name = rtems_build_name('M', 'P', 'D', 'P');
     rtems_status_code status = rtems_semaphore_create(name, 1, 0, 0, &datapool_sem);
     if (status != RTEMS_SUCCESSFUL) {
@@ -59,7 +56,7 @@ void datapool_init(void) {
     datapool_enter();
 
     // initialise the heap
-    gc_init(datapool_heap, datapool_heap + DATAPOOL_HEAP_SIZE);
+    gc_init(datapool_heap, datapool_heap + datapool_heap_size);
 
     // initialise the MicroPython runtime
     mp_init();
