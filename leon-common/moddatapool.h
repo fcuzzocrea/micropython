@@ -32,8 +32,8 @@ void datapool_heap_unlock(void);
 
 datapool_result_t datapool_create(const char *id, datapool_t *dp);
 datapool_result_t datapool_ident(const char *id, datapool_t *dp);
-datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, size_t len, const void *data);
-datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, size_t len, void *data);
+datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, const void *data, size_t len);
+datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, void *data, size_t len);
 datapool_result_t datapool_set_u32(datapool_t dp_in, int32_t idx, uint32_t val);
 datapool_result_t datapool_get_u32(datapool_t dp_in, int32_t idx, uint32_t *val);
 datapool_result_t datapool_set_double(datapool_t dp_in, int32_t idx, double val);

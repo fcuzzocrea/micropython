@@ -142,7 +142,7 @@ datapool_result_t datapool_ident(const char *id, datapool_t *dp) {
     return res;
 }
 
-datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, size_t len, const void *data) {
+datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, const void *data, size_t len) {
     datapool_enter();
     datapool_result_t res = DATAPOOL_OK;
 
@@ -182,7 +182,7 @@ datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, size_t len, co
     return res;
 }
 
-datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, size_t len, void *data) {
+datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, void *data, size_t len) {
     datapool_enter();
     datapool_result_t res = DATAPOOL_OK;
 
@@ -213,19 +213,19 @@ datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, size_t len, vo
 }
 
 datapool_result_t datapool_set_u32(datapool_t dp_in, int32_t idx, uint32_t val) {
-    return datapool_set_buf(dp_in, idx, sizeof(val), &val);
+    return datapool_set_buf(dp_in, idx, &val, sizeof(val));
 }
 
 datapool_result_t datapool_get_u32(datapool_t dp_in, int32_t idx, uint32_t *val) {
-    return datapool_get_buf(dp_in, idx, sizeof(*val), val);
+    return datapool_get_buf(dp_in, idx, val, sizeof(*val));
 }
 
 datapool_result_t datapool_set_double(datapool_t dp_in, int32_t idx, double val) {
-    return datapool_set_buf(dp_in, idx, sizeof(val), &val);
+    return datapool_set_buf(dp_in, idx, &val, sizeof(val));
 }
 
 datapool_result_t datapool_get_double(datapool_t dp_in, int32_t idx, double *val) {
-    return datapool_get_buf(dp_in, idx, sizeof(*val), val);
+    return datapool_get_buf(dp_in, idx, val, sizeof(*val));
 }
 
 /******************************************************************************/
@@ -261,7 +261,7 @@ STATIC mp_obj_t datapool_obj_set_buf(mp_obj_t self_in, mp_obj_t idx_in, mp_obj_t
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_READ);
     datapool_result_t res = datapool_set_buf(self->dp,
-        mp_obj_get_int(idx_in), bufinfo.len, bufinfo.buf);
+        mp_obj_get_int(idx_in), bufinfo.buf, bufinfo.len);
     datapool_result_check(res);
     return mp_const_none;
 }
@@ -272,7 +272,7 @@ STATIC mp_obj_t datapool_obj_get_buf(mp_obj_t self_in, mp_obj_t idx_in, mp_obj_t
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
     datapool_result_t res = datapool_get_buf(self->dp,
-        mp_obj_get_int(idx_in), bufinfo.len, bufinfo.buf);
+        mp_obj_get_int(idx_in), bufinfo.buf, bufinfo.len);
     if (res == DATAPOOL_NOT_FOUND) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_KeyError, "datapool index not found"));
     } else {
