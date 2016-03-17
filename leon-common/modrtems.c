@@ -84,6 +84,8 @@ STATIC const mp_rom_map_elem_t mp_module_rtems_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_timer), MP_ROM_PTR(&mp_module_rtems_timer) },
 
     { MP_ROM_QSTR(MP_QSTR_DEFAULT_ATTRIBUTES), MP_ROM_INT(RTEMS_DEFAULT_ATTRIBUTES) },
+    { MP_ROM_QSTR(MP_QSTR_SEARCH_ALL_NODES), MP_ROM_INT(RTEMS_SEARCH_ALL_NODES) },
+    // TODO SEARCH_OTHER_NODES and SEARCH_LOCAL_NODE need full 32-bits
 };
 
 STATIC MP_DEFINE_CONST_DICT(mp_module_rtems_globals, mp_module_rtems_globals_table);
