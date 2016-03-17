@@ -11,6 +11,7 @@
 
 #include "py/nlr.h"
 #include "py/obj.h"
+#include "py/runtime.h"
 #include "modrtems.h"
 
 typedef struct _rtems_queue_obj_t {
@@ -120,16 +121,28 @@ STATIC const mp_obj_type_t rtems_queue_type = {
     .locals_dict = (void*)&rtems_queue_locals_dict,
 };
 
-STATIC mp_obj_t mod_rtems_queue_create(mp_obj_t name_in, mp_obj_t max_size_in) {
-    rtems_name name = mod_rtems_name_from_obj(name_in);
-    mp_int_t max_size = mp_obj_get_int(max_size_in);
+STATIC mp_obj_t mod_rtems_queue_create(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    enum { ARG_name, ARG_count, ARG_max_size, ARG_attr };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_name, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_count, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_max_size, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_attr, MP_ARG_INT, {.u_int = RTEMS_DEFAULT_ATTRIBUTES} },
+    };
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    rtems_name name = mod_rtems_name_from_obj(args[ARG_name].u_obj);
+    mp_int_t count = args[ARG_count].u_int;
+    mp_int_t max_size = args[ARG_max_size].u_int;
+    uint32_t attr = args[ARG_attr].u_int;
     rtems_queue_obj_t *self = m_new_obj(rtems_queue_obj_t);
     self->base.type = &rtems_queue_type;
-    rtems_status_code status = rtems_message_queue_create(name, 4, max_size, RTEMS_DEFAULT_ATTRIBUTES, &self->id);
+    rtems_status_code status = rtems_message_queue_create(name, count, max_size, attr, &self->id);
     mod_rtems_status_code_check(status);
     return MP_OBJ_FROM_PTR(self);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_rtems_queue_create_obj, mod_rtems_queue_create);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(mod_rtems_queue_create_obj, 0, mod_rtems_queue_create);
 
 STATIC mp_obj_t mod_rtems_queue_ident(mp_obj_t name_in, mp_obj_t node_in) {
     rtems_name name = mod_rtems_name_from_obj(name_in);

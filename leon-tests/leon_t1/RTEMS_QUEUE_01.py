@@ -5,11 +5,11 @@ import micropython
 from rtems import queue
 
 try:
-    q = queue.create('q', 10)
+    q = queue.create('q', 4, 10)
 except ValueError as er:
     print(repr(er))
 
-q = queue.create('qqqq', 10)
+q = queue.create('qqqq', 4, 10)
 buf = bytearray(10)
 
 micropython.heap_lock()

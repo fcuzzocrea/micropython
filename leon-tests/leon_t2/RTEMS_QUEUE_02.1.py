@@ -6,7 +6,7 @@ import rtems
 
 script_id = '[T%u]' % rtems.script_id()
 
-mq = rtems.queue.create('tstq', 10)
+mq = rtems.queue.create('tstq', 4, 10)
 
 # below tests should not need the heap
 micropython.heap_lock()

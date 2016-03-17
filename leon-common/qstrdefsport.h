@@ -7,6 +7,7 @@ Q(sleep)
 
 Q(rtems)
 Q(script_id)
+Q(DEFAULT_ATTRIBUTES)
 
 Q(task)
 Q(wake_after)
@@ -24,6 +25,10 @@ Q(broadcast)
 Q(receive)
 Q(flush)
 Q(get_number_pending)
+Q(name)
+Q(count)
+Q(max_size)
+Q(attr)
 
 Q(timer)
 Q(create)

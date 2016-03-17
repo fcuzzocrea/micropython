@@ -6,8 +6,8 @@ import rtems
 
 script_id = '[T%u]' % rtems.script_id()
 
-mq_mosi = rtems.queue.create('mosi', 5)
-mq_miso = rtems.queue.create('miso', 5)
+mq_mosi = rtems.queue.create('mosi', 4, 5)
+mq_miso = rtems.queue.create('miso', 4, 5)
 buf = bytearray(5)
 
 # below tests should not need the heap
