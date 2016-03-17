@@ -144,16 +144,24 @@ STATIC mp_obj_t mod_rtems_queue_create(size_t n_args, const mp_obj_t *pos_args, 
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(mod_rtems_queue_create_obj, 0, mod_rtems_queue_create);
 
-STATIC mp_obj_t mod_rtems_queue_ident(mp_obj_t name_in, mp_obj_t node_in) {
-    rtems_name name = mod_rtems_name_from_obj(name_in);
-    mp_int_t node = mp_obj_get_int(node_in);
+STATIC mp_obj_t mod_rtems_queue_ident(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    enum { ARG_name, ARG_node };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_name, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_node, MP_ARG_INT, {.u_int = RTEMS_SEARCH_ALL_NODES} },
+    };
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    rtems_name name = mod_rtems_name_from_obj(args[ARG_name].u_obj);
+    uint32_t node = args[ARG_node].u_int;
     rtems_queue_obj_t *self = m_new_obj(rtems_queue_obj_t);
     self->base.type = &rtems_queue_type;
     rtems_status_code status = rtems_message_queue_ident(name, node, &self->id);
     mod_rtems_status_code_check(status);
     return MP_OBJ_FROM_PTR(self);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_rtems_queue_ident_obj, mod_rtems_queue_ident);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(mod_rtems_queue_ident_obj, 0, mod_rtems_queue_ident);
 
 STATIC const mp_rom_map_elem_t mp_module_rtems_queue_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_queue) },
