@@ -64,8 +64,6 @@ STATIC mp_obj_t rtems_queue_broadcast(mp_obj_t self_in, mp_obj_t msg_in) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_broadcast_obj, rtems_queue_broadcast);
 
 STATIC mp_obj_t rtems_queue_receive(mp_obj_t self_in, mp_obj_t msg_in) {
-    // TODO we can't check that the buffer has enough room for the message
-    // the caller must know the maximum size and pass in something big enough
     rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(msg_in, &bufinfo, MP_BUFFER_WRITE);
@@ -73,6 +71,14 @@ STATIC mp_obj_t rtems_queue_receive(mp_obj_t self_in, mp_obj_t msg_in) {
     rtems_interval timeout = 0;
     size_t sz = 0;
     rtems_status_code status = rtems_message_queue_receive(self->id, bufinfo.buf, &sz, option_set, timeout);
+    if (sz > bufinfo.len) {
+        // We can't check that the buffer has enough room for the message, so
+        // the caller must know the maximum size and pass in something big enough.
+        // Here we just do a sanity check and raise an exception if the buffer was
+        // not large enough.
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_RuntimeError,
+            "input buffer was too small for received message, heap is likely now corrupt!"));
+    }
     mod_rtems_status_code_check(status);
     return MP_OBJ_NEW_SMALL_INT(sz);
 }
