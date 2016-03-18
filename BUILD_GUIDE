@@ -39,6 +39,22 @@ LEON specific directories:
     leon-tests/         the LEON tests
 
 ================================================================================
+Prerequisites
+================================================================================
+
+To build and run the code you will need:
+
+    - make, bash, and Python (2.6+ or 3.3+)
+    - a local/host C compiler and linker (usually gcc et al)
+    - a cross compiler for SPARC V8 (eg sparc-rtems-gcc)
+    - the RTEMS library (eg rtems-4.8)
+
+It is assumed that the host C compiler is in your path.
+
+The location of the SPARC compiler and the RTEMS library are configured in the
+leon-common/mkenv.mk file.
+
+================================================================================
 Building
 ================================================================================
 

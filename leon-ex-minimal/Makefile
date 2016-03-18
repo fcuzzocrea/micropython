@@ -6,7 +6,7 @@
 #
 # This Makefile builds an example of a minimal LEON port.
 
-# the location of the MIcroPython LEON support code
+# the location of the MicroPython LEON support code
 LEON_COMMON = leon-common
 LEON_COMMON_FROM_HERE = ../$(LEON_COMMON)
 
@@ -18,25 +18,12 @@ QSTR_DEFS = $(LEON_COMMON_FROM_HERE)/qstrdefsport.h
 # include py core make definitions
 include ../py/py.mk
 
-# the toolchain needs two things:
-# - the sparc-rtems compiler: (TOOL_BASE)
-# - the precompiled RTEMS (RTEMS_BASE)
-TOOL_BASE = /home/notroot/Download/rtems-4.8/bin
-RTEMS_BASE = /home/notroot/Download/rtems-4.8/sparc-rtems/leon2
-
-CROSS_COMPILE = $(TOOL_BASE)/sparc-rtems-
-LD = $(CROSS_COMPILE)gcc
-OBJDUMP = $(CROSS_COMPILE)objdump
-
-# RTEMS lib needs
-GCCSPECS = -B$(RTEMS_BASE)/lib/ -specs bsp_specs -qrtems
+# include LEON common makefile settings
+include $(LEON_COMMON_FROM_HERE)/mkenv.mk
 
 INC =
 INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
-INC += -I$(RTEMS_BASE)/lib/include 
 
-CFLAGS =
-CFLAGS += $(GCCSPECS)
 CFLAGS += $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT) -mcpu=v8
 
 # Use this to optimise the static hash tables
@@ -48,10 +35,6 @@ CFLAGS += -O0 -ggdb
 else
 CFLAGS += -Os -DNDEBUG
 endif
-
-LDFLAGS =
-LDFLAGS += $(GCCSPECS)
-LDFLAGS += -L$(RTEMS_BASE)/lib
 
 LIBS = -lm
 
