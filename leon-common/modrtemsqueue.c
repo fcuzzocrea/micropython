@@ -34,24 +34,50 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(rtems_queue_delete_obj, rtems_queue_delete);
 
 typedef rtems_status_code (*queue_submit_t)(Objects_Id, void*, size_t);
 
-STATIC mp_obj_t rtems_queue_submit(mp_obj_t self_in, mp_obj_t msg_in, queue_submit_t queue_submit) {
-    rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
+STATIC mp_obj_t rtems_queue_submit(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args, queue_submit_t queue_submit) {
+    enum { ARG_buf, ARG_option, ARG_timeout };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_buf, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_option, MP_ARG_INT, {.u_int = RTEMS_NO_WAIT} },
+        { MP_QSTR_timeout, MP_ARG_INT, {.u_int = 0} },
+    };
+
+    // parse args
+    rtems_queue_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
     mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(msg_in, &bufinfo, MP_BUFFER_READ);
+    mp_get_buffer_raise(args[ARG_buf].u_obj, &bufinfo, MP_BUFFER_READ);
     rtems_status_code status = queue_submit(self->id, bufinfo.buf, bufinfo.len);
+
+    // MicroPython extension to RTEMS API: allow to block with a timeout
+    // timeout<=0 means wait forever
+    if (args[ARG_option].u_int == RTEMS_WAIT && status == RTEMS_TOO_MANY) {
+        mp_int_t t = 0;
+        do {
+            rtems_task_wake_after(1);
+            status = queue_submit(self->id, bufinfo.buf, bufinfo.len);
+            t += 1;
+            if (args[ARG_timeout].u_int > 0 && t >= args[ARG_timeout].u_int) {
+                status = RTEMS_TIMEOUT;
+            }
+        } while (status == RTEMS_TOO_MANY);
+    }
+
     mod_rtems_status_code_check(status);
     return mp_const_none;
 }
 
-STATIC mp_obj_t rtems_queue_send(mp_obj_t self_in, mp_obj_t msg_in) {
-    return rtems_queue_submit(self_in, msg_in, rtems_message_queue_send);
+STATIC mp_obj_t rtems_queue_send(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    return rtems_queue_submit(n_args, pos_args, kw_args, rtems_message_queue_send);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_send_obj, rtems_queue_send);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(rtems_queue_send_obj, 1, rtems_queue_send);
 
-STATIC mp_obj_t rtems_queue_urgent(mp_obj_t self_in, mp_obj_t msg_in) {
-    return rtems_queue_submit(self_in, msg_in, rtems_message_queue_urgent);
+STATIC mp_obj_t rtems_queue_urgent(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    return rtems_queue_submit(n_args, pos_args, kw_args, rtems_message_queue_urgent);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_urgent_obj, rtems_queue_urgent);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(rtems_queue_urgent_obj, 1, rtems_queue_urgent);
 
 STATIC mp_obj_t rtems_queue_broadcast(mp_obj_t self_in, mp_obj_t msg_in) {
     rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
