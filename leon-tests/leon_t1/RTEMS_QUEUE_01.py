@@ -38,3 +38,21 @@ try:
     q.receive(buf, rtems.WAIT, 100)
 except OSError as er:
     print('OSError:', er)
+
+# fill queue
+q.send(buf)
+q.send(buf)
+q.send(buf)
+q.send(buf)
+
+# test non-blocking send (default behaviour)
+try:
+    q.send(buf, rtems.NO_WAIT)
+except OSError as er:
+    print('OSError:', er)
+
+# test blocking send with a small timeout
+try:
+    q.send(buf, rtems.WAIT, 100)
+except OSError as er:
+    print('OSError:', er)

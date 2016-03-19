@@ -6,3 +6,5 @@ bytearray(b'message\x00\x00\x00')
 bytearray(b'Message\x00\x00\x00')
 OSError: UNSATISFIED
 OSError: TIMEOUT
+OSError: TOO_MANY
+OSError: TIMEOUT
