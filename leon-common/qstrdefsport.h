@@ -9,6 +9,8 @@ Q(rtems)
 Q(script_id)
 Q(DEFAULT_ATTRIBUTES)
 Q(SEARCH_ALL_NODES)
+Q(SEARCH_OTHER_NODES)
+Q(SEARCH_LOCAL_NODE)
 
 Q(task)
 Q(wake_after)

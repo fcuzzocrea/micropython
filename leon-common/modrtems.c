@@ -11,6 +11,7 @@
 
 #include "py/nlr.h"
 #include "py/obj.h"
+#include "py/objint.h"
 #include "modrtems.h"
 
 STATIC const char *rtems_status_code_string[] = {
@@ -74,6 +75,15 @@ STATIC mp_obj_t mod_rtems_script_id(void) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_rtems_script_id_obj, mod_rtems_script_id);
 
+// this macro requires MPZ_DIG_SIZE=16
+#define MPZ(val) \
+    const mp_obj_int_t mpz_##val = \
+        {{&mp_type_int}, {.neg=0, .fixed_dig=1, .alloc=2, .len=2, \
+        .dig=(uint16_t[]){(val) & 0xffff, ((val) >> 16) & 0xffff}}};
+
+STATIC MPZ(RTEMS_SEARCH_OTHER_NODES);
+STATIC MPZ(RTEMS_SEARCH_LOCAL_NODE);
+
 STATIC const mp_rom_map_elem_t mp_module_rtems_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_rtems) },
 
@@ -85,7 +95,8 @@ STATIC const mp_rom_map_elem_t mp_module_rtems_globals_table[] = {
 
     { MP_ROM_QSTR(MP_QSTR_DEFAULT_ATTRIBUTES), MP_ROM_INT(RTEMS_DEFAULT_ATTRIBUTES) },
     { MP_ROM_QSTR(MP_QSTR_SEARCH_ALL_NODES), MP_ROM_INT(RTEMS_SEARCH_ALL_NODES) },
-    // TODO SEARCH_OTHER_NODES and SEARCH_LOCAL_NODE need full 32-bits
+    { MP_ROM_QSTR(MP_QSTR_SEARCH_OTHER_NODES), MP_ROM_PTR(&mpz_RTEMS_SEARCH_OTHER_NODES) },
+    { MP_ROM_QSTR(MP_QSTR_SEARCH_LOCAL_NODE), MP_ROM_PTR(&mpz_RTEMS_SEARCH_LOCAL_NODE) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(mp_module_rtems_globals, mp_module_rtems_globals_table);
