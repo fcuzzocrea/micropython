@@ -2,6 +2,7 @@
 # Test ID: RTEMS_QUEUE_01
 
 import micropython
+import rtems
 from rtems import queue
 
 try:
@@ -11,6 +12,8 @@ except ValueError as er:
 
 q = queue.create('qqqq', 4, 10)
 buf = bytearray(10)
+
+er = None # global variable needed for try/except below
 
 micropython.heap_lock()
 
@@ -23,3 +26,15 @@ buf[0] = ord('M')
 q.send(buf)
 print(q.receive(buf))
 print(buf)
+
+# test non-blocking receive
+try:
+    q.receive(buf, rtems.NO_WAIT)
+except OSError as er:
+    print('OSError:', er)
+
+# test blocking receive with a small timeout
+try:
+    q.receive(buf, rtems.WAIT, 100)
+except OSError as er:
+    print('OSError:', er)
