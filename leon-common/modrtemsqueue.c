@@ -64,12 +64,23 @@ STATIC mp_obj_t rtems_queue_broadcast(mp_obj_t self_in, mp_obj_t msg_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_broadcast_obj, rtems_queue_broadcast);
 
-STATIC mp_obj_t rtems_queue_receive(mp_obj_t self_in, mp_obj_t msg_in) {
-    rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
+STATIC mp_obj_t rtems_queue_receive(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    enum { ARG_buf, ARG_option, ARG_timeout };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_buf, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_option, MP_ARG_INT, {.u_int = RTEMS_WAIT} },
+        { MP_QSTR_timeout, MP_ARG_INT, {.u_int = 0} },
+    };
+
+    // parse args
+    rtems_queue_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
     mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(msg_in, &bufinfo, MP_BUFFER_WRITE);
-    uint32_t option_set = 0;
-    rtems_interval timeout = 0;
+    mp_get_buffer_raise(args[ARG_buf].u_obj, &bufinfo, MP_BUFFER_WRITE);
+    uint32_t option_set = args[ARG_option].u_int;
+    rtems_interval timeout = args[ARG_timeout].u_int;
     size_t sz = 0;
     rtems_status_code status = rtems_message_queue_receive(self->id, bufinfo.buf, &sz, option_set, timeout);
     if (sz > bufinfo.len) {
@@ -83,7 +94,7 @@ STATIC mp_obj_t rtems_queue_receive(mp_obj_t self_in, mp_obj_t msg_in) {
     mod_rtems_status_code_check(status);
     return MP_OBJ_NEW_SMALL_INT(sz);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(rtems_queue_receive_obj, rtems_queue_receive);
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(rtems_queue_receive_obj, 1, rtems_queue_receive);
 
 STATIC mp_obj_t rtems_queue_flush(mp_obj_t self_in) {
     rtems_queue_obj_t *self = MP_OBJ_TO_PTR(self_in);
