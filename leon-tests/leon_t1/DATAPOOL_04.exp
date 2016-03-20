@@ -1,0 +1,3 @@
+bytearray(b'1234')
+KeyError: datapool index not found
+ValueError: datapool item wrong size
