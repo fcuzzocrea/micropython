@@ -163,7 +163,7 @@ datapool_result_t datapool_set_buf(datapool_t dp_in, int32_t idx, const void *da
                 res = DATAPOOL_INTERNAL_ERROR;
             } else if (len != bufinfo.len) {
                 // length of datapool entry does not match requested length
-                res = DATAPOOL_WRONG_SIZE;
+                res = DATAPOOL_ITEM_WRONG_SIZE;
             } else {
                 // copy data into datapool
                 memcpy(bufinfo.buf, data, len);
@@ -189,7 +189,7 @@ datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, void *data, si
     mp_map_elem_t *elem = mp_map_lookup(map, key, MP_MAP_LOOKUP);
     if (elem == NULL) {
         // idx not found
-        res = DATAPOOL_NOT_FOUND;
+        res = DATAPOOL_INDEX_NOT_FOUND;
     } else {
         // found
         mp_buffer_info_t bufinfo;
@@ -198,7 +198,7 @@ datapool_result_t datapool_get_buf(datapool_t dp_in, int32_t idx, void *data, si
             res = DATAPOOL_INTERNAL_ERROR;
         } else if (len != bufinfo.len) {
             // length of datapool entry does not match requested length
-            res = DATAPOOL_WRONG_SIZE;
+            res = DATAPOOL_ITEM_WRONG_SIZE;
         } else {
             // copy data out of datapool
             memcpy(data, bufinfo.buf, len);
@@ -228,18 +228,24 @@ datapool_result_t datapool_get_double(datapool_t dp_in, int32_t idx, double *val
 /******************************************************************************/
 // MicroPython bindings for datapool
 
-STATIC const char *datapool_result_string[] = {
-    [DATAPOOL_OK                ] = "ok",
-    [DATAPOOL_NOT_FOUND         ] = "datapool not found",
-    [DATAPOOL_ALREADY_EXISTS    ] = "datapool already exists",
-    [DATAPOOL_WRONG_SIZE        ] = "datapool item wrong size",
-    [DATAPOOL_MEMORY_ERROR      ] = "datapool memory error",
-    [DATAPOOL_INTERNAL_ERROR    ] = "datapool internal error",
+typedef struct _datapool_error_t {
+    const mp_obj_type_t *exc;
+    const char *msg;
+} datapool_error_t;
+
+STATIC const datapool_error_t datapool_error_table[] = {
+    [DATAPOOL_OK                ] = {NULL, "ok"},
+    [DATAPOOL_NOT_FOUND         ] = {&mp_type_OSError, "datapool not found"},
+    [DATAPOOL_ALREADY_EXISTS    ] = {&mp_type_OSError, "datapool already exists"},
+    [DATAPOOL_INDEX_NOT_FOUND   ] = {&mp_type_KeyError, "datapool index not found"},
+    [DATAPOOL_ITEM_WRONG_SIZE   ] = {&mp_type_ValueError, "datapool item wrong size"},
+    [DATAPOOL_MEMORY_ERROR      ] = {&mp_type_MemoryError, "datapool memory error"},
+    [DATAPOOL_INTERNAL_ERROR    ] = {&mp_type_RuntimeError, "datapool internal error"},
 };
 
 void datapool_result_check(datapool_result_t res) {
     if (res != DATAPOOL_OK) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, datapool_result_string[res]));
+        nlr_raise(mp_obj_new_exception_msg(datapool_error_table[res].exc, datapool_error_table[res].msg));
     }
 }
 
@@ -270,11 +276,7 @@ STATIC mp_obj_t datapool_obj_get_buf(mp_obj_t self_in, mp_obj_t idx_in, mp_obj_t
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
     datapool_result_t res = datapool_get_buf(self->dp,
         mp_obj_get_int(idx_in), bufinfo.buf, bufinfo.len);
-    if (res == DATAPOOL_NOT_FOUND) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_KeyError, "datapool index not found"));
-    } else {
-        datapool_result_check(res);
-    }
+    datapool_result_check(res);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(datapool_obj_get_buf_obj, datapool_obj_get_buf);
@@ -292,11 +294,7 @@ STATIC mp_obj_t datapool_obj_get_u32(mp_obj_t self_in, mp_obj_t idx_in) {
     datapool_obj_t *self = MP_OBJ_TO_PTR(self_in);
     uint32_t val;
     datapool_result_t res = datapool_get_u32(self->dp, mp_obj_get_int(idx_in), &val);
-    if (res == DATAPOOL_NOT_FOUND) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_KeyError, "datapool index not found"));
-    } else {
-        datapool_result_check(res);
-    }
+    datapool_result_check(res);
     return mp_obj_new_int_from_uint(val);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(datapool_obj_get_u32_obj, datapool_obj_get_u32);
@@ -314,11 +312,7 @@ STATIC mp_obj_t datapool_obj_get_double(mp_obj_t self_in, mp_obj_t idx_in) {
     datapool_obj_t *self = MP_OBJ_TO_PTR(self_in);
     double val;
     datapool_result_t res = datapool_get_double(self->dp, mp_obj_get_int(idx_in), &val);
-    if (res == DATAPOOL_NOT_FOUND) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_KeyError, "datapool index not found"));
-    } else {
-        datapool_result_check(res);
-    }
+    datapool_result_check(res);
     return mp_obj_new_float(val);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(datapool_obj_get_double_obj, datapool_obj_get_double);
@@ -369,7 +363,7 @@ STATIC mp_obj_t mod_datapool_ident(mp_obj_t id_in) {
     datapool_result_t res = datapool_ident(str, &dp->dp);
     datapool_result_check(res);
     if (dp->dp == 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "datapool does not exist"));
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_LookupError, "datapool does not exist"));
     }
     return MP_OBJ_FROM_PTR(dp);
 }
