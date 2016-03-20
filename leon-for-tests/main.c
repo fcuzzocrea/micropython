@@ -23,11 +23,15 @@ rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
 
 #include <rtems/confdefs.h>
+#include "leon-common/moddatapool.h"
 
 #define MICROPY_RTEMS_TASK_ATTRIBUTES (RTEMS_APPLICATION_TASK | RTEMS_FLOATING_POINT)
 #define MICROPY_RTEMS_STACK_SIZE (RTEMS_MINIMUM_STACK_SIZE * 3)
 #define MICROPY_RTEMS_HEAP_SIZE (48 * 1024)
 #define MICROPY_RTEMS_NUM_TASKS (10)
+
+#define DATAPOOL_HEAP_SIZE (4 * 1024)
+static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
 
 /******************************************************************************/
 // RTEMS initialisation task
@@ -50,6 +54,9 @@ rtems_task Init(rtems_task_argument ignored) {
 
     // initialise the timer subsystem
     _Timer_Manager_initialization(2);
+
+    // bring up the datapool
+    datapool_init(datapool_heap, DATAPOOL_HEAP_SIZE);
 
     // start the manager task to do the rest of the work
     rtems_name task_name = rtems_build_name('M', 'P', 'M', 'A');

@@ -76,10 +76,12 @@
 extern const struct _mp_obj_module_t mp_module_time;
 extern const struct _mp_obj_module_t mp_module_rtems;
 extern const struct _mp_obj_module_t mp_module_mem;
+extern const struct _mp_obj_module_t mp_module_datapool;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_time) }, \
     { MP_ROM_QSTR(MP_QSTR_rtems), MP_ROM_PTR(&mp_module_rtems) }, \
     { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
+    { MP_ROM_QSTR(MP_QSTR_datapool), MP_ROM_PTR(&mp_module_datapool) }, \
 
 // definitions specific to SPARC
 #define MP_ENDIANNESS_BIG (1)
@@ -129,6 +131,10 @@ typedef long mp_off_t;
 #define MP_STATE_VM(x) (MP_STATE_PTR->vm.x)
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
 #define MP_STATE_PORT MP_STATE_VM
+
+// Root pointers
+#define MICROPY_PORT_ROOT_POINTERS \
+    mp_map_t datapool_index; \
 
 // Hook for the VM
 #define MICROPY_VM_HOOK_COUNT (1)
