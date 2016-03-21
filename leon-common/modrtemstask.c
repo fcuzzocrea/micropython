@@ -23,13 +23,15 @@ STATIC mp_obj_t mod_rtems_task_wake_when(mp_obj_t tod_in) {
     tod.hour = mp_obj_get_int(items[3]);
     tod.minute = mp_obj_get_int(items[4]);
     tod.second = mp_obj_get_int(items[5]);
-    rtems_task_wake_when(&tod);
+    rtems_status_code status = rtems_task_wake_when(&tod);
+    mod_rtems_status_code_check(status);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_rtems_task_wake_when_obj, mod_rtems_task_wake_when);
 
 STATIC mp_obj_t mod_rtems_task_wake_after(mp_obj_t ticks_in) {
-    rtems_task_wake_after(mp_obj_get_int(ticks_in));
+    rtems_status_code status = rtems_task_wake_after(mp_obj_get_int(ticks_in));
+    mod_rtems_status_code_check(status);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_rtems_task_wake_after_obj, mod_rtems_task_wake_after);
