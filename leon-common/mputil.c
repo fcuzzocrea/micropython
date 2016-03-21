@@ -103,7 +103,7 @@ void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
 // Execute a Python script passed as pre-compiled bytecode in a buffer.
 // Returns an exit code, 0 for normal exit.
 uint32_t mp_exec_mpy(const byte *buf, size_t len) {
-    mp_vm_manager_init(RTEMS_SELF);
+    mp_vm_worker_init();
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(MP_QSTR___main__));
