@@ -362,9 +362,6 @@ STATIC mp_obj_t mod_datapool_ident(mp_obj_t id_in) {
     dp->base.type = &datapool_obj_type;
     datapool_result_t res = datapool_ident(str, &dp->dp);
     datapool_result_check(res);
-    if (dp->dp == 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_LookupError, "datapool does not exist"));
-    }
     return MP_OBJ_FROM_PTR(dp);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mod_datapool_ident_obj, mod_datapool_ident);
