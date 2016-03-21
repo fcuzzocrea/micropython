@@ -6,7 +6,7 @@ expfile=vmmanage_test.exp
 
 echo "Running test: VM_MANAGER"
 
-make run | grep "^UART A sent : " > $outfile
+make run | grep -a "^UART A sent : " > $outfile
 
 diff --brief $outfile $expfile > /dev/null
 
