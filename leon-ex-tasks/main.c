@@ -109,6 +109,9 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     // set the MicroPython context for this task
     _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
 
+    // set value for rtems.script_id() function
+    MP_STATE_PORT(rtems_script_id) = mp_obj_new_int(task_index);
+
     // initialise the stack limit checking
     mp_stack_ctrl_init();
     mp_stack_set_limit(MICROPY_RTEMS_STACK_SIZE - 2048);

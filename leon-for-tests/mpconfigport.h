@@ -134,6 +134,7 @@ typedef long mp_off_t;
 
 // Root pointers
 #define MICROPY_PORT_ROOT_POINTERS \
+    mp_obj_t rtems_script_id; \
     mp_map_t datapool_index; \
 
 // Hook for the VM

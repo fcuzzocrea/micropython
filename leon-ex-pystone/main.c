@@ -114,6 +114,9 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     // set the MicroPython context for this task
     _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
 
+    // set value for rtems.script_id() function
+    MP_STATE_PORT(rtems_script_id) = mp_obj_new_int(task_index);
+
     // get a pointer to the heap for this task
     byte *heap_start = &mp_heap[task_index * MICROPY_RTEMS_HEAP_SIZE];
 

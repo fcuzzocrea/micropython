@@ -135,6 +135,9 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     // set the MicroPython context for this task
     _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
 
+    // set value for rtems.script_id() function
+    MP_STATE_PORT(rtems_script_id) = mp_obj_new_int(task_index);
+
     // loop forever, loading and executing scripts
     for (;;) {
         const byte *mpy_data;

@@ -130,6 +130,10 @@ typedef long mp_off_t;
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
 #define MP_STATE_PORT MP_STATE_VM
 
+// Root pointers
+#define MICROPY_PORT_ROOT_POINTERS \
+    mp_obj_t rtems_script_id; \
+
 // Hook for the VM
 #define MICROPY_VM_HOOK_COUNT (1)
 #define MICROPY_VM_HOOK_INIT uint vm_hook_count = MICROPY_VM_HOOK_COUNT;

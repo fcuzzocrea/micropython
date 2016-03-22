@@ -1,8 +1,8 @@
-[T1] queue pending: 0
-[T1] queue pending: 1
-[T1] queue pending: 2
-[T1] queue flush: 2
-[T1] queue pending: 0
-[T1] queue pending: 1
-[T2] queue receive: 10
-[T2] queue buf: bytearray(b'hello leon')
+[T0] queue pending: 0
+[T0] queue pending: 1
+[T0] queue pending: 2
+[T0] queue flush: 2
+[T0] queue pending: 0
+[T0] queue pending: 1
+[T1] queue receive: 10
+[T1] queue buf: bytearray(b'hello leon')

@@ -63,15 +63,9 @@ rtems_name mod_rtems_name_from_obj(mp_obj_t name_in) {
     return rtems_build_name(name_str[0], name_str[1], name_str[2], name_str[3]);
 }
 
-// Return the task id of the script, starting from 1.
+// Return the task id of the script, starting from 0.
 STATIC mp_obj_t mod_rtems_script_id(void) {
-    rtems_id tid;
-    rtems_status_code status = rtems_task_ident(RTEMS_SELF, RTEMS_SEARCH_ALL_NODES, &tid);
-    mod_rtems_status_code_check(status);
-    uint32_t task_number = rtems_get_index(tid)
-        - rtems_configuration_get_rtems_api_configuration()->number_of_initialization_tasks
-        - 1; // first task is the MicroPython manager task
-    return mp_obj_new_int((mp_int_t)task_number);
+    return MP_STATE_PORT(rtems_script_id);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(mod_rtems_script_id_obj, mod_rtems_script_id);
 
