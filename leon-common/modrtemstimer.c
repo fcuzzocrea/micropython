@@ -6,6 +6,9 @@
  * MicroPython to LEON platforms", contract number 4000114080/15/NL/FE/as.
  */
 
+// Note: this module is a work-in-progress.  It currently does not work, the
+// timers do not fire.
+
 #include <stdio.h>
 #include <rtems.h>
 
