@@ -35,7 +35,7 @@ bytes_in_qstr_hash = 2
 table_size_mult = 1
 
 # these control output during processing
-print_stats = True
+print_stats = False
 print_debug = False
 
 # end configuration variables
