@@ -37,6 +37,7 @@ LEON specific directories:
     leon-ex-pystone/    an example of MicroPython that runs pystone benchmark
     leon-for-tests/     a version of MicroPython for running LEON tests
     leon-tests/         the LEON tests
+    leon-obcp/          OBCP example system
 
 ================================================================================
 Prerequisites

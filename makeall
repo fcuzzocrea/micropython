@@ -7,6 +7,7 @@ make -C leon-ex-minimal
 make -C leon-ex-tasks
 make -C leon-ex-manager
 make -C leon-for-tests
+make -C leon-obcp
 
 (cd leon-tests && ./run-tests.sh CORE_BASICS/*.exp)
 (cd leon-tests && ./run-tests.sh CORE_UNICODE/*.exp)
