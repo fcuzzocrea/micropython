@@ -59,7 +59,7 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_clock_set(&time);
 
     // initialise the message queue subsystem
-    _Message_queue_Manager_initialization(4);
+    _Message_queue_Manager_initialization(6);
 
     // initialise the timer subsystem
     _Timer_Manager_initialization(2);
