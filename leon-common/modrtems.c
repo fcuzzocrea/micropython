@@ -85,6 +85,7 @@ STATIC const mp_rom_map_elem_t mp_module_rtems_globals_table[] = {
 
     { MP_ROM_QSTR(MP_QSTR_task), MP_ROM_PTR(&mp_module_rtems_task) },
     { MP_ROM_QSTR(MP_QSTR_queue), MP_ROM_PTR(&mp_module_rtems_queue) },
+    { MP_ROM_QSTR(MP_QSTR_sem), MP_ROM_PTR(&mp_module_rtems_sem) },
     { MP_ROM_QSTR(MP_QSTR_timer), MP_ROM_PTR(&mp_module_rtems_timer) },
 
     { MP_ROM_QSTR(MP_QSTR_DEFAULT_ATTRIBUTES), MP_ROM_INT(RTEMS_DEFAULT_ATTRIBUTES) },
