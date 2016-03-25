@@ -20,3 +20,4 @@ make -C leon-obcp
 (cd leon-tests && ./run-tests.sh -t 10 leon_t10/*.exp)
 (cd leon-tests && ./run-tests.sh -o leon_perf/*.exp)
 (cd leon-ex-manager && ./run-test.sh)
+(cd leon-obcp && ./run-test.sh)

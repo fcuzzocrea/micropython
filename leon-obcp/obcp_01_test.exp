@@ -1,0 +1,216 @@
+UART A sent : OBCP program started
+UART A sent : MicroPython worker task 0 started
+UART A sent : MicroPython worker task 1 started
+UART A sent : MicroPython worker task 2 started
+UART A sent : MicroPython worker task 3 started
+UART A sent : TM task started
+UART A sent : TC task started
+UART A sent : TEMP task started
+UART A sent : GND task started
+UART A sent : [ 0.003] TC wrote data to vm=0 off=0x0000 len=56
+UART A sent : [ 0.007] TC wrote data to vm=0 off=0x0038 len=56
+UART A sent : [ 0.010] TC wrote data to vm=0 off=0x0070 len=56
+UART A sent : [ 0.013] TC wrote data to vm=0 off=0x00a8 len=56
+UART A sent : [ 0.016] TC wrote data to vm=0 off=0x00e0 len=56
+UART A sent : [ 0.020] TC wrote data to vm=0 off=0x0118 len=56
+UART A sent : [ 0.023] TC wrote data to vm=0 off=0x0150 len=56
+UART A sent : [ 0.027] TC wrote data to vm=0 off=0x0188 len=56
+UART A sent : [ 0.030] TC wrote data to vm=0 off=0x01c0 len=56
+UART A sent : [ 0.033] TC wrote data to vm=0 off=0x01f8 len=56
+UART A sent : [ 0.037] TC wrote data to vm=0 off=0x0230 len=56
+UART A sent : [ 0.040] TC wrote data to vm=0 off=0x0268 len=56
+UART A sent : [ 0.043] TC wrote data to vm=0 off=0x02a0 len=56
+UART A sent : [ 0.047] TC wrote data to vm=0 off=0x02d8 len=56
+UART A sent : [ 0.050] TC wrote data to vm=0 off=0x0310 len=56
+UART A sent : [ 0.054] GND: sent MPY_LOAD on TC queue
+UART A sent : [ 0.057] TC wrote data to vm=0 off=0x0348 len=56
+UART A sent : [ 0.060] TC wrote data to vm=0 off=0x0380 len=56
+UART A sent : [ 0.063] TC wrote data to vm=0 off=0x03b8 len=56
+UART A sent : [ 0.066] TC wrote data to vm=0 off=0x03f0 len=52
+UART A sent : [ 0.180] GND: sent MPY_START on TC queue
+UART A sent : [ 0.208] TC vm=0 len=1060 SHA256 PASS
+UART A sent : THERM script started, using VM 0
+UART A sent : THERM: initial temp_thres(0): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(1): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(2): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(3): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(4): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(5): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(6): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(7): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(8): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(9): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(10): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(11): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(12): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(13): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(14): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(15): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(16): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(17): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(18): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(19): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(20): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(21): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(22): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(23): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(24): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(25): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(26): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(27): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(28): [262.99, 283.00]
+UART A sent : THERM: initial temp_thres(29): [262.99, 283.00]
+UART A sent : [ 0.676] TC wrote data to vm=3 off=0x0000 len=56
+UART A sent : [ 0.679] TC wrote data to vm=3 off=0x0038 len=56
+UART A sent : [ 0.682] TC wrote data to vm=3 off=0x0070 len=56
+UART A sent : [ 0.685] TC wrote data to vm=3 off=0x00a8 len=56
+UART A sent : [ 0.688] TC wrote data to vm=3 off=0x00e0 len=56
+UART A sent : [ 0.693] TC wrote data to vm=3 off=0x0118 len=56
+UART A sent : [ 0.696] TC wrote data to vm=3 off=0x0150 len=56
+UART A sent : [ 0.699] TC wrote data to vm=3 off=0x0188 len=56
+UART A sent : [ 0.702] TC wrote data to vm=3 off=0x01c0 len=56
+UART A sent : [ 0.705] TC wrote data to vm=3 off=0x01f8 len=56
+UART A sent : [ 0.710] TC wrote data to vm=3 off=0x0230 len=56
+UART A sent : [ 0.713] TC wrote data to vm=3 off=0x0268 len=56
+UART A sent : [ 0.716] TC wrote data to vm=3 off=0x02a0 len=56
+UART A sent : [ 0.719] TC wrote data to vm=3 off=0x02d8 len=56
+UART A sent : [ 0.722] TC wrote data to vm=3 off=0x0310 len=56
+UART A sent : [ 0.727] TC wrote data to vm=3 off=0x0348 len=56
+UART A sent : [ 0.730] TC wrote data to vm=3 off=0x0380 len=56
+UART A sent : [ 0.733] TC wrote data to vm=3 off=0x03b8 len=56
+UART A sent : [ 0.736] TC wrote data to vm=3 off=0x03f0 len=56
+UART A sent : [ 0.739] TC wrote data to vm=3 off=0x0428 len=56
+UART A sent : [ 0.744] TC wrote data to vm=3 off=0x0460 len=56
+UART A sent : [ 0.747] TC wrote data to vm=3 off=0x0498 len=56
+UART A sent : [ 0.750] TC wrote data to vm=3 off=0x04d0 len=56
+UART A sent : [ 0.753] TC wrote data to vm=3 off=0x0508 len=56
+UART A sent : [ 0.756] TC wrote data to vm=3 off=0x0540 len=56
+UART A sent : [ 0.763] TC wrote data to vm=3 off=0x0578 len=56
+UART A sent : [ 0.766] TC wrote data to vm=3 off=0x05b0 len=56
+UART A sent : [ 0.769] TC wrote data to vm=3 off=0x05e8 len=56
+UART A sent : [ 0.772] TC wrote data to vm=3 off=0x0620 len=56
+UART A sent : [ 0.775] TC wrote data to vm=3 off=0x0658 len=56
+UART A sent : [ 0.780] TC wrote data to vm=3 off=0x0690 len=56
+UART A sent : [ 0.783] TC wrote data to vm=3 off=0x06c8 len=56
+UART A sent : [ 0.786] TC wrote data to vm=3 off=0x0700 len=56
+UART A sent : [ 0.789] TC wrote data to vm=3 off=0x0738 len=56
+UART A sent : [ 0.792] TC wrote data to vm=3 off=0x0770 len=56
+UART A sent : [ 0.797] TC wrote data to vm=3 off=0x07a8 len=56
+UART A sent : [ 0.800] TC wrote data to vm=3 off=0x07e0 len=56
+UART A sent : [ 0.803] TC wrote data to vm=3 off=0x0818 len=56
+UART A sent : [ 0.806] TC wrote data to vm=3 off=0x0850 len=56
+UART A sent : [ 0.809] TC wrote data to vm=3 off=0x0888 len=56
+UART A sent : [ 0.814] TC wrote data to vm=3 off=0x08c0 len=56
+UART A sent : [ 0.817] TC wrote data to vm=3 off=0x08f8 len=56
+UART A sent : [ 0.820] TC wrote data to vm=3 off=0x0930 len=56
+UART A sent : [ 0.823] TC wrote data to vm=3 off=0x0968 len=56
+UART A sent : [ 0.826] TC wrote data to vm=3 off=0x09a0 len=56
+UART A sent : [ 0.829] GND: sent MPY_LOAD on TC queue
+UART A sent : [ 0.832] TC wrote data to vm=3 off=0x09d8 len=56
+UART A sent : [ 0.835] TC wrote data to vm=3 off=0x0a10 len=17
+UART A sent : [ 0.985] GND: sent MPY_START on TC queue
+UART A sent : [ 1.050] TC vm=3 len=2593 SHA256 PASS
+UART A sent : POWER script started, using VM 3
+UART A sent : POWER: initial volt_thres(0): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(1): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(2): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(3): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(4): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(5): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(6): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(7): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(8): [10.00, 13.00]
+UART A sent : POWER: initial volt_thres(9): [10.00, 13.00]
+UART A sent : POWER: initial curr_thres(0): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(1): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(2): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(3): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(4): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(5): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(6): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(7): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(8): [0.03, 0.04]
+UART A sent : POWER: initial curr_thres(9): [0.03, 0.04]
+UART A sent : [ 1.588] TM message: temperature(26) out of range; 283 outside [263, 283]
+UART A sent : [ 1.593] TM message: temperature(27) out of range; 284 outside [263, 283]
+UART A sent : [ 1.598] TM message: temperature(28) out of range; 284 outside [263, 283]
+UART A sent : [ 1.603] TM message: temperature(29) out of range; 285 outside [263, 283]
+UART A sent : [ 1.985] GND: send on TC queue: 4
+UART A sent : POWER: change voltage threshold: 0 1.0 2.0
+UART A sent : [ 2.083] TM message: voltage(0) out of range: 12.8 outside [1, 2]
+UART A sent : [ 2.195] TM message: voltage(0) out of range: 12.8 outside [1, 2]
+UART A sent : [ 2.200] GND: send on TC queue: 5
+UART A sent : POWER: change current threshold: 8 0.1 0.2
+UART A sent : [ 2.327] TM message: voltage(0) out of range: 12.7 outside [1, 2]
+UART A sent : [ 2.331] TM message: current(8) out of range; 0.0346 outside [0.1, 0.2]
+UART A sent : [ 2.447] TM message: voltage(0) out of range: 12.7 outside [1, 2]
+UART A sent : [ 2.451] TM message: current(8) out of range; 0.0346 outside [0.1, 0.2]
+UART A sent : [ 2.567] TM message: voltage(0) out of range: 12.6 outside [1, 2]
+UART A sent : [ 2.571] TM message: current(8) out of range; 0.0346 outside [0.1, 0.2]
+UART A sent : [ 2.687] TM message: voltage(0) out of range: 12.6 outside [1, 2]
+UART A sent : [ 2.691] TM message: current(8) out of range; 0.0346 outside [0.1, 0.2]
+UART A sent : [ 2.696] GND: send on TC queue: 6
+UART A sent : POWER: change current threshold: 8 0.0 0.5
+UART A sent : [ 2.813] TM message: voltage(0) out of range: 12.5 outside [1, 2]
+UART A sent : [ 2.924] TM message: voltage(0) out of range: 12.5 outside [1, 2]
+UART A sent : [ 2.995] GND: send on TC queue: 7
+UART A sent : GND task ended
+UART A sent : POWER: change voltage threshold: 0 12.0 14.0
+UART A sent : [ 3.925] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [ 4.024] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [ 4.144] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 4.254] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 4.364] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 4.474] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 4.584] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [ 4.657] TM message: temperature(26) out of range; 263 outside [263, 283]
+UART A sent : [ 4.662] TM message: temperature(27) out of range; 262 outside [263, 283]
+UART A sent : [ 4.666] TM message: temperature(28) out of range; 262 outside [263, 283]
+UART A sent : [ 4.671] TM message: temperature(29) out of range; 262 outside [263, 283]
+UART A sent : [ 4.696] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [ 4.815] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [ 4.924] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [ 5.024] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 5.144] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 5.254] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 5.364] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [ 5.474] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [ 7.745] TM message: temperature(27) out of range; 283 outside [263, 283]
+UART A sent : [ 7.750] TM message: temperature(28) out of range; 284 outside [263, 283]
+UART A sent : [ 7.754] TM message: temperature(29) out of range; 284 outside [263, 283]
+UART A sent : [10.274] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [10.384] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [10.494] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [10.605] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [10.725] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [10.804] TM message: temperature(28) out of range; 263 outside [263, 283]
+UART A sent : [10.809] TM message: temperature(29) out of range; 262 outside [263, 283]
+UART A sent : [10.834] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [10.944] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [11.054] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [11.164] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [11.274] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [11.384] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [11.494] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [11.604] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [11.714] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [13.881] TM message: temperature(29) out of range; 283 outside [263, 283]
+UART A sent : [16.584] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [16.694] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [16.804] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [16.941] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [17.055] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [17.164] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [17.274] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [17.384] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [17.494] TM message: voltage(0) out of range: 11.8 outside [12, 14]
+UART A sent : [17.604] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [17.714] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [17.824] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [17.965] TM message: temperature(28) out of range; 263 outside [263, 283]
+UART A sent : [17.969] TM message: temperature(29) out of range; 263 outside [263, 283]
+UART A sent : [17.974] TM message: voltage(0) out of range: 11.9 outside [12, 14]
+UART A sent : [18.075] TM message: voltage(0) out of range: 12 outside [12, 14]
+UART A sent : [21.025] TM message: temperature(27) out of range; 283 outside [263, 283]
+UART A sent : [21.029] TM message: temperature(28) out of range; 283 outside [263, 283]
+UART A sent : [21.034] TM message: temperature(29) out of range; 284 outside [263, 283]
