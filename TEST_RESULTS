@@ -482,6 +482,11 @@ pass  CORE_MICROPYTHON/heapalloc
 3 tests performed (14 individual testcases)
 3 tests passed
 
+pass  leon_t1/DATAPOOL_01
+pass  leon_t1/DATAPOOL_02
+pass  leon_t1/DATAPOOL_03
+pass  leon_t1/DATAPOOL_04
+pass  leon_t1/MODMEM_01
 pass  leon_t1/NOHEAP_01
 pass  leon_t1/NOHEAP_02
 pass  leon_t1/NOHEAP_03
@@ -498,12 +503,16 @@ pass  leon_t1/ROB_STACK_02
 FAIL  leon_t1/ROB_STACK_03
 pass  leon_t1/ROB_STACK_04
 pass  leon_t1/RTEMS_01
+pass  leon_t1/RTEMS_CONST_01
 pass  leon_t1/RTEMS_QUEUE_01
+pass  leon_t1/RTEMS_SEM_01
+pass  leon_t1/RTEMS_SEM_02
 pass  leon_t1/RTEMS_TASK_01
-18 tests performed (262 individual testcases)
-17 tests passed
+26 tests performed (354 individual testcases)
+25 tests passed
 1 tests failed - ROB_STACK_03
 
+pass  leon_t2/DATAPOOL_05
 pass  leon_t2/ROB_TASK_01
 pass  leon_t2/RTEMS_QUEUE_02
 pass  leon_t2/RTEMS_QUEUE_03
@@ -511,10 +520,11 @@ pass  leon_t2/RTEMS_QUEUE_04
 pass  leon_t2/RTEMS_QUEUE_05
 pass  leon_t2/RTEMS_QUEUE_06
 pass  leon_t2/RTEMS_QUEUE_07
+pass  leon_t2/RTEMS_SEM_03
 pass  leon_t2/RTEMS_TASK_02
 pass  leon_t2/RTEMS_TASK_03
-9 tests performed (163 individual testcases)
-9 tests passed
+11 tests performed (181 individual testcases)
+11 tests passed
 
 pass  leon_t10/ROB_TASK_02
 1 tests performed (20 individual testcases)
@@ -563,4 +573,7 @@ GC: total: 48512, used: 1056, free: 47456
  No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
 
 Running test: VM_MANAGER
+test passed
+
+Running test: OBCP_01
 test passed
