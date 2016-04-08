@@ -48,12 +48,22 @@ To build and run the code you will need:
     - make, bash, and Python (2.6+ or 3.3+)
     - a local/host C compiler and linker (usually gcc et al)
     - a cross compiler for SPARC V8 (eg sparc-rtems-gcc)
-    - the RTEMS library (eg rtems-4.8)
+    - the RTEMS library (rtems-4.8 is supported)
+    - a SPARC emulator (for running the code, eg leon2-emu)
 
 It is assumed that the host C compiler is in your path.
 
 The location of the SPARC compiler and the RTEMS library are configured in the
 leon-common/mkenv.mk file.
+
+To optimise the built-in hash tables you also need to configure the location of
+the SPARC cc1 executable in the tools/cc1 file, with the variable "cc1_path".
+Alternatively, you can disable hash-table optimisation by commenting out the
+line in Makefile that reads: CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
+
+To run the compiled code (eg for the tests) it is assumed that the "leon2-emu"
+executable is in your path.  This executable is referenced in some Makefile's
+under the "run" target, as well as in the leon-tests/run-tests.sh script.
 
 ================================================================================
 Building
