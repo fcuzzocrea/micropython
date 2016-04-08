@@ -12,6 +12,8 @@ This is the port of MicroPython to LEON platforms.
 This document provide some guidance on programming Python scripts for the LEON
 port of MicroPython.
 
+Further information can be found in document D7: GRL-MPLEON-D7.
+
 ================================================================================
 Development environment
 ================================================================================
