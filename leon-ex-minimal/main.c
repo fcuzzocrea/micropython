@@ -135,6 +135,10 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
         // initialise the MicroPython runtime
         mp_init();
 
+        // register the last script for importing
+        mp_mpy_modules_init();
+        mp_mpy_modules_register(mpy_script_data[mpy_script_num - 1], mpy_script_len[mpy_script_num - 1]);
+
         // execute the bytecode
         uint32_t retval = mp_exec_mpy(mpy_script_data[script_num], mpy_script_len[script_num]);
 

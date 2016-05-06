@@ -71,6 +71,7 @@
 #define MICROPY_PY_SYS              (1)
 #define MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF (1)
 #define MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE (256)
+#define MICROPY_ENABLE_MPY_MODULES  (1)
 
 // builtin modules
 extern const struct _mp_obj_module_t mp_module_time;
@@ -133,6 +134,7 @@ typedef long mp_off_t;
 // Root pointers
 #define MICROPY_PORT_ROOT_POINTERS \
     mp_obj_t rtems_script_id; \
+    struct _mp_mpy_module_t *mpy_modules; \
 
 // Hook for the VM
 #define MICROPY_VM_HOOK_COUNT (8)

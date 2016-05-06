@@ -5,6 +5,11 @@ import time
 import math
 import rtems
 
+# test importing a pure Python script
+import ex3
+print(ex3.data)
+ex3.foo(1)
+
 def main():
     tod = 6 * [0]
 

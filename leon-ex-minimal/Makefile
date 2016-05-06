@@ -56,7 +56,7 @@ SRC_S = \
 	$(LEON_COMMON)/gchelper.s \
 
 # these are the example Python scripts to compile
-SRC_PY = ex1.py ex2.py
+SRC_PY = ex1.py ex2.py ex3.py
 
 OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o))
 
