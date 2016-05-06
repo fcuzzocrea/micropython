@@ -16,3 +16,6 @@ qstr mp_obj_fun_get_source(mp_const_obj_t fun_in);
 size_t mp_code_state_get_line(const mp_code_state *code_state, qstr *source_file, qstr *block_name);
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind);
 uint32_t mp_exec_mpy(const byte *buf, size_t len);
+
+void mp_mpy_modules_init(void);
+void mp_mpy_modules_register(const byte *buf, size_t len);

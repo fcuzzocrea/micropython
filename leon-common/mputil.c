@@ -134,15 +134,66 @@ uint32_t mp_exec_mpy(const byte *buf, size_t len) {
     }
 }
 
+#if MICROPY_ENABLE_MPY_MODULES
+
+typedef struct _mp_mpy_module_t {
+    char *filename;
+    mp_raw_code_t *raw_code;
+    struct _mp_mpy_module_t *next;
+} mp_mpy_module_t;
+
+void mp_mpy_modules_init(void) {
+    MP_STATE_PORT(mpy_modules) = NULL;
+}
+
+void mp_mpy_modules_register(const byte *buf, size_t len) {
+    nlr_buf_t nlr;
+    if (nlr_push(&nlr) == 0) {
+        mp_mpy_module_t *rf = m_new_obj(mp_mpy_module_t);
+        rf->raw_code = mp_raw_code_load_mem(buf, len);
+        mp_obj_t f = mp_make_function_from_raw_code(rf->raw_code, MP_OBJ_NULL, MP_OBJ_NULL);
+        const char *import_name = qstr_str(mp_obj_fun_get_source(f));
+        size_t import_name_len = strlen(import_name) - 3; // cut off .py
+        rf->filename = m_new(char, import_name_len + 5);
+        memcpy(rf->filename, import_name, import_name_len);
+        memcpy(rf->filename + import_name_len, ".mpy", 5);
+        rf->next = MP_STATE_PORT(mpy_modules);
+        MP_STATE_PORT(mpy_modules) = rf;
+        nlr_pop();
+    } else {
+        // uncaught exception
+        mp_obj_t exc = MP_OBJ_FROM_PTR(nlr.ret_val);
+        mp_obj_print_exception(&mp_plat_print, exc);
+    }
+}
+
+#endif
+
 // Hook for the runtime to stat the filesystem for a module.
 mp_import_stat_t mp_import_stat(const char *path) {
-    // there is no filesystem so we always return "not found"
+    #if MICROPY_ENABLE_MPY_MODULES
+    for (mp_mpy_module_t *rf = MP_STATE_PORT(mpy_modules); rf != NULL; rf = rf->next) {
+        if (strcmp(rf->filename, path) == 0) {
+            return MP_IMPORT_STAT_FILE;
+        }
+    }
+    #endif
+
+    // the requested file is not found
     return MP_IMPORT_STAT_NO_EXIST;
 }
 
 // Hook for the runtime to load raw code (.mpy) from a file.
 mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
-    // there is no filesystem so we raise an error
+    #if MICROPY_ENABLE_MPY_MODULES
+    for (mp_mpy_module_t *rf = MP_STATE_PORT(mpy_modules); rf != NULL; rf = rf->next) {
+        if (strcmp(rf->filename, filename) == 0) {
+            return rf->raw_code;
+        }
+    }
+    #endif
+
+    // the requested file is not found
     nlr_raise(mp_obj_new_exception_msg(&mp_type_RuntimeError, "can't import"));
 }
 
