@@ -172,17 +172,17 @@ STATIC mp_raw_code_t *load_raw_code(mp_reader_t *reader) {
     read_bytes(reader, bytecode, bc_len);
 
     // extract prelude
-    const byte *ip = bytecode;
+    byte *ip = bytecode;
     const byte *ip2;
     bytecode_prelude_t prelude;
-    extract_prelude(&ip, &ip2, &prelude);
+    extract_prelude((const byte**)&ip, &ip2, &prelude);
 
     // load qstrs and link global qstr ids into bytecode
     qstr simple_name = load_qstr(reader);
     qstr source_file = load_qstr(reader);
     ((byte*)ip2)[0] = simple_name; ((byte*)ip2)[1] = simple_name >> 8;
     ((byte*)ip2)[2] = source_file; ((byte*)ip2)[3] = source_file >> 8;
-    load_bytecode_qstrs(reader, (byte*)ip, bytecode + bc_len);
+    load_bytecode_qstrs(reader, ip, bytecode + bc_len);
 
     // load constant table
     size_t n_obj = read_uint(reader);
