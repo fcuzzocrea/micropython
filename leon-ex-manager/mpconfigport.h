@@ -123,9 +123,9 @@ typedef long mp_off_t;
 // We define our own state accessor macros
 #include <rtems.h>
 #define MP_STATE_PTR ((mp_state_ctx_t*)_Thread_Executing->Start.numeric_argument)
-#define MP_STATE_CTX(x) (MP_STATE_PTR->x)
 #define MP_STATE_VM(x) (MP_STATE_PTR->vm.x)
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
+#define MP_STATE_THREAD(x) (MP_STATE_PTR->thread.x)
 #define MP_STATE_PORT MP_STATE_VM
 
 // Root pointers
@@ -139,6 +139,6 @@ typedef long mp_off_t;
     if (--vm_hook_count == 0) { \
         vm_hook_count = MICROPY_VM_HOOK_COUNT; \
         MARK_EXC_IP_SELECTIVE(); \
-        extern void mp_vm_hook(const mp_code_state *code_state); \
+        extern void mp_vm_hook(const mp_code_state_t *code_state); \
         mp_vm_hook(code_state); \
     }
