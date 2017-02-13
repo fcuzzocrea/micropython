@@ -229,11 +229,13 @@ mp_raw_code_t *mp_raw_code_load_mem(const byte *buf, size_t len) {
     return mp_raw_code_load(&reader);
 }
 
+#if 0
 mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
     mp_reader_t reader;
     mp_reader_new_file(&reader, filename);
     return mp_raw_code_load(&reader);
 }
+#endif
 
 #endif // MICROPY_PERSISTENT_CODE_LOAD
 
