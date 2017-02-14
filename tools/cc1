@@ -249,8 +249,11 @@ def main():
             if arg == '-o':
                 return process_file(sys.argv[i + 1])
 
-        print('%s: could not find "-o" option' % (sys.argv[0],))
-        sys.exit(1)
+        # Could not find "-o" option, so it's likely that cc1 was called with the
+        # output being redirected at the shell (eg this happens when doing qstr
+        # preprocessing).  In such a case we can't do our processing, but it shouldn't
+        # matter so just exit successfully.
+        sys.exit(0)
     elif sys.argv[1] == '-fpreprocessed':
         # compiler has been run, nothing more to do
         return
