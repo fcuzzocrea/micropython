@@ -211,6 +211,5 @@ STATIC MP_DEFINE_CONST_DICT(mp_module_rtems_queue_globals, mp_module_rtems_queue
 
 const mp_obj_module_t mp_module_rtems_queue = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_queue,
     .globals = (mp_obj_dict_t*)&mp_module_rtems_queue_globals,
 };

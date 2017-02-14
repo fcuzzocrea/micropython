@@ -92,6 +92,5 @@ STATIC MP_DEFINE_CONST_DICT(mem_module_globals, mem_module_globals_table);
 // this structure describes the actual "mem" module
 const mp_obj_module_t mp_module_mem = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_mem,
     .globals = (mp_obj_dict_t*)&mem_module_globals,
 };
