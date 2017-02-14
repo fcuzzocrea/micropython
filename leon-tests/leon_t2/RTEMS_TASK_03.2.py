@@ -3,6 +3,7 @@
 
 import micropython
 import rtems
+i = None
 
 # below tests should not need the heap
 micropython.heap_lock()

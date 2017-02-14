@@ -42,7 +42,5 @@ print(dct.setdefault('two', 222))
 # update
 dct.update(other_dict)
 print(dct)
-dct.update(other_tuple)
-print(dct)
 dct.update(one=11)
 print(dct)

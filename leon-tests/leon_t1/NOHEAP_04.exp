@@ -15,5 +15,4 @@ two
 444
 22
 {'three': 3, 'one': 11, 'two': 22}
-{'three': 3, 'one': 1, 'two': 22}
 {'three': 3, 'one': 11, 'two': 22}

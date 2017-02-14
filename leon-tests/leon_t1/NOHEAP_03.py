@@ -1,6 +1,7 @@
 # Test for MicroPython port to LEON
 # Test ID: NOHEAPP_03
 
+i = None
 empty_list = []
 lst = [2, 1, 4, 3]
 

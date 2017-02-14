@@ -10,5 +10,5 @@ def create_bufs(n, sz):
 print('start')
 for iter in range(5):
     print(iter)
-    for sz in range(2, 65, 2):
+    for sz in range(2, 63, 2):
         create_bufs(150, sz)

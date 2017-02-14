@@ -1,6 +1,7 @@
 # Test for MicroPython port to LEON
 # Test ID: NOHEAP_02
 
+i = None
 tpl = (1, 2, 3, 4)
 
 import micropython
