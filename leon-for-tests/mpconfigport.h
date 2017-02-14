@@ -39,6 +39,7 @@
 #define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_DOUBLE)
 #define MICROPY_PY_FUNCTION_ATTRS   (1)
 #define MICROPY_PY_BUILTINS_STR_UNICODE (1)
+#define MICROPY_PY_BUILTINS_STR_PARTITION (1)
 #define MICROPY_PY_BUILTINS_STR_SPLITLINES (1)
 #define MICROPY_PY_BUILTINS_BYTEARRAY (1)
 #define MICROPY_PY_BUILTINS_MEMORYVIEW (1)
@@ -48,6 +49,7 @@
 #define MICROPY_PY_BUILTINS_SET     (1)
 #define MICROPY_PY_BUILTINS_SLICE   (1)
 #define MICROPY_PY_BUILTINS_PROPERTY (1)
+#define MICROPY_PY_BUILTINS_POW3    (1)
 #define MICROPY_PY___FILE__         (1)
 #define MICROPY_PY_MICROPYTHON_MEM_INFO (1)
 #define MICROPY_PY_SYS_EXIT         (1)
@@ -64,7 +66,7 @@
 #define MICROPY_PY_COLLECTIONS      (1)
 #define MICROPY_PY_MATH             (1)
 #define MICROPY_PY_CMATH            (1)
-#define MICROPY_PY_UJSON            (1)
+#define MICROPY_PY_UJSON            (0)
 #define MICROPY_PY_UBINASCII        (1)
 #define MICROPY_PY_IO               (0)
 #define MICROPY_PY_STRUCT           (1)
@@ -127,9 +129,9 @@ typedef long mp_off_t;
 // We define our own state accessor macros
 #include <rtems.h>
 #define MP_STATE_PTR ((mp_state_ctx_t*)_Thread_Executing->Start.numeric_argument)
-#define MP_STATE_CTX(x) (MP_STATE_PTR->x)
 #define MP_STATE_VM(x) (MP_STATE_PTR->vm.x)
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
+#define MP_STATE_THREAD(x) (MP_STATE_PTR->thread.x)
 #define MP_STATE_PORT MP_STATE_VM
 
 // Root pointers
@@ -144,6 +146,6 @@ typedef long mp_off_t;
     if (--vm_hook_count == 0) { \
         vm_hook_count = MICROPY_VM_HOOK_COUNT; \
         MARK_EXC_IP_SELECTIVE(); \
-        extern void mp_vm_hook(const mp_code_state *code_state); \
+        extern void mp_vm_hook(const mp_code_state_t *code_state); \
         mp_vm_hook(code_state); \
     }
