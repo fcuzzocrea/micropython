@@ -68,6 +68,5 @@ STATIC MP_DEFINE_CONST_DICT(powersys_module_globals, powersys_module_globals_tab
 // this structure describes the actual "powersys" module
 const mp_obj_module_t mp_module_powersys = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_powersys,
     .globals = (mp_obj_dict_t*)&powersys_module_globals,
 };
