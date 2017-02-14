@@ -17,8 +17,8 @@ void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len);
 
 // This function is for the worker VM to call periodically to check if there
 // are any outstanding requests (eg pause, resume, exit).
-struct _mp_code_state;
-void mp_vm_hook(const struct _mp_code_state *code_state);
+struct _mp_code_state_t;
+void mp_vm_hook(const struct _mp_code_state_t *code_state);
 
 // These functions are for use by the VM manager task to control VM worker
 // tasks.  The "task_id" parameter is the RTEMS id of the target VM worker

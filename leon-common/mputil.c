@@ -14,6 +14,7 @@
 #include "py/builtin.h"
 #include "py/gc.h"
 #include "py/stackctrl.h"
+#include "py/persistentcode.h"
 #include "py/mphal.h"
 #include "leon-common/mputil.h"
 #include "leon-common/mpvmmanage.h"
@@ -30,16 +31,26 @@ qstr mp_obj_fun_get_source(mp_const_obj_t fun_in) {
     bc++; // skip n_def_pos_args
 
     mp_decode_uint(&bc); // skip code_info_size entry
-    //qstr simple_name = bc[0] | (bc[1] << 8);
-    qstr source_file = bc[2] | (bc[3] << 8);
-
-    return source_file;
+    #if MICROPY_PERSISTENT_CODE
+    return bc[2] | (bc[3] << 8);
+    #else
+    mp_decode_uint(&bc); // skip simple name
+    return mp_decode_uint(&bc);
+    #endif
 }
 
 // Get the line number info of some currently-executing bytecode.
-size_t mp_code_state_get_line(const mp_code_state *code_state, qstr *source_file, qstr *block_name) {
-    const byte *ip = code_state->code_info;
-    mp_uint_t code_info_size = mp_decode_uint(&ip);
+size_t mp_code_state_get_line(const mp_code_state_t *code_state, qstr *source_file, qstr *block_name) {
+    const byte *ip = code_state->fun_bc->bytecode;
+    mp_decode_uint(&ip); // skip n_state
+    mp_decode_uint(&ip); // skip n_exc_stack
+    ip++; // skip scope_params
+    ip++; // skip n_pos_args
+    ip++; // skip n_kwonly_args
+    ip++; // skip n_def_pos_args
+    size_t bc = code_state->ip - ip;
+    size_t code_info_size = mp_decode_uint(&ip);
+    bc -= code_info_size;
     #if MICROPY_PERSISTENT_CODE
     *block_name = ip[0] | (ip[1] << 8);
     *source_file = ip[2] | (ip[3] << 8);
@@ -48,7 +59,6 @@ size_t mp_code_state_get_line(const mp_code_state *code_state, qstr *source_file
     *block_name = mp_decode_uint(&ip);
     *source_file = mp_decode_uint(&ip);
     #endif
-    size_t bc = code_state->ip - code_state->code_info - code_info_size;
     size_t source_line = 1;
     size_t c;
     while ((c = *ip)) {
@@ -213,7 +223,7 @@ void gc_collect(void) {
     // Scan the stack and the registers (registers live on the stack of this function).
     void **regs_ptr = &regs[0];
     gc_collect_root(regs_ptr,
-        ((uintptr_t)MP_STATE_VM(stack_top) - (uintptr_t)regs_ptr) / sizeof(void*));
+        ((uintptr_t)MP_STATE_THREAD(stack_top) - (uintptr_t)regs_ptr) / sizeof(void*));
 
     #endif
 

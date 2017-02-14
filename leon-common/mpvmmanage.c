@@ -60,7 +60,7 @@ void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len) {
 }
 
 // Hook to execute arbitrary code within the VM loop.
-void mp_vm_hook(const mp_code_state *code_state) {
+void mp_vm_hook(const mp_code_state_t *code_state) {
     // check if there is a pending signal
     uint32_t note;
     rtems_task_get_note(RTEMS_SELF, NOTEPAD_SIGNAL, &note);
