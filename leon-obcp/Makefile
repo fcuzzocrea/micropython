@@ -27,7 +27,7 @@ INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
 CFLAGS += $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT) -mcpu=v8
 
 # Use this to optimise the static hash tables
-CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
+#CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
 
 # Debugging/Optimization
 ifeq ($(DEBUG), 1)
