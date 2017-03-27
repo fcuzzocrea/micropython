@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <rtems.h>
-#include <bsp.h>
 
 #define CONFIGURE_INIT
 #define CONFIGURE_INIT_TASK_ENTRY_POINT Init
@@ -49,10 +48,18 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_clock_set(&time);
 
     // initialise the message queue subsystem
+    #if RTEMS_4_8
     _Message_queue_Manager_initialization(4);
+    #else
+    _Message_queue_Manager_initialization();
+    #endif
 
     // initialise the timer subsystem
+    #if RTEMS_4_8
     _Timer_Manager_initialization(2);
+    #else
+    _Timer_Manager_initialization();
+    #endif
 
     // start the manager task to do the rest of the work
     rtems_name task_name = rtems_build_name('M', 'P', 'M', 'A');
@@ -63,6 +70,7 @@ rtems_task Init(rtems_task_argument ignored) {
         MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id
     );
     status = rtems_task_start(task_id, mp_manager_task, 0);
+    (void)status; // status not checked
     rtems_task_delete(RTEMS_SELF);
 }
 
@@ -90,6 +98,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id[i]
         );
         status = rtems_task_start(task_id[i], mp_worker_task, i);
+        (void)status; // status not checked
     }
 
     // manage the running tasks

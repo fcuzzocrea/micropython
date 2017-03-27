@@ -65,11 +65,17 @@ MP_DEFINE_CONST_FUN_OBJ_1(time_localtime_into_obj, time_localtime_into);
 // Returns the number of seconds since the Epoch, as a float.
 // Has sub-second precision.
 STATIC mp_obj_t time_time(void) {
+    #if RTEMS_4_8
     rtems_clock_time_value t;
     rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
     mod_rtems_status_code_check(status);
     return mp_obj_new_float(t.seconds + 1e-6 * t.microseconds);
-
+    #else
+    struct timeval tv;
+    rtems_status_code status = rtems_clock_get_tod_timeval(&tv);
+    mod_rtems_status_code_check(status);
+    return mp_obj_new_float(tv.tv_sec + (mp_float_t)tv.tv_usec / 1000000);
+    #endif
 }
 MP_DEFINE_CONST_FUN_OBJ_0(time_time_obj, time_time);
 

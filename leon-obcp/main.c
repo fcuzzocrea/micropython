@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <rtems.h>
-#include <bsp.h>
 
 #define CONFIGURE_INIT
 #define CONFIGURE_INIT_TASK_ENTRY_POINT Init

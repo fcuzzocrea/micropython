@@ -8,13 +8,14 @@
 
 #include <stdio.h>
 #include <rtems.h>
-#include <bsp.h>
 
 #define CONFIGURE_INIT
 #define CONFIGURE_INIT_TASK_ENTRY_POINT Init
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
 #define CONFIGURE_MAXIMUM_TASKS (12)
+#define CONFIGURE_MAXIMUM_SEMAPHORES (4)
+#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES (4)
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_EXTRA_TASK_STACKS (20 * RTEMS_MINIMUM_STACK_SIZE)
 
@@ -50,10 +51,19 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_clock_set(&time);
 
     // initialise the message queue subsystem
+    #if RTEMS_4_8
     _Message_queue_Manager_initialization(4);
+    #else
+    //_Message_queue_Manager_initialization();
+    //_Semaphore_Manager_initialization();
+    #endif
 
     // initialise the timer subsystem
+    #if RTEMS_4_8
     _Timer_Manager_initialization(2);
+    #else
+    //_Timer_Manager_initialization();
+    #endif
 
     // bring up the datapool
     datapool_init(datapool_heap, DATAPOOL_HEAP_SIZE);
@@ -67,6 +77,7 @@ rtems_task Init(rtems_task_argument ignored) {
         MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id
     );
     status = rtems_task_start(task_id, mp_manager_task, 0);
+    (void)status; // status not checked
     rtems_task_delete(RTEMS_SELF);
 }
 

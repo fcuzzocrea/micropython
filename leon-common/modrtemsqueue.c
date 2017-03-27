@@ -32,7 +32,11 @@ STATIC mp_obj_t rtems_queue_delete(mp_obj_t self_in) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(rtems_queue_delete_obj, rtems_queue_delete);
 
+#if RTEMS_4_8
 typedef rtems_status_code (*queue_submit_t)(Objects_Id, void*, size_t);
+#else
+typedef rtems_status_code (*queue_submit_t)(Objects_Id, const void*, size_t);
+#endif
 
 STATIC mp_obj_t rtems_queue_submit(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args, queue_submit_t queue_submit) {
     enum { ARG_buf, ARG_option, ARG_timeout };
