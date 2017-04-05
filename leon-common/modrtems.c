@@ -54,7 +54,7 @@ void mod_rtems_status_code_check(rtems_status_code status) {
 }
 
 rtems_name mod_rtems_name_from_obj(mp_obj_t name_in) {
-    mp_uint_t name_len;
+    size_t name_len;
     const char *name_str = mp_obj_str_get_data(name_in, &name_len);
     if (name_len != 4) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
