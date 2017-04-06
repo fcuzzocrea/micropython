@@ -13,3 +13,8 @@ StopIteration
 leaf caught GeneratorExit and raised StopIteration instead
 delegating caught GeneratorExit
 StopIteration
+123
+RuntimeError
+0
+1
+close

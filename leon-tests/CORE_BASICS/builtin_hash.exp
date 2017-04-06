@@ -1,8 +1,7 @@
 0
 1
 {(): 1}
-{73786976294838206464: 1}
-{-73786976294838206464: 2}
+{(1,): 1}
 True
 TypeError
 123
@@ -10,4 +9,3 @@ TypeError
 TypeError
 TypeError
 1
-True

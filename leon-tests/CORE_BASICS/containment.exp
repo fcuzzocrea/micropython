@@ -1,13 +1,9 @@
 1 in {1: 2}: True
 1 not in {1: 2}: False
-1 in {1}: True
-1 not in {1}: False
 1 in dict_keys([1]): True
 1 not in dict_keys([1]): False
 2 in {1: 2}: False
 2 not in {1: 2}: True
-2 in {1}: False
-2 not in {1}: True
 2 in dict_keys([1]): False
 2 not in dict_keys([1]): True
 supercalifragilistc in supercalifragilistc :: True

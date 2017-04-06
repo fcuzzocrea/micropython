@@ -48,23 +48,12 @@
 {:>20}  >                 foo<
 {:^20}  >        foo         <
 {:<20}  >foo                 <
+#######123
+#######123
+#######123
+foo                 
+   foo    
+                           foo
 bar/foo
 123
 123-bar
-ValueError
-IndexError
-ValueError
-ValueError
-ValueError
-ValueError
-ValueError
-ValueError
-IndexError
-KeyError
-ValueError
-IndexError
-ValueError
-ValueError
-ValueError
-ValueError
-ValueError

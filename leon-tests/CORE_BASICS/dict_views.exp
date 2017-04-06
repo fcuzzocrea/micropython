@@ -4,3 +4,6 @@ dict_values([2])
 [2]
 dict_keys([1])
 [1]
+dict_values([1, 1])
+TypeError
+TypeError

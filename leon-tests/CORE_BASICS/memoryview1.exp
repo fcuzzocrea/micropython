@@ -2,11 +2,13 @@
 49 50 52
 [49, 50, 51, 52]
 TypeError
+TypeError
 bytearray(b'\x01234')
 [1, 50, 51, 52]
 [50, 51, 52]
 [50, 51]
 bytearray(b'\x00\x00')
+[49, 50, 51, 52]
 [1, 2, 3, 4]
 [2, 3]
 array('i', [1, 2, 6, 4])
@@ -17,4 +19,5 @@ ValueError
 ValueError
 ValueError
 array('i', [0, 3, 3, 0, 0])
+ValueError
 ValueError
