@@ -19,6 +19,7 @@ nan
 nan
 ValueError
 ValueError
+ValueError
 False
 True
 1.2
@@ -34,6 +35,8 @@ True
 ZeroDivisionError
 ZeroDivisionError
 ZeroDivisionError
+ZeroDivisionError
+TypeError
 TypeError
 TypeError
 TypeError

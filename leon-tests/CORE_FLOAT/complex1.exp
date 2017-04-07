@@ -21,6 +21,7 @@ True
 0.5
 (0.4+0.2j)
 1 0
+0 0
 1 0
 -0.70711 -0.70711
 0.019703 0
@@ -28,14 +29,18 @@ False
 True
 1.0
 2.2361
+1
+<class 'int'>
 (1.2+3j)
 (nan+nanj)
 (inf+infj)
 (-inf-infj)
-1.1806e+21 1
+AttributeError
 TypeError
 TypeError
 TypeError
 TypeError
+TypeError
+ZeroDivisionError
 ZeroDivisionError
 ZeroDivisionError
