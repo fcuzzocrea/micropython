@@ -155,4 +155,6 @@ s[:6]: 6 chars, 'a©ÿģࠀ￮'
 s[6:6]: 0 chars, ''
 s[6:]: 1 chars, '👌'
 b'a\xc2\xa9\xc3\xbf\xc4\xa3\xe0\xa0\x80\xef\xbf\xae\xf0\x9f\x91\x8c' True
+'a\uffff'
+'a\U0001ffff'
 ValueError
