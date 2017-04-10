@@ -248,7 +248,8 @@ mp_obj_t mp_stream_write(mp_obj_t self_in, const void *buf, size_t len, byte fla
     mp_get_stream_raise(self_in, MP_STREAM_OP_WRITE);
 
     int error;
-    mp_uint_t out_sz = mp_stream_rw(self_in, (void*)buf, len, &error, flags);
+    void *buf_non_const = (void*)buf;
+    mp_uint_t out_sz = mp_stream_rw(self_in, buf_non_const, len, &error, flags);
     if (error != 0) {
         if (mp_is_nonblocking_error(error)) {
             // http://docs.python.org/3/library/io.html#io.RawIOBase.write
