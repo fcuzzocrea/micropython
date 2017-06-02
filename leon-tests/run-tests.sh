@@ -65,10 +65,14 @@ numfailed=0
 nameskipped=
 namefailed=
 
-for expfile in $tests
+for testfile in $tests
 do
-    basename=`basename $expfile .exp`
-    infile_no_ext=$(dirname $expfile)/$(basename $expfile .exp)
+    # strip of .exp or .py to allow either to be passed in
+    basename=$(basename $testfile .exp)
+    basename=$(basename $basename .py)
+
+    infile_no_ext=$(dirname $testfile)/$basename
+    expfile=${infile_no_ext}.exp
     outfile=${basename}.out
 
     if [ $num_tasks = 1 ]; then
