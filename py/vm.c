@@ -33,6 +33,7 @@
 #include "py/nlr.h"
 #include "py/emitglue.h"
 #include "py/objtype.h"
+#include "py/runtime0.h"
 #include "py/runtime.h"
 #include "py/bc0.h"
 #include "py/bc.h"
@@ -1242,9 +1243,14 @@ yield:
                     MARK_EXC_IP_SELECTIVE();
                     mp_obj_t rhs = POP();
                     mp_obj_t lhs = TOP();
-                    if (mp_obj_is_float(lhs)) {
+                    uint op = ip[-1] - MP_BC_BINARY_OP_MULTI;
+                    if (mp_obj_is_float(lhs)
+                        && op != MP_BINARY_OP_IS
+                        && op != MP_BINARY_OP_EQUAL
+                        && op != MP_BINARY_OP_NOT_EQUAL
+                        && op != MP_BINARY_OP_EXCEPTION_MATCH
+                        && op != MP_BINARY_OP_IN) {
                         // fast-path for float on LHS; see objfloat.c/float_binary_op()
-                        uint op = ip[-1] - MP_BC_BINARY_OP_MULTI;
                         mp_float_t lhs_val = mp_obj_float_get(lhs);
                         mp_obj_t ans;
                         #if MICROPY_PY_BUILTINS_COMPLEX
