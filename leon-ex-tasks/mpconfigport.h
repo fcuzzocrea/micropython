@@ -7,7 +7,7 @@
  */
 
 // options to control how MicroPython is built
-#define MICROPY_NLR_SETJMP          (1)
+#define MICROPY_NLR_SPARC           (1)
 #define MICROPY_ALLOC_PATH_MAX      (128)
 #define MICROPY_PERSISTENT_CODE_LOAD (1)
 #define MICROPY_EMIT_X64            (0)

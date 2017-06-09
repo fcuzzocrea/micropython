@@ -105,6 +105,7 @@ PY_O_BASENAME = \
 	nlrx64.o \
 	nlrthumb.o \
 	nlrxtensa.o \
+	nlrsparc.o \
 	nlrsetjmp.o \
 	malloc.o \
 	gc.o \

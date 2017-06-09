@@ -65,6 +65,7 @@ SRC_C = \
 	$(LEON_COMMON)/moddatapool.c \
 
 SRC_S = \
+	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
 
 OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o))

@@ -53,6 +53,7 @@ SRC_C = \
 	$(LEON_COMMON)/modmem.c \
 
 SRC_S = \
+	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
 
 # these are the example Python scripts to compile

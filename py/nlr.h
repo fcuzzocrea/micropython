@@ -53,6 +53,8 @@ struct _nlr_buf_t {
     void *regs[10];
 #elif defined(__xtensa__)
     void *regs[10];
+#elif MICROPY_NLR_SPARC
+    void *regs[18];
 #else
     #define MICROPY_NLR_SETJMP (1)
     //#warning "No native NLR support for this arch, using setjmp implementation"
@@ -74,7 +76,13 @@ NORETURN void nlr_setjmp_jump(void *val);
 #define nlr_pop() { MP_STATE_THREAD(nlr_top) = MP_STATE_THREAD(nlr_top)->prev; }
 #define nlr_jump(val) nlr_setjmp_jump(val)
 #else
+#if MICROPY_NLR_SPARC
+// nlr_push() is a macro because it must not call the save/restore instructions
+int sparc_setjmp(void *env);
+#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top) = (buf), sparc_setjmp((buf)->regs))
+#else
 unsigned int nlr_push(nlr_buf_t *);
+#endif
 void nlr_pop(void);
 NORETURN void nlr_jump(void *val);
 #endif

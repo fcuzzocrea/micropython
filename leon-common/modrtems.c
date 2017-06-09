@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <rtems.h>
 
-#include "py/nlr.h"
+#include "py/mpstate.h"
 #include "py/obj.h"
 #include "py/objint.h"
 #include "modrtems.h"
