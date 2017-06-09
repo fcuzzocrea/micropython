@@ -1251,9 +1251,9 @@ yield:
                         && op != MP_BINARY_OP_EXCEPTION_MATCH
                         && op != MP_BINARY_OP_IN) {
                         // fast-path for float on LHS; see objfloat.c/float_binary_op()
-                        mp_float_t lhs_val = mp_obj_float_get(lhs);
                         mp_obj_t ans;
                         #if MICROPY_PY_BUILTINS_COMPLEX
+                        mp_float_t lhs_val = mp_obj_float_get(lhs);
                         if (MP_OBJ_IS_TYPE(rhs, &mp_type_complex)) {
                             ans = mp_obj_complex_binary_op(op, lhs_val, 0, rhs);
                         } else
