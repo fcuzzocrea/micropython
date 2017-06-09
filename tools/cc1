@@ -14,6 +14,8 @@ Makefile:
 CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
 """
 
+from __future__ import print_function
+
 import sys
 import os
 import re
