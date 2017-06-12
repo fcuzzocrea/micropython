@@ -94,6 +94,10 @@ sparc_window_flush_trap_handler:
     mov  %g4, %l6
     mov  %g5, %l7
 
+    # disable interrupts
+    or  %l0, 0xf00, %g1
+    wr  %g1, %psr
+
     mov  %l0, %g1
     rd  %wim, %g2
 
@@ -139,7 +143,7 @@ sparc_window_flush_trap_handler:
     sll  %g4, %g3, %g4
     mov  %g4, %wim
 
-    # restore PSR
+    # restore PSR (and interrupt mask PIL)
     wr  %g1, %psr
     nop
     nop
