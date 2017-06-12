@@ -218,7 +218,9 @@ void gc_collect(void) {
     // Get all the SPARC registers:
     //   16 regs per window, 32 bit registers, with room to align to 8 bytes
     void *regs[MICROPY_SPARC_NUM_REG_WINDOWS * 16 + 1];
+    uint32_t state = sparc_disable_interrupts();
     gc_helper_get_regs(MP_ALIGN(regs, 8));
+    sparc_enable_interrupts(state);
 
     // Scan the stack and the registers (registers live on the stack of this function).
     void **regs_ptr = &regs[0];
