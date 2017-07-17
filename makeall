@@ -2,12 +2,12 @@
 #
 # This script will build all components and run all tests.
 
-make -C mpy-cross
-make -C leon-ex-minimal
-make -C leon-ex-tasks
-make -C leon-ex-manager
-make -C leon-for-tests
-make -C leon-obcp
+make -C mpy-cross || exit $?
+make -C leon-ex-minimal || exit $?
+make -C leon-ex-tasks || exit $?
+make -C leon-ex-manager || exit $?
+make -C leon-for-tests || exit $?
+make -C leon-obcp || exit $?
 
 (cd leon-tests && ./run-tests.sh CORE_BASICS/*.exp)
 (cd leon-tests && ./run-tests.sh CORE_UNICODE/*.exp)
