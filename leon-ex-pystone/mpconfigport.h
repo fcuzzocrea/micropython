@@ -110,8 +110,6 @@ typedef unsigned mp_uint_t;
 
 #endif
 
-typedef void *machine_ptr_t; // must be of pointer size
-typedef const void *machine_const_ptr_t; // must be of pointer size
 typedef long mp_off_t;
 
 // We need to provide a declaration/definition of alloca()
