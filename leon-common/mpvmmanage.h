@@ -10,9 +10,8 @@
 
 #include <rtems.h>
 
-// These functions are to be used by VM worker tasks, which take scripts
-// and execute them.
-void mp_vm_worker_init(void);
+// This function is to be used by VM worker tasks, which take scripts and
+// execute them.  It will block until some MPY code is available.
 void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len);
 
 // This function is for the worker VM to call periodically to check if there

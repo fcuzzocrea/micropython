@@ -88,8 +88,6 @@ size_t mp_code_state_get_line(const mp_code_state_t *code_state, qstr *source_fi
 #if MICROPY_ENABLE_COMPILER
 // Execute a Python script passed a a string.
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
-    mp_vm_manager_init(RTEMS_SELF);
-
     mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
     if (lex == NULL) {
         printf("MemoryError: lexer could not allocate memory\n");
@@ -113,7 +111,6 @@ void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
 // Execute a Python script passed as pre-compiled bytecode in a buffer.
 // Returns an exit code, 0 for normal exit.
 uint32_t mp_exec_mpy(const byte *buf, size_t len) {
-    mp_vm_worker_init();
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(MP_QSTR___main__));

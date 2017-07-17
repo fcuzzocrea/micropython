@@ -36,13 +36,9 @@
 #define SIGNAL_EXIT (4)
 #define SIGNAL_NEW_MPY (5)
 
-void mp_vm_worker_init(void) {
-    rtems_task_set_note(RTEMS_SELF, NOTEPAD_STATE, STATE_START);
-    rtems_task_set_note(RTEMS_SELF, NOTEPAD_SIGNAL, SIGNAL_NONE);
-}
-
 void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len) {
     rtems_task_set_note(RTEMS_SELF, NOTEPAD_STATE, STATE_WAITING);
+    rtems_task_set_note(RTEMS_SELF, NOTEPAD_SIGNAL, SIGNAL_NONE);
 
     for (;;) {
         uint32_t note;
@@ -52,7 +48,8 @@ void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len) {
             *buf = (const uint8_t*)note;
             rtems_task_get_note(RTEMS_SELF, NOTEPAD_INFO1, &note);
             *len = note;
-            mp_vm_worker_init();
+            rtems_task_set_note(RTEMS_SELF, NOTEPAD_STATE, STATE_START);
+            rtems_task_set_note(RTEMS_SELF, NOTEPAD_SIGNAL, SIGNAL_NONE);
             return;
         }
         rtems_task_wake_after(TICKS_POLL);

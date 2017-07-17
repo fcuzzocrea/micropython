@@ -134,13 +134,3 @@ typedef long mp_off_t;
 #define MICROPY_PORT_ROOT_POINTERS \
     mp_obj_t rtems_script_id; \
 
-// Hook for the VM
-#define MICROPY_VM_HOOK_COUNT (8)
-#define MICROPY_VM_HOOK_INIT uint vm_hook_count = MICROPY_VM_HOOK_COUNT;
-#define MICROPY_VM_HOOK_LOOP \
-    if (--vm_hook_count == 0) { \
-        vm_hook_count = MICROPY_VM_HOOK_COUNT; \
-        MARK_EXC_IP_SELECTIVE(); \
-        extern void mp_vm_hook(const mp_code_state_t *code_state); \
-        mp_vm_hook(code_state); \
-    }
