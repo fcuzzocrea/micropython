@@ -85,6 +85,26 @@ size_t mp_code_state_get_line(const mp_code_state_t *code_state, qstr *source_fi
     return source_line;
 }
 
+// Get the location of an exception from the traceback data of the object.
+void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc) {
+    exc_loc->filename = "unknown";
+    exc_loc->line = 0;
+    exc_loc->block = NULL;
+    if (mp_obj_is_exception_instance(exc)) {
+        size_t n, *values;
+        mp_obj_exception_get_traceback(exc, &n, &values);
+        if (n >= 3) {
+            exc_loc->filename = qstr_str(values[0]);
+            #if MICROPY_ENABLE_SOURCE_LINE
+            exc_loc->line = values[1];
+            #endif
+            if (values[2] != MP_QSTR_NULL) {
+                exc_loc->block = qstr_str(values[2]);
+            }
+        }
+    }
+}
+
 #if MICROPY_ENABLE_COMPILER
 // Execute a Python script passed a a string.
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
@@ -108,9 +128,26 @@ void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
 }
 #endif
 
+// Check an exception for SystemExit and extract its return value.
+STATIC uint32_t mp_obj_exception_check_system_exit(mp_obj_t exc) {
+    if (mp_obj_is_subclass_fast(MP_OBJ_FROM_PTR(mp_obj_get_type(exc)),
+        MP_OBJ_FROM_PTR(&mp_type_SystemExit))) {
+        // None is an exit value of 0; an int is its value; anything else is 1
+        mp_obj_t exit_val = mp_obj_exception_get_value(exc);
+        mp_int_t val = 0;
+        if (exit_val != mp_const_none && !mp_obj_get_int_maybe(exit_val, &val)) {
+            val = 1;
+        }
+        return 0x80 | (val & 255);
+    } else {
+        // any other exception
+        return 0;
+    }
+}
+
 // Execute a Python script passed as pre-compiled bytecode in a buffer.
-// Returns an exit code, 0 for normal exit.
-uint32_t mp_exec_mpy(const byte *buf, size_t len) {
+// Returns MP_OBJ_NULL for no exception, otherwise the exception instance.
+mp_obj_t mp_exec_mpy_with_exc(const byte *buf, size_t len) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(MP_QSTR___main__));
@@ -118,26 +155,60 @@ uint32_t mp_exec_mpy(const byte *buf, size_t len) {
         mp_obj_t f = mp_make_function_from_raw_code(raw_code, MP_OBJ_NULL, MP_OBJ_NULL);
         mp_call_function_0(f);
         nlr_pop();
-        return 0;
+        // no exception was raised
+        return MP_OBJ_NULL;
     } else {
         // uncaught exception
-        mp_obj_t exc = MP_OBJ_FROM_PTR(nlr.ret_val);
+        return MP_OBJ_FROM_PTR(nlr.ret_val);
+    }
+}
 
-        // check for SystemExit
-        if (mp_obj_is_subclass_fast(MP_OBJ_FROM_PTR(mp_obj_get_type(exc)),
-            MP_OBJ_FROM_PTR(&mp_type_SystemExit))) {
-            // None is an exit value of 0; an int is its value; anything else is 1
-            mp_obj_t exit_val = mp_obj_exception_get_value(exc);
-            mp_int_t val = 0;
-            if (exit_val != mp_const_none && !mp_obj_get_int_maybe(exit_val, &val)) {
-                val = 1;
-            }
-            return 0x80 | (val & 255);
+// Execute a Python script passed as pre-compiled bytecode in a buffer.
+// If an exception is raised then the location of the innermost part of the
+// script that caused the exception is stored in exc_loc.
+// Returns an exit code:
+//  - 0 for normal exit
+//  - 1 if a non-SystemExit exception was raised
+//  - 128 or'd with return code if a SystemExit exception was raised
+uint32_t mp_exec_mpy_with_exc_location(const byte *buf, size_t len, mp_exc_location_t *exc_loc) {
+    mp_obj_t exc = mp_exec_mpy_with_exc(buf, len);
+    if (exc == MP_OBJ_NULL) {
+        // no exception was raised
+        return 0;
+    } else {
+        mp_obj_exception_get_location(exc, exc_loc);
+        uint32_t retval = mp_obj_exception_check_system_exit(exc);
+        if (retval) {
+            // SystemExit was raised, return its argument
+            return retval;
+        } else {
+            // another exception was raised
+            return 1;
         }
+    }
+}
 
-        // report all other exceptions
-        mp_obj_print_exception(&mp_plat_print, exc);
-        return 1;
+// Execute a Python script passed as pre-compiled bytecode in a buffer.
+// If an exception is raised then it's traceback is printed to stdout.
+// Returns an exit code:
+//  - 0 for normal exit
+//  - 1 if a non-SystemExit exception was raised
+//  - 128 or'd with return code if a SystemExit exception was raised
+uint32_t mp_exec_mpy(const byte *buf, size_t len) {
+    mp_obj_t exc = mp_exec_mpy_with_exc(buf, len);
+    if (exc == MP_OBJ_NULL) {
+        // no exception was raised
+        return 0;
+    } else {
+        uint32_t retval = mp_obj_exception_check_system_exit(exc);
+        if (retval) {
+            // SystemExit was raised, return its argument
+            return retval;
+        } else {
+            // report all other exceptions by printing them
+            mp_obj_print_exception(&mp_plat_print, exc);
+            return 1;
+        }
     }
 }
 

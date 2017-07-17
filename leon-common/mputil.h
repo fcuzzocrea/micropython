@@ -12,9 +12,19 @@
 #include "py/bc.h"
 #include "py/obj.h"
 
+// data structure used to return location of an exception
+typedef struct _mp_exc_location_t {
+     const char *filename; // always a valid string
+     uint32_t line; // 0 if line numbers are not enabled
+     const char *block; // NULL if block is unknown
+} mp_exc_location_t;
+
 qstr mp_obj_fun_get_source(mp_const_obj_t fun_in);
 size_t mp_code_state_get_line(const mp_code_state_t *code_state, qstr *source_file, qstr *block_name);
+void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc);
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind);
+mp_obj_t mp_exec_mpy_with_exc(const byte *buf, size_t len);
+uint32_t mp_exec_mpy_with_exc_location(const byte *buf, size_t len, mp_exc_location_t *exc_loc);
 uint32_t mp_exec_mpy(const byte *buf, size_t len);
 
 void mp_mpy_modules_init(void);
