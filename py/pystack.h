@@ -32,4 +32,7 @@ void mp_pystack_init(void *start, void *end);
 void *mp_pystack_alloc(size_t n_bytes);
 void mp_pystack_free(void *ptr);
 
+size_t mp_pystack_usage(void);
+size_t mp_pystack_limit(void);
+
 #endif // MICROPY_INCLUDED_PY_PYSTACK_H

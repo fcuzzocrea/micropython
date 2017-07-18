@@ -72,4 +72,12 @@ void mp_pystack_free(void *ptr) {
     MP_STATE_THREAD(pystack_cur) = ptr;
 }
 
+size_t mp_pystack_usage(void) {
+    return MP_STATE_THREAD(pystack_cur) - MP_STATE_THREAD(pystack_start);
+}
+
+size_t mp_pystack_limit(void) {
+    return MP_STATE_THREAD(pystack_end) - MP_STATE_THREAD(pystack_start);
+}
+
 #endif
