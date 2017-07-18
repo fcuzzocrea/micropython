@@ -30,6 +30,7 @@ rtems_task mp_worker_task(rtems_task_argument unused);
 #define MICROPY_RTEMS_STACK_SIZE (RTEMS_MINIMUM_STACK_SIZE * 3)
 #define MICROPY_RTEMS_HEAP_SIZE (48 * 1024)
 #define MICROPY_RTEMS_NUM_TASKS (10)
+#define MICROPY_RTEMS_PYSTACK_WORD_SIZE (512)
 
 #define DATAPOOL_HEAP_SIZE (4 * 1024)
 static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
@@ -161,6 +162,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 #include "py/runtime.h"
 #include "py/gc.h"
 #include "py/stackctrl.h"
+#include "py/pystack.h"
 #include "mputil.h"
 
 // these settings are used to check the heap for overflow
@@ -170,6 +172,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 
 static mp_state_ctx_t mp_state_ctx[MICROPY_RTEMS_NUM_TASKS];
 static byte mp_heap[MICROPY_RTEMS_NUM_TASKS * HEAP_SIZE];
+static mp_obj_t mp_pystack[MICROPY_RTEMS_NUM_TASKS * MICROPY_RTEMS_PYSTACK_WORD_SIZE];
 
 void pattern_fill(void *p_in, size_t len) {
     uint32_t *p = (uint32_t*)p_in;
@@ -212,6 +215,10 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     byte *heap_start = &mp_heap[task_index * HEAP_SIZE];
     pattern_fill((uint32_t*)heap_start, HEAP_SIZE);
     gc_init(heap_start + HEAP_PRE, heap_start + HEAP_PRE + MICROPY_RTEMS_HEAP_SIZE);
+
+    // initialise the Python stack
+    mp_pystack_init(&mp_pystack[task_index * MICROPY_RTEMS_PYSTACK_WORD_SIZE],
+        &mp_pystack[(task_index + 1) * MICROPY_RTEMS_PYSTACK_WORD_SIZE]);
 
     // initialise the MicroPython runtime
     mp_init();

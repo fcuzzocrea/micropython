@@ -13,6 +13,8 @@
 // options to control how MicroPython is built
 #define MICROPY_NLR_SPARC           (1)
 #define MICROPY_ALLOC_PATH_MAX      (128)
+#define MICROPY_STACKLESS           (1)
+#define MICROPY_STACKLESS_STRICT    (1)
 #define MICROPY_PERSISTENT_CODE_LOAD (1)
 #define MICROPY_ENABLE_COMPILER     (0)
 #define MICROPY_COMP_CONST          (0)
@@ -21,6 +23,7 @@
 #define MICROPY_ENABLE_GC           (1)
 #define MICROPY_ENABLE_IMMORTAL_GC  (0)
 #define MICROPY_ENABLE_FINALISER    (1)
+#define MICROPY_ENABLE_PYSTACK      (1)
 #define MICROPY_STACK_CHECK         (1)
 #define MICROPY_ENABLE_SOURCE_LINE  (1)
 #define MICROPY_ENABLE_DOC_STRING   (0)
