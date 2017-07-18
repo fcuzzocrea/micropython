@@ -4,14 +4,14 @@
 import micropython
 
 def f1(x):
-    micropython.mem_info()
+    print(micropython.stack_use(), micropython.pystack_use())
     if x:
         f1(x - 1)
 print('-- calling f1 --')
 f1(4)
 
 def f2(x, y):
-    micropython.mem_info()
+    print(micropython.stack_use(), micropython.pystack_use())
     if x:
         f2(x - 1, y)
 print('-- calling f2 --')
