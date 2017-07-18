@@ -64,6 +64,9 @@ struct _nlr_buf_t {
 #if MICROPY_NLR_SETJMP
     jmp_buf jmpbuf;
 #endif
+    #if MICROPY_ENABLE_PYSTACK
+    void *pystack;
+    #endif
 };
 
 #if MICROPY_NLR_SETJMP
@@ -72,7 +75,11 @@ struct _nlr_buf_t {
 NORETURN void nlr_setjmp_jump(void *val);
 // nlr_push() must be defined as a macro, because "The stack context will be
 // invalidated if the function which called setjmp() returns."
+#if MICROPY_ENABLE_PYSTACK
+#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top)->pystack = MP_STATE_THREAD(pystack_cur), MP_STATE_THREAD(nlr_top) = (buf), setjmp((buf)->jmpbuf))
+#else
 #define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top) = (buf), setjmp((buf)->jmpbuf))
+#endif
 #define nlr_pop() { MP_STATE_THREAD(nlr_top) = MP_STATE_THREAD(nlr_top)->prev; }
 #define nlr_jump(val) nlr_setjmp_jump(val)
 #else

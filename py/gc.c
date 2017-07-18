@@ -316,6 +316,10 @@ void gc_collect_start(void) {
     void **ptrs = (void**)(void*)&mp_state_ctx;
     #endif
     gc_collect_root(ptrs, offsetof(mp_state_ctx_t, vm.qstr_last_chunk) / sizeof(void*));
+    #if MICROPY_ENABLE_PYSTACK
+    ptrs = (void**)(void*)MP_STATE_THREAD(pystack_start);
+    gc_collect_root(ptrs, (MP_STATE_THREAD(pystack_cur) - MP_STATE_THREAD(pystack_start)) / sizeof(void*));
+    #endif
 }
 
 void gc_collect_root(void **ptrs, size_t len) {

@@ -1,9 +1,9 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,23 +23,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef MICROPY_INCLUDED_PY_PYSTACK_H
+#define MICROPY_INCLUDED_PY_PYSTACK_H
 
-#include "py/nlr.h"
+#include <stdint.h>
 
-#if MICROPY_NLR_SETJMP
+void mp_pystack_init(void *start, void *end);
+void *mp_pystack_alloc(size_t n_bytes);
+void mp_pystack_free(void *ptr);
 
-void nlr_setjmp_jump(void *val) {
-    nlr_buf_t **top_ptr = &MP_STATE_THREAD(nlr_top);
-    nlr_buf_t *top = *top_ptr;
-    if (top == NULL) {
-        nlr_jump_fail(val);
-    }
-    top->ret_val = val;
-    #if MICROPY_ENABLE_PYSTACK
-    MP_STATE_THREAD(pystack_cur) = top->pystack;
-    #endif
-    *top_ptr = top->prev;
-    longjmp(top->jmpbuf, 1);
-}
-
-#endif
+#endif // MICROPY_INCLUDED_PY_PYSTACK_H

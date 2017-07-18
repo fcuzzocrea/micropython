@@ -88,6 +88,9 @@ unsigned int nlr_push(nlr_buf_t *nlr) {
 __attribute__((used)) unsigned int nlr_push_tail(nlr_buf_t *nlr) {
     nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);
     nlr->prev = *top;
+    #if MICROPY_ENABLE_PYSTACK
+    nlr->pystack = MP_STATE_THREAD(pystack_cur);
+    #endif
     *top = nlr;
     return 0; // normal return
 }
@@ -105,6 +108,9 @@ NORETURN void nlr_jump(void *val) {
     }
 
     top->ret_val = val;
+    #if MICROPY_ENABLE_PYSTACK
+    MP_STATE_THREAD(pystack_cur) = top->pystack;
+    #endif
     *top_ptr = top->prev;
 
     __asm volatile (

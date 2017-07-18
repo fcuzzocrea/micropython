@@ -439,6 +439,12 @@
 #define MICROPY_ENABLE_FINALISER (0)
 #endif
 
+// Whether to enable a separate allocator for the Python stack.
+// If enabled then the code must call mp_pystack_init before mp_init.
+#ifndef MICROPY_ENABLE_PYSTACK
+#define MICROPY_ENABLE_PYSTACK (0)
+#endif
+
 // Whether to check C stack usage. C stack used for calling Python functions,
 // etc. Not checking means segfault on overflow.
 #ifndef MICROPY_STACK_CHECK

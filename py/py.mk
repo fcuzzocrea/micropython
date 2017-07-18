@@ -110,6 +110,7 @@ PY_O_BASENAME = \
 	malloc.o \
 	gc.o \
 	gcimmortal.o \
+	pystack.o \
 	qstr.o \
 	vstr.o \
 	mpprint.o \

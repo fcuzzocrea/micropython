@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "py/pystack.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 
@@ -168,6 +169,12 @@ STATIC void *thread_entry(void *args_in) {
     // set locals and globals from the calling context
     mp_locals_set(args->dict_locals);
     mp_globals_set(args->dict_globals);
+
+    #if MICROPY_ENABLE_PYSTACK
+    // TODO threading and pystack is not fully supported, for now just make a small stack
+    mp_obj_t mini_pystack[128];
+    mp_pystack_init(mini_pystack, &mini_pystack[128]);
+    #endif
 
     MP_THREAD_GIL_ENTER();
 
