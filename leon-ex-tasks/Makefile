@@ -36,7 +36,7 @@ else
 CFLAGS += -Os -DNDEBUG
 endif
 
-LIBS = -lm
+LIBS += -lm
 
 SRC_C = \
 	main.c \
@@ -60,7 +60,7 @@ SRC_S = \
 # they are executed in separate tasks
 SRC_PY = ex1.py ex2.py ex3.py ex4.py
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o))
+OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
 
 all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab $(BUILD)/scripts.srec
 

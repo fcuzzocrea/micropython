@@ -1,0 +1,3 @@
+The files in this directory provide the bare-minimum libc header files for
+MicroPython to build, for ports/toolchains that don't provide them.
+Implementations of the functions must be provided externally.

@@ -36,7 +36,7 @@ else
 CFLAGS += -Os -DNDEBUG
 endif
 
-LIBS = -lm
+LIBS += -lm
 
 SRC_C = \
 	main.c \
@@ -57,7 +57,7 @@ SRC_S = \
 	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o))
+OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
 
 all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab
 

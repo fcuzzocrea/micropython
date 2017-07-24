@@ -1,0 +1,4 @@
+#ifndef LIBC_INCLUDE_INCLUDED_STDINT_H
+#define LIBC_INCLUDE_INCLUDED_STDINT_H
+#include <stddef.h> // for size_t
+#endif // LIBC_INCLUDE_INCLUDED_STDINT_H

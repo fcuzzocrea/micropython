@@ -21,6 +21,11 @@ include ../py/py.mk
 # include LEON common makefile settings
 include $(LEON_COMMON_FROM_HERE)/mkenv.mk
 
+# the OBCP example needs printf which is not provided by the Edisoft toolchain
+ifeq ($(RTEMS_VER),4_8_EDI)
+$(error Cannot build OBCP example with RTEMS-4.8 Edisoft (printf is reqired))
+endif
+
 INC =
 INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
 
@@ -36,7 +41,7 @@ else
 CFLAGS += -Os -DNDEBUG
 endif
 
-LIBS = -lm
+LIBS += -lm
 
 # these are the Python scripts to compile into the binary
 SRC_PY = \
@@ -68,7 +73,7 @@ SRC_S = \
 	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o))
+OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
 
 all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab
 

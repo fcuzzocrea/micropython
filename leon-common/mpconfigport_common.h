@@ -34,8 +34,20 @@ typedef unsigned mp_uint_t;
 
 typedef long mp_off_t;
 
+#if RTEMS_4_8_EDISOFT
+
+// Edisoft doesn't have alloca(), so use m_malloc
+#define MICROPY_NO_ALLOCA (1)
+
+// Edisoft doesn't define offsetof, so use the RTEMS version
+#define offsetof(x, y) RTEMS_offsetof(x, y)
+
+#else
+
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
+
+#endif
 
 // INFINITY is not defined by toolchain
 #ifndef INFINITY
