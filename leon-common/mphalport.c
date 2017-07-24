@@ -6,15 +6,15 @@
  * MicroPython to LEON platforms", contract number 4000114080/15/NL/FE/as.
  */
 
-#include <unistd.h>
-#include <string.h>
 #include "py/mpconfig.h"
 #include "py/mphal.h"
 
 // Send string of given length
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
-    int r = write(1, str, len);
-    (void)r;
+    extern void console_outbyte_polled(int port, unsigned char ch);
+    while (len--) {
+        console_outbyte_polled(0, *str++);
+    }
 }
 
 #define MP_HAL_STDOUT_HEXLIFY_MAX_N (32)
