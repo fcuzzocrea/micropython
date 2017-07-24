@@ -46,7 +46,7 @@ STATIC mp_obj_t mod_rtems_timer_delete(mp_obj_t self_in) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_rtems_timer_delete_obj, mod_rtems_timer_delete);
 
 STATIC rtems_timer_service_routine f(rtems_id id, void* user_data) {
-    printf("||| here %d %p\n", (int)id, user_data);
+    mp_printf(&mp_plat_print, "||| here %d %p\n", (int)id, user_data);
     ((byte*)user_data)[0] = 0;
 }
 

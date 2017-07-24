@@ -110,7 +110,7 @@ void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc) {
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
     if (lex == NULL) {
-        printf("MemoryError: lexer could not allocate memory\n");
+        mp_printf(&mp_plat_print, "MemoryError: lexer could not allocate memory\n");
         return;
     }
 

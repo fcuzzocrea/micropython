@@ -93,11 +93,11 @@ rtems_task Init(rtems_task_argument ignored) {
 
 // this function is used as a hook to set a breakpoint to terminate emu
 void emu_terminate(void) {
-    printf("emu_terminate\n");
+    mp_printf(&mp_plat_print, "emu_terminate\n");
 }
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    printf("\nMicroPython manager task started\n");
+    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
 
     // detect the number of tasks needed by looking for valid scripts
     int num_tasks = 0;
@@ -111,7 +111,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             break;
         }
     }
-    printf("Detected %u scripts\n", num_tasks);
+    mp_printf(&mp_plat_print, "Detected %u scripts\n", num_tasks);
 
     // we must use hexlified output so it isn't modified by the UART
     mp_hal_stdout_enable_hexlify();
@@ -128,12 +128,12 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id[i]
         );
         if (status != RTEMS_SUCCESSFUL) {
-            printf("Error creating task #%u: %u\n", i, status);
+            mp_printf(&mp_plat_print, "Error creating task #%u: %u\n", i, status);
             emu_terminate();
         }
         status = rtems_task_start(task_id[i], mp_worker_task, i);
         if (status != RTEMS_SUCCESSFUL) {
-            printf("Error starting task #%u: %u\n", i, status);
+            mp_printf(&mp_plat_print, "Error starting task #%u: %u\n", i, status);
             emu_terminate();
         }
     }

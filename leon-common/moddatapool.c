@@ -49,7 +49,7 @@ void datapool_init(void *datapool_heap, size_t datapool_heap_size) {
     rtems_name name = rtems_build_name('M', 'P', 'D', 'P');
     rtems_status_code status = rtems_semaphore_create(name, 1, 0, 0, &datapool_sem);
     if (status != RTEMS_SUCCESSFUL) {
-        printf("datapool_init: error creating semaphore; %d\n", status);
+        mp_printf(&mp_plat_print, "datapool_init: error creating semaphore; %d\n", status);
         return;
     }
 

@@ -78,11 +78,11 @@ rtems_task Init(rtems_task_argument ignored) {
 
 // this function is used as a hook to set a breakpoint to terminate emu
 void emu_terminate(void) {
-    printf("emu_terminate\n");
+    mp_printf(&mp_plat_print, "emu_terminate\n");
 }
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    printf("\nMicroPython manager task started\n");
+    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
 
     rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];

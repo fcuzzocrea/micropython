@@ -84,7 +84,7 @@ rtems_task Init(rtems_task_argument ignored) {
 #include "scripts.h"
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    printf("\nMicroPython manager task started\n");
+    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
 
     rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
@@ -112,12 +112,12 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 
         // pause the script
         mp_vm_manager_pause(task_id[0], 1000000, &line);
-        printf("Manager got line %u\n", (uint)line);
+        mp_printf(&mp_plat_print, "Manager got line %u\n", (uint)line);
 
         // step through the script
         for (int i = 0; i < 3; ++i) {
             mp_vm_manager_step(task_id[0], 1000000, &line);
-            printf("Manager got line %u\n", (uint)line);
+            mp_printf(&mp_plat_print, "Manager got line %u\n", (uint)line);
         }
 
         // resume the script

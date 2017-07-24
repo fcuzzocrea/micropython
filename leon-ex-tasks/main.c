@@ -80,7 +80,7 @@ rtems_task Init(rtems_task_argument ignored) {
 #include "py/mphal.h"
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    printf("\nMicroPython manager task started\n");
+    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
 
     rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
