@@ -26,7 +26,7 @@
 #ifndef MICROPY_INCLUDED_PY_PYSTACK_H
 #define MICROPY_INCLUDED_PY_PYSTACK_H
 
-#include <stdint.h>
+#include <stdlib.h>
 
 void mp_pystack_init(void *start, void *end);
 void *mp_pystack_alloc(size_t n_bytes);
