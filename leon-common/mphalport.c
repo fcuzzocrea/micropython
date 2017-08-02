@@ -11,9 +11,9 @@
 
 // Send string of given length
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
-    extern void console_outbyte_polled(int port, unsigned char ch);
+    extern void output_a_character_to_leon2_port0(unsigned char c);
     while (len--) {
-        console_outbyte_polled(0, *str++);
+        output_a_character_to_leon2_port0(*str++);
     }
 }
 

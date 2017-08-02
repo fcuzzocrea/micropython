@@ -13,8 +13,8 @@
 # to be adjusted for your particular system.
 
 # Select one of these RTEMS versions
-#RTEMS_VER = 4_8_EDI
-RTEMS_VER = 4_8
+RTEMS_VER = 4_8_EDI
+#RTEMS_VER = 4_8
 #RTEMS_VER = 4_10
 #RTEMS_VER = 4_11
 
@@ -26,12 +26,8 @@ RTEMS_BASE = /opt/rtems-4.8/sparc-rtems4.8/leon2/lib
 CFLAGS += -DRTEMS_4_8 -DRTEMS_4_8_EDISOFT
 CFLAGS += -I$(LEON_COMMON_FROM_HERE)/libc-include
 CFLAGS += -B/opt/rtems-4.8/sparc-rtems4.8/leon2/lib
-CFLAGS += -B/opt/rtems-4.8/support/include
 LIBS += -Wl,--start-group -lrtemscpu -lio -lno_event -lmsg -lsem -ltimer -lno_rtmon -lno_ext -lrtemsbsp -lrtemscpu -Wl,--end-group
-LDFLAGS += -Wl,--wrap,_IO_Initialize_all_drivers
-SRC_RTEMS = \
-	/opt/rtems-4.8/support/src/leon2.c \
-	/opt/rtems-4.8/support/src/printk.c
+SRC_RTEMS = leon-common/leon2serial.c
 endif
 
 # Settings for RTEMS 4.8 Gaisler
