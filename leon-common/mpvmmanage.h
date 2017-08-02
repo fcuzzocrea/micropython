@@ -10,6 +10,11 @@
 
 #include <rtems.h>
 
+// This function is to be used by the VM manager task to initialise a given
+// VM worker task, specified by its MicroPython context.
+struct _mp_state_ctx_t;
+void mp_vm_worker_init(struct _mp_state_ctx_t *worker_ctx);
+
 // This function is to be used by VM worker tasks, which take scripts and
 // execute them.  It will block until some MPY code is available.
 void mp_vm_worker_wait_mpy(const uint8_t **buf, size_t *len);
@@ -25,8 +30,8 @@ void mp_vm_hook(const struct _mp_code_state_t *code_state);
 // Note: these functions are not thread safe and assume that each VM worker
 // task has a unique VM manager task associated with it.  Making them thread
 // safe would require the use of a semaphore.
-rtems_status_code mp_vm_manager_start_mpy(rtems_id task_id, const uint8_t* buf, size_t len);
-rtems_status_code mp_vm_manager_pause(rtems_id task_id, rtems_interval ticks_timeout, uint32_t *source_line);
-rtems_status_code mp_vm_manager_resume(rtems_id task_id, rtems_interval ticks_timeout);
-rtems_status_code mp_vm_manager_step(rtems_id task_id, rtems_interval ticks_timeout, uint32_t *source_line);
-rtems_status_code mp_vm_manager_exit(rtems_id task_id, rtems_interval ticks_timeout, uint32_t exit_code);
+rtems_status_code mp_vm_manager_start_mpy(struct _mp_state_ctx_t *worker_ctx, const uint8_t* buf, size_t len);
+rtems_status_code mp_vm_manager_pause(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t *source_line);
+rtems_status_code mp_vm_manager_resume(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms);
+rtems_status_code mp_vm_manager_step(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t *source_line);
+rtems_status_code mp_vm_manager_exit(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t exit_code);
