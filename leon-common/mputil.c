@@ -17,7 +17,6 @@
 #include "py/persistentcode.h"
 #include "py/mphal.h"
 #include "leon-common/mputil.h"
-#include "leon-common/mpvmmanage.h"
 
 // Get the source file of a given function object.
 qstr mp_obj_fun_get_source(mp_const_obj_t fun_in) {
