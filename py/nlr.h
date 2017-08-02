@@ -79,7 +79,7 @@ NORETURN void nlr_setjmp_jump(void *val);
 // nlr_push() must be defined as a macro, because "The stack context will be
 // invalidated if the function which called setjmp() returns."
 #if MICROPY_ENABLE_PYSTACK
-#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top)->pystack = MP_STATE_THREAD(pystack_cur), MP_STATE_THREAD(nlr_top) = (buf), setjmp((buf)->jmpbuf))
+#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), (buf)->pystack = MP_STATE_THREAD(pystack_cur), MP_STATE_THREAD(nlr_top) = (buf), setjmp((buf)->jmpbuf))
 #else
 #define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top) = (buf), setjmp((buf)->jmpbuf))
 #endif
