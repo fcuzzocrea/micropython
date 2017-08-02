@@ -74,7 +74,7 @@ rtems_task Init(rtems_task_argument ignored) {
 /******************************************************************************/
 // MicroPython manager task
 
-#include "py/mphal.h"
+#include "py/mpprint.h"
 
 // this function is used as a hook to set a breakpoint to terminate emu
 void emu_terminate(void) {

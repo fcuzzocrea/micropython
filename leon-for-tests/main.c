@@ -89,6 +89,7 @@ rtems_task Init(rtems_task_argument ignored) {
 #define MPY_MEM_BASE   (0x40100000)
 #define MPY_MEM_STRIDE (0x00010000)
 
+#include "py/mpprint.h"
 #include "py/mphal.h"
 
 // this function is used as a hook to set a breakpoint to terminate emu

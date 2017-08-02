@@ -77,7 +77,7 @@ rtems_task Init(rtems_task_argument ignored) {
 /******************************************************************************/
 // MicroPython manager task
 
-#include "py/mphal.h"
+#include "py/mpprint.h"
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
     mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
