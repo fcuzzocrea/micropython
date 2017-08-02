@@ -70,6 +70,7 @@ mp_uint_t mp_hal_ticks_us(void);
 mp_uint_t mp_hal_ticks_cpu(void);
 #endif
 
+#if MICROPY_PY_MACHINE
 // If port HAL didn't define its own pin API, use generic
 // "virtual pin" API from the core.
 #ifndef mp_hal_pin_obj_t
@@ -78,6 +79,7 @@ mp_uint_t mp_hal_ticks_cpu(void);
 #define mp_hal_pin_read(pin) mp_virtual_pin_read(pin)
 #define mp_hal_pin_write(pin, v) mp_virtual_pin_write(pin, v)
 #include "extmod/virtpin.h"
+#endif
 #endif
 
 #endif // MICROPY_INCLUDED_PY_MPHAL_H
