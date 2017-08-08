@@ -26,17 +26,6 @@ rtems_task obcp_task_tc(rtems_task_argument task_arg) {
 
     printf("TC task started\n");
 
-    // get the id of the worker tasks
-    rtems_id mpw[VM_WORKER_NUM_TASKS];
-    for (int i = 0; i < VM_WORKER_NUM_TASKS; ++i) {
-        rtems_name name = rtems_build_name('M', 'P', 'W', '0' + i);
-        status = rtems_task_ident(name, RTEMS_SEARCH_ALL_NODES, &mpw[i]);
-        if (status != RTEMS_SUCCESSFUL) {
-            printf("TC: error getting VM worker task: %d\n", status);
-            return;
-        }
-    }
-
     // get the id of the TC queue
     rtems_id tcq_id;
     {
@@ -102,7 +91,7 @@ rtems_task obcp_task_tc(rtems_task_argument task_arg) {
                         printf("[%6.3f] TC vm=%u len=%u SHA256 FAIL\n", get_time(), vm_id, len);
                     } else {
                         printf("[%6.3f] TC vm=%u len=%u SHA256 PASS\n", get_time(), vm_id, len);
-                        mp_vm_manager_start_mpy(mpw[vm_id], mpy_buf, len);
+                        mp_vm_manager_start_mpy(get_vm_worker_ctx(vm_id), mpy_buf, len);
                     }
                     break;
                 }

@@ -92,3 +92,7 @@ typedef struct {
 
 void set_start_time(void);
 double get_time(void);
+
+// Accessor to get the state for each VM worker
+struct _mp_state_ctx_t;
+extern struct _mp_state_ctx_t *get_vm_worker_ctx(int id);

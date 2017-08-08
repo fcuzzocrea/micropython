@@ -24,6 +24,10 @@
 static mp_state_ctx_t mp_state_ctx[VM_WORKER_NUM_TASKS];
 static byte mp_heap[VM_WORKER_NUM_TASKS * VM_WORKER_HEAP_SIZE];
 
+mp_state_ctx_t *get_vm_worker_ctx(int id) {
+    return &mp_state_ctx[id];
+}
+
 rtems_task obcp_task_mp_worker(rtems_task_argument task_index) {
     printf("MicroPython worker task %d started\n", task_index);
 

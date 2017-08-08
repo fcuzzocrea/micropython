@@ -23,6 +23,7 @@ rtems_task mp_worker_task(rtems_task_argument unused);
 
 #include <rtems/confdefs.h>
 #include "obcp.h"
+#include "leon-common/mpvmmanage.h"
 #include "leon-common/moddatapool.h"
 
 static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
@@ -62,6 +63,9 @@ rtems_task Init(rtems_task_argument ignored) {
 
     // initialise the timer subsystem
     _Timer_Manager_initialization(2);
+
+    // initialise POSIX components
+    _POSIX_Semaphore_Manager_initialization(VM_WORKER_NUM_TASKS * 2);
 
     // print a message to indicate start-up
     printf("\nOBCP program started\n");
@@ -140,6 +144,7 @@ rtems_task Init(rtems_task_argument ignored) {
             printf("Error creating VM task #%u: %u\n", i, status);
             return;
         }
+        mp_vm_worker_init(get_vm_worker_ctx(i));
         status = rtems_task_start(task_id, obcp_task_mp_worker, i);
         if (status != RTEMS_SUCCESSFUL) {
             printf("Error starting VM task #%u: %u\n", i, status);
