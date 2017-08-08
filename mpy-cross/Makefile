@@ -72,3 +72,8 @@ OBJ = $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
 include ../py/mkrules.mk
+
+# Preprocess all the source files, producing .pp output in the $(BUILD) dir.
+# We first build all the object files so that qstrs etc are generated correctly.
+PREPROC_IGNORE = py/emitn%.pp
+preprocess: $(OBJ) $(filter-out $(addprefix $(BUILD)/,$(PREPROC_IGNORE)),$(OBJ:.o=.pp))
