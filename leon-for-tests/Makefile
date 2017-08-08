@@ -42,7 +42,6 @@ SRC_C = \
 	main.c \
 	lib/libc/string0.c \
 	$(LEON_COMMON)/mputil.c \
-	$(LEON_COMMON)/mpvmmanage.c \
 	$(LEON_COMMON)/mphalport.c \
 	$(LEON_COMMON)/modtime.c \
 	$(LEON_COMMON)/modrtems.c \
