@@ -73,4 +73,9 @@ $(BUILD)/firmware.tab: $(BUILD)/firmware.elf
 	$(ECHO) "TAB $@"
 	$(Q)$(OBJDUMP) --syms $< > $@   
 
+# Preprocess all the source files, producing .pp output in the $(BUILD) dir.
+# We first build all the object files so that qstrs etc are generated correctly.
+PREPROC_IGNORE = py/emitn%.pp leon-common/sparcjmp.pp leon-common/gchelper.pp
+preprocess: $(OBJ) $(filter-out $(addprefix $(BUILD)/,$(PREPROC_IGNORE)),$(OBJ:.o=.pp))
+
 include ../py/mkrules.mk
