@@ -89,7 +89,7 @@ NORETURN void nlr_setjmp_jump(void *val);
 #if MICROPY_NLR_SPARC
 // nlr_push() is a macro because it must not call the save/restore instructions
 int sparc_setjmp(void *env);
-#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), MP_STATE_THREAD(nlr_top) = (buf), sparc_setjmp((buf)->regs))
+#define nlr_push(buf) ((buf)->prev = MP_STATE_THREAD(nlr_top), (buf)->pystack = MP_STATE_THREAD(pystack_cur), MP_STATE_THREAD(nlr_top) = (buf), sparc_setjmp((buf)->regs))
 #else
 unsigned int nlr_push(nlr_buf_t *);
 #endif

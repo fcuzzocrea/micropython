@@ -43,6 +43,9 @@ NORETURN void nlr_jump(void *val) {
         nlr_jump_fail(val);
     }
     top->ret_val = val;
+    #if MICROPY_ENABLE_PYSTACK
+    MP_STATE_THREAD(pystack_cur) = top->pystack;
+    #endif
     *top_ptr = top->prev;
     sparc_longjmp(top->regs, 1);
 }
