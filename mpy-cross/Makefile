@@ -23,10 +23,10 @@ QSTR_DEFS = qstrdefsport.h
 UNAME_S := $(shell uname -s)
 
 # include py core make definitions
-include ../py/py.mk
+include $(TOP)/py/py.mk
 
 INC +=  -I.
-INC +=  -I..
+INC +=  -I$(TOP)
 INC += -I$(BUILD)
 
 # compiler settings
@@ -71,7 +71,7 @@ endif
 OBJ = $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
-include ../py/mkrules.mk
+include $(TOP)/py/mkrules.mk
 
 # Preprocess all the source files, producing .pp output in the $(BUILD) dir.
 # We first build all the object files so that qstrs etc are generated correctly.
