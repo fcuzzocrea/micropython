@@ -145,7 +145,7 @@ void mp_irq_handler (mp_obj_t self_in) {
 /******************************************************************************/
 // MicroPython bindings
 
-STATIC mp_obj_t mp_irq_init (mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+STATIC mp_obj_t mp_irq_init(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     mp_irq_obj_t *self = pos_args[0];
     // this is a bit of a hack, but it let us reuse the callback_create method from our parent
     ((mp_obj_t *)pos_args)[0] = self->parent;
@@ -182,12 +182,12 @@ STATIC mp_obj_t mp_irq_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const 
     return mp_const_none;
 }
 
-STATIC const mp_map_elem_t mp_irq_locals_dict_table[] = {
+STATIC const mp_rom_map_elem_t mp_irq_locals_dict_table[] = {
     // instance methods
-    { MP_OBJ_NEW_QSTR(MP_QSTR_init),                (mp_obj_t)&mp_irq_init_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_enable),              (mp_obj_t)&mp_irq_enable_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_disable),             (mp_obj_t)&mp_irq_disable_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_flags),               (mp_obj_t)&mp_irq_flags_obj },
+    { MP_ROM_QSTR(MP_QSTR_init),                MP_ROM_PTR(&mp_irq_init_obj) },
+    { MP_ROM_QSTR(MP_QSTR_enable),              MP_ROM_PTR(&mp_irq_enable_obj) },
+    { MP_ROM_QSTR(MP_QSTR_disable),             MP_ROM_PTR(&mp_irq_disable_obj) },
+    { MP_ROM_QSTR(MP_QSTR_flags),               MP_ROM_PTR(&mp_irq_flags_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(mp_irq_locals_dict, mp_irq_locals_dict_table);

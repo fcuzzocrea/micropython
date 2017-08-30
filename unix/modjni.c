@@ -64,7 +64,7 @@ STATIC const mp_obj_type_t jmethod_type;
 
 STATIC mp_obj_t new_jobject(jobject jo);
 STATIC mp_obj_t new_jclass(jclass jc);
-STATIC mp_obj_t call_method(jobject obj, const char *name, jarray methods, bool is_constr, mp_uint_t n_args, const mp_obj_t *args);
+STATIC mp_obj_t call_method(jobject obj, const char *name, jarray methods, bool is_constr, size_t n_args, const mp_obj_t *args);
 STATIC bool py2jvalue(const char **jtypesig, mp_obj_t arg, jvalue *out);
 
 typedef struct _mp_obj_jclass_t {
@@ -293,7 +293,7 @@ STATIC mp_obj_t jobject_subscr(mp_obj_t self_in, mp_obj_t index, mp_obj_t value)
 return MP_OBJ_NULL;
 }
 
-STATIC mp_obj_t jobject_unary_op(mp_uint_t op, mp_obj_t self_in) {
+STATIC mp_obj_t jobject_unary_op(mp_unary_op_t op, mp_obj_t self_in) {
     mp_obj_jobject_t *self = self_in;
     switch (op) {
         case MP_UNARY_OP_BOOL:
@@ -463,7 +463,7 @@ STATIC mp_obj_t jvalue2py(const char *jtypesig, jobject arg) {
 }
 #endif
 
-STATIC mp_obj_t call_method(jobject obj, const char *name, jarray methods, bool is_constr, mp_uint_t n_args, const mp_obj_t *args) {
+STATIC mp_obj_t call_method(jobject obj, const char *name, jarray methods, bool is_constr, size_t n_args, const mp_obj_t *args) {
     jvalue jargs[n_args];
 //    printf("methods=%p\n", methods);
     jsize num_methods = JJ(GetArrayLength, methods);

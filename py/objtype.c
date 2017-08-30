@@ -345,7 +345,7 @@ const qstr mp_unary_op_method_name[] = {
     [MP_UNARY_OP_NOT] = MP_QSTR_, // don't need to implement this, used to make sure array has full size
 };
 
-STATIC mp_obj_t instance_unary_op(mp_uint_t op, mp_obj_t self_in) {
+STATIC mp_obj_t instance_unary_op(mp_unary_op_t op, mp_obj_t self_in) {
     mp_obj_instance_t *self = MP_OBJ_TO_PTR(self_in);
 
     #if MICROPY_PY_SYS_GETSIZEOF
@@ -452,7 +452,7 @@ const qstr mp_binary_op_method_name[] = {
     [MP_BINARY_OP_EXCEPTION_MATCH] = MP_QSTR_, // not implemented, used to make sure array has full size
 };
 
-STATIC mp_obj_t instance_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
+STATIC mp_obj_t instance_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
     // Note: For ducktyping, CPython does not look in the instance members or use
     // __getattr__ or __getattribute__.  It only looks in the class dictionary.
     mp_obj_instance_t *lhs = MP_OBJ_TO_PTR(lhs_in);
@@ -471,14 +471,28 @@ STATIC mp_obj_t instance_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_i
         .is_type = false,
     };
     mp_obj_class_lookup(&lookup, lhs->base.type);
+
+    mp_obj_t res;
     if (dest[0] == MP_OBJ_SENTINEL) {
-        return mp_binary_op(op, lhs->subobj[0], rhs_in);
+        res = mp_binary_op(op, lhs->subobj[0], rhs_in);
     } else if (dest[0] != MP_OBJ_NULL) {
         dest[2] = rhs_in;
-        return mp_call_method_n_kw(1, 0, dest);
+        res = mp_call_method_n_kw(1, 0, dest);
     } else {
         return MP_OBJ_NULL; // op not supported
     }
+
+    #if MICROPY_PY_BUILTINS_NOTIMPLEMENTED
+    // NotImplemented means "try other fallbacks (like calling __rop__
+    // instead of __op__) and if nothing works, raise TypeError". As
+    // MicroPython doesn't implement any fallbacks, signal to raise
+    // TypeError right away.
+    if (res == mp_const_notimplemented) {
+        return MP_OBJ_NULL; // op not supported
+    }
+    #endif
+
+    return res;
 }
 
 STATIC void mp_obj_instance_load_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
