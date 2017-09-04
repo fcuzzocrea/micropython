@@ -70,8 +70,13 @@ rtems_task Init(rtems_task_argument ignored) {
         task_name, 1, RTEMS_MINIMUM_STACK_SIZE, RTEMS_DEFAULT_MODES,
         MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id
     );
+    if (status != RTEMS_SUCCESSFUL) {
+        return;
+    }
     status = rtems_task_start(task_id, mp_manager_task, 0);
-    (void)status; // status not checked
+    if (status != RTEMS_SUCCESSFUL) {
+        return;
+    }
     rtems_task_delete(RTEMS_SELF);
 }
 
