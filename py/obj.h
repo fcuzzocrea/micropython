@@ -630,7 +630,6 @@ extern const struct _mp_obj_exception_t mp_const_GeneratorExit_obj;
 // General API for objects
 
 mp_obj_t mp_obj_new_type(qstr name, mp_obj_t bases_tuple, mp_obj_t locals_dict);
-mp_obj_t mp_obj_new_none(void);
 static inline mp_obj_t mp_obj_new_bool(mp_int_t x) { return x ? mp_const_true : mp_const_false; }
 mp_obj_t mp_obj_new_cell(mp_obj_t obj);
 mp_obj_t mp_obj_new_int(mp_int_t value);
@@ -686,6 +685,7 @@ mp_int_t mp_obj_get_int_truncated(mp_const_obj_t arg);
 bool mp_obj_get_int_maybe(mp_const_obj_t arg, mp_int_t *value);
 #if MICROPY_PY_BUILTINS_FLOAT
 mp_float_t mp_obj_get_float(mp_obj_t self_in);
+bool mp_obj_get_float_maybe(mp_obj_t arg, mp_float_t *value);
 void mp_obj_get_complex(mp_obj_t self_in, mp_float_t *real, mp_float_t *imag);
 #endif
 //qstr mp_obj_get_qstr(mp_obj_t arg);
