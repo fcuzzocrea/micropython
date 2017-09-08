@@ -234,6 +234,7 @@ mp_obj_t mp_obj_complex_binary_op(mp_binary_op_t op, mp_float_t lhs_real, mp_flo
                 }
             } else {
                 mp_float_t ln1 = MICROPY_FLOAT_C_FUN(log)(abs1);
+                /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
                 mp_float_t arg1 = MICROPY_FLOAT_C_FUN(atan2)(lhs_imag, lhs_real);
                 mp_float_t x3 = rhs_real * ln1 - rhs_imag * arg1;
                 mp_float_t y3 = rhs_imag * ln1 + rhs_real * arg1;

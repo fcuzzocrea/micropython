@@ -34,6 +34,7 @@
 STATIC mp_obj_t mp_cmath_phase(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
+    /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
     return mp_obj_new_float(MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_phase_obj, mp_cmath_phase);
@@ -44,6 +45,7 @@ STATIC mp_obj_t mp_cmath_polar(mp_obj_t z_obj) {
     mp_obj_get_complex(z_obj, &real, &imag);
     mp_obj_t tuple[2] = {
         mp_obj_new_float(MICROPY_FLOAT_C_FUN(sqrt)(real*real + imag*imag)),
+        /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
         mp_obj_new_float(MICROPY_FLOAT_C_FUN(atan2)(imag, real)),
     };
     return mp_obj_new_tuple(2, tuple);
@@ -72,6 +74,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_exp_obj, mp_cmath_exp);
 STATIC mp_obj_t mp_cmath_log(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
+    /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
     return mp_obj_new_complex(0.5 * MICROPY_FLOAT_C_FUN(log)(real*real + imag*imag), MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log_obj, mp_cmath_log);
@@ -91,6 +94,7 @@ STATIC mp_obj_t mp_cmath_sqrt(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
     mp_float_t sqrt_abs = MICROPY_FLOAT_C_FUN(pow)(real*real + imag*imag, 0.25);
+    /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
     mp_float_t theta = 0.5 * MICROPY_FLOAT_C_FUN(atan2)(imag, real);
     return mp_obj_new_complex(sqrt_abs * MICROPY_FLOAT_C_FUN(cos)(theta), sqrt_abs * MICROPY_FLOAT_C_FUN(sin)(theta));
 }
