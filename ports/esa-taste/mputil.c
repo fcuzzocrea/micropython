@@ -181,6 +181,8 @@ void mp_mpy_modules_register(const byte *buf, size_t len) {
 
 // Hook for the runtime to stat the filesystem for a module.
 mp_import_stat_t mp_import_stat(const char *path) {
+    (void)path;
+
     #if MICROPY_ENABLE_MPY_MODULES
     for (mp_mpy_module_t *rf = MP_STATE_PORT(mpy_modules); rf != NULL; rf = rf->next) {
         if (strcmp(rf->filename, path) == 0) {
@@ -195,6 +197,8 @@ mp_import_stat_t mp_import_stat(const char *path) {
 
 // Hook for the runtime to load raw code (.mpy) from a file.
 mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
+    (void)filename;
+
     #if MICROPY_ENABLE_MPY_MODULES
     for (mp_mpy_module_t *rf = MP_STATE_PORT(mpy_modules); rf != NULL; rf = rf->next) {
         if (strcmp(rf->filename, filename) == 0) {
