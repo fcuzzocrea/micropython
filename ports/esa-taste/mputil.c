@@ -11,6 +11,7 @@
 #include "py/nlr.h"
 #include "py/compile.h"
 #include "py/runtime.h"
+#include "py/objtuple.h"
 #include "py/objfun.h"
 #include "py/bc.h"
 #include "py/builtin.h"
@@ -241,3 +242,48 @@ void nlr_jump_fail(void *val) {
     for (;;) {
     }
 }
+
+/******************************************************************************/
+// Implementation of mutable attrtuple
+
+// this is the same as mp_obj_attrtuple_print but that function is currently static
+STATIC void mp_obj_mutable_attrtuple_print(const mp_print_t *print, mp_obj_t o_in, mp_print_kind_t kind) {
+    (void)kind;
+    mp_obj_tuple_t *o = MP_OBJ_TO_PTR(o_in);
+    const qstr *fields = (const qstr*)MP_OBJ_TO_PTR(o->items[o->len]);
+    mp_obj_attrtuple_print_helper(print, fields, o);
+}
+
+STATIC void mp_obj_mutable_attrtuple_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
+    mp_obj_tuple_t *self = MP_OBJ_TO_PTR(self_in);
+    size_t len = self->len;
+    const qstr *fields = (const qstr*)MP_OBJ_TO_PTR(self->items[len]);
+    for (size_t i = 0; i < len; i++) {
+        if (fields[i] == attr) {
+            if (dest[0] == MP_OBJ_NULL) {
+                // load attribute
+                dest[0] = self->items[i];
+                return;
+            } else if (dest[1] != MP_OBJ_NULL) {
+                // store attribute
+                self->items[i] = dest[1];
+                dest[0] = MP_OBJ_NULL; // indicate success
+                return;
+            } else {
+                // delete attribute, not allowed
+                return;
+            }
+        }
+    }
+}
+
+const mp_obj_type_t mp_type_mutable_attrtuple = {
+    { &mp_type_type },
+    .name = MP_QSTR_tuple, // reuse tuple to save on a qstr
+    .print = mp_obj_mutable_attrtuple_print,
+    .unary_op = mp_obj_tuple_unary_op,
+    .binary_op = mp_obj_tuple_binary_op,
+    .attr = mp_obj_mutable_attrtuple_attr,
+    .subscr = mp_obj_tuple_subscr,
+    .getiter = mp_obj_tuple_getiter,
+};

@@ -19,6 +19,8 @@ typedef struct _mp_exc_location_t {
      const char *block; // NULL if block is unknown
 } mp_exc_location_t;
 
+extern const mp_obj_type_t mp_type_mutable_attrtuple;
+
 void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc);
 void mp_exec_str(const char *src, mp_parse_input_kind_t input_kind);
 mp_obj_t mp_exec_mpy_with_exc(const byte *buf, size_t len);
