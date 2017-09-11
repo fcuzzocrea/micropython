@@ -54,21 +54,15 @@
 
 // configuration for 64-bit NaN boxing
 #define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_D)
-#define BYTES_PER_WORD (8)
 typedef int64_t mp_int_t;
 typedef uint64_t mp_uint_t;
-#define UINT_FMT "%llu"
-#define INT_FMT "%lld"
 
 #else
 
 // configuration for objects with machine-word size
 #define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_A)
-#define BYTES_PER_WORD (4)
-#define UINT_FMT "%u"
-#define INT_FMT "%d"
-typedef int mp_int_t;
-typedef unsigned mp_uint_t;
+typedef intptr_t mp_int_t;
+typedef uintptr_t mp_uint_t;
 
 #endif
 
