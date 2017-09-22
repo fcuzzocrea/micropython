@@ -29,3 +29,20 @@ uint32_t mp_exec_mpy(const byte *buf, size_t len);
 
 void mp_mpy_modules_init(void);
 void mp_mpy_modules_register(const byte *buf, size_t len);
+
+/******************************************************************************/
+// Interface of the Access type, used to store a reference to an object
+
+#define MP_OBJ_ACCESS_INIT(obj) {{&mp_type_mutable_attrtuple}, 1, obj, MP_OBJ_FROM_PTR(mp_obj_access_fields)}
+
+typedef struct _mp_obj_access_t {
+    mp_obj_base_t base;
+    size_t len;
+    mp_obj_t items[2];
+} mp_obj_access_t;
+
+extern qstr mp_obj_access_fields[1];
+
+mp_obj_t mp_obj_new_access(mp_obj_t arg);
+MP_DECLARE_CONST_FUN_OBJ_1(mp_obj_new_access_obj);
+mp_obj_t *mp_obj_access_get_items(mp_obj_t self);

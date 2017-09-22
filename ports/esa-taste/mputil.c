@@ -287,3 +287,29 @@ const mp_obj_type_t mp_type_mutable_attrtuple = {
     .subscr = mp_obj_tuple_subscr,
     .getiter = mp_obj_tuple_getiter,
 };
+
+/******************************************************************************/
+// Implementation of the Access type
+
+qstr mp_obj_access_fields[1] = {MP_QSTR_all};
+
+mp_obj_t mp_obj_new_access(mp_obj_t arg) {
+    mp_obj_access_t *self = m_new_obj(mp_obj_access_t);
+    self->base.type = &mp_type_mutable_attrtuple;
+    self->len = 1;
+    self->items[0] = arg;
+    self->items[1] = MP_OBJ_FROM_PTR(mp_obj_access_fields);
+    return MP_OBJ_FROM_PTR(self);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(mp_obj_new_access_obj, mp_obj_new_access);
+
+mp_obj_t *mp_obj_access_get_items(mp_obj_t self_in) {
+    if (mp_obj_get_type(self_in) != &mp_type_mutable_attrtuple) {
+        mp_raise_TypeError("expecting an Access type");
+    }
+    mp_obj_access_t *self = MP_OBJ_TO_PTR(self_in);
+    if (self->len != 1 || MP_OBJ_TO_PTR(self->items[1]) != mp_obj_access_fields) {
+        mp_raise_TypeError("expecting an Access type");
+    }
+    return self->items;
+}
