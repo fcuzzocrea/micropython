@@ -441,6 +441,13 @@ const qstr mp_binary_op_method_name[] = {
     MP_BINARY_OP_INPLACE_TRUE_DIVIDE,
     MP_BINARY_OP_INPLACE_MODULO,
     MP_BINARY_OP_INPLACE_POWER,*/
+
+    #if MICROPY_PY_REVERSE_SPECIAL_METHODS
+    [MP_BINARY_OP_REVERSE_ADD] = MP_QSTR___radd__,
+    [MP_BINARY_OP_REVERSE_SUBTRACT] = MP_QSTR___rsub__,
+    [MP_BINARY_OP_REVERSE_MULTIPLY] = MP_QSTR___rmul__,
+    #endif
+
     [MP_BINARY_OP_LESS] = MP_QSTR___lt__,
     [MP_BINARY_OP_MORE] = MP_QSTR___gt__,
     [MP_BINARY_OP_EQUAL] = MP_QSTR___eq__,
@@ -453,7 +460,7 @@ const qstr mp_binary_op_method_name[] = {
     /*
     MP_BINARY_OP_IS,
     */
-    [MP_BINARY_OP_EXCEPTION_MATCH] = MP_QSTR_, // not implemented, used to make sure array has full size
+    [MP_BINARY_OP_LAST] = 0, // used to make sure array has full size, TODO: FIXME
 };
 
 STATIC mp_obj_t instance_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {

@@ -28,7 +28,6 @@
 
 #include "usbd_cdc_msc_hid0.h"
 
-#define PYB_USB_FLAG_DEV_ENABLED        (0x0001)
 #define PYB_USB_FLAG_USB_MODE_CALLED    (0x0002)
 
 // Windows needs a different PID to distinguish different device configurations
@@ -44,8 +43,8 @@ typedef enum {
 } pyb_usb_storage_medium_t;
 
 typedef enum {
-	USB_PHY_FS_ID = 0,
-	USB_PHY_HS_ID = 1,
+    USB_PHY_FS_ID = 0,
+    USB_PHY_HS_ID = 1,
 } USB_PHY_ID;
 
 extern mp_uint_t pyb_usb_flags;
