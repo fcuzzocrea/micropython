@@ -1,1 +1,3 @@
-ValueError: 
+Traceback (most recent call last):
+  File "CORE_MICROPYTHON/emg_exc.py", line 15, in f
+ValueError: 1
