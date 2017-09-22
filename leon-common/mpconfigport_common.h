@@ -14,6 +14,8 @@
 
 // configuration for 64-bit NaN boxing
 #define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_D)
+#define UINT_FMT "%llu"
+#define INT_FMT "%lld"
 typedef int64_t mp_int_t;
 typedef uint64_t mp_uint_t;
 
