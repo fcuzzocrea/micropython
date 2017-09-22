@@ -12,11 +12,14 @@
 #include "py/bc.h"
 #include "py/obj.h"
 
+#define MP_EXC_LOCATION_MSG_LEN (80)
+
 // data structure used to return location of an exception
 typedef struct _mp_exc_location_t {
-     const char *filename; // always a valid string
-     uint32_t line; // 0 if line numbers are not enabled
-     const char *block; // NULL if block is unknown
+    const char *filename; // always a valid string
+    uint32_t line; // 0 if line numbers are not enabled
+    const char *block; // NULL if block is unknown
+    char exc_msg[MP_EXC_LOCATION_MSG_LEN]; // ASCIIZ string of the message
 } mp_exc_location_t;
 
 qstr mp_obj_fun_get_source(mp_const_obj_t fun_in);

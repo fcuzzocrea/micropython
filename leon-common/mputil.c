@@ -84,6 +84,25 @@ size_t mp_code_state_get_line(const mp_code_state_t *code_state, qstr *source_fi
     return source_line;
 }
 
+// The following struct and function implement a simple printer that truncates the
+// output data if it doesn't fit in the given buffer, leaving room for a null byte.
+
+struct _exc_printer_t {
+    size_t alloc;
+    size_t len;
+    char *buf;
+};
+
+STATIC void exc_add_strn(void *data, const char *str, size_t len) {
+    struct _exc_printer_t *pr = data;
+    if (pr->len + len >= pr->alloc) {
+        // Not enough room so truncate data (and leave room for a null byte)
+        len = pr->alloc - pr->len - 1;
+    }
+    memcpy(pr->buf + pr->len, str, len);
+    pr->len += len;
+}
+
 // Get the location of an exception from the traceback data of the object.
 void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc) {
     exc_loc->filename = "unknown";
@@ -102,6 +121,12 @@ void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc) {
             }
         }
     }
+
+    // Render the exception message into the given buffer
+    struct _exc_printer_t printer = {sizeof(exc_loc->exc_msg), 0, &exc_loc->exc_msg[0]};
+    mp_print_t print = {&printer, exc_add_strn};
+    mp_obj_print_helper(&print, exc, PRINT_EXC);
+    exc_loc->exc_msg[printer.len] = '\0'; // add null terminating byte
 }
 
 #if MICROPY_ENABLE_COMPILER
