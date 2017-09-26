@@ -11,7 +11,6 @@
 extern const mp_obj_module_t mp_module_rtems_task;
 extern const mp_obj_module_t mp_module_rtems_queue;
 extern const mp_obj_module_t mp_module_rtems_sem;
-extern const mp_obj_module_t mp_module_rtems_timer;
 
 void mod_rtems_status_code_check(rtems_status_code status);
 rtems_name mod_rtems_name_from_obj(mp_obj_t name_in);
