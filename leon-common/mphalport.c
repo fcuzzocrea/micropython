@@ -67,7 +67,10 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     */
 
     if (mp_hal_stdout_hexlify) {
-        static const uint8_t to_hex[16] = "0123456789abcdef";
+        static const uint8_t to_hex[16] = {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+        };
         while (len--) {
             char buf[2];
             if (mp_hal_stdout_hexlify_n >= MP_HAL_STDOUT_HEXLIFY_MAX_N) {
