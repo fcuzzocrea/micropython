@@ -57,3 +57,7 @@ typedef long mp_off_t;
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
 #define MP_STATE_THREAD(x) (MP_STATE_PTR->thread.x)
 #define MP_STATE_PORT MP_STATE_VM
+
+// The static analyser doesn't understand __builtin_expect so don't use it
+#define MP_LIKELY(x) (x)
+#define MP_UNLIKELY(x) (x)
