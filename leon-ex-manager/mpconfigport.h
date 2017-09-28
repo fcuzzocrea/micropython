@@ -64,11 +64,11 @@ extern const struct _mp_obj_module_t mp_module_mem;
     { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
 
 // Root pointers
-#include <semaphore.h>
+#include "leon-common/mpsem.h"
 #define MICROPY_PORT_ROOT_POINTERS \
     mp_obj_t rtems_script_id; \
-    sem_t rtems_worker_sem_in; \
-    sem_t rtems_worker_sem_out; \
+    mp_sem_t rtems_worker_sem_in; \
+    mp_sem_t rtems_worker_sem_out; \
     uint32_t rtems_worker_signal; \
     uint32_t rtems_worker_info0; \
     uint32_t rtems_worker_info1; \

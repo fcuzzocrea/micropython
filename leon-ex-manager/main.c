@@ -14,14 +14,13 @@
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
 #define CONFIGURE_MAXIMUM_TASKS (4)
+#define CONFIGURE_MAXIMUM_POSIX_SEMAPHORES (MICROPY_RTEMS_NUM_TASKS * 2)
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_EXTRA_TASK_STACKS (3 * RTEMS_MINIMUM_STACK_SIZE)
 
 rtems_task Init(rtems_task_argument argument);
 rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
-
-#include <rtems/confdefs.h>
 
 #define MICROPY_RTEMS_TASK_ATTRIBUTES (RTEMS_APPLICATION_TASK | RTEMS_FLOATING_POINT)
 #define MICROPY_RTEMS_STACK_SIZE (RTEMS_MINIMUM_STACK_SIZE * 2)
@@ -30,6 +29,9 @@ rtems_task mp_worker_task(rtems_task_argument unused);
 #ifndef MICROPY_RTEMS_NUM_TASKS
 #define MICROPY_RTEMS_NUM_TASKS (1)
 #endif
+
+#include <rtems/confdefs.h>
+#include "leon-common/mpsem.h"
 
 /******************************************************************************/
 // RTEMS initialisation task
@@ -61,8 +63,8 @@ rtems_task Init(rtems_task_argument ignored) {
     _Timer_Manager_initialization();
     #endif
 
-    // initialise POSIX components
-    _POSIX_Semaphore_Manager_initialization(MICROPY_RTEMS_NUM_TASKS * 2);
+    // initialise semaphores
+    mp_sem_init(MICROPY_RTEMS_NUM_TASKS * 2);
 
     // start the manager task to do the rest of the work
     rtems_name task_name = rtems_build_name('M', 'P', 'M', 'A');

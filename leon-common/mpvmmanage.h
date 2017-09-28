@@ -31,7 +31,7 @@ void mp_vm_hook(const struct _mp_code_state_t *code_state);
 // task has a unique VM manager task associated with it.  Making them thread
 // safe would require the use of a semaphore.
 rtems_status_code mp_vm_manager_start_mpy(struct _mp_state_ctx_t *worker_ctx, const uint8_t* buf, size_t len);
-rtems_status_code mp_vm_manager_pause(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t *source_line);
-rtems_status_code mp_vm_manager_resume(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms);
-rtems_status_code mp_vm_manager_step(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t *source_line);
-rtems_status_code mp_vm_manager_exit(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ms, uint32_t exit_code);
+rtems_status_code mp_vm_manager_pause(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ticks, uint32_t *source_line);
+rtems_status_code mp_vm_manager_resume(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ticks);
+rtems_status_code mp_vm_manager_step(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ticks, uint32_t *source_line);
+rtems_status_code mp_vm_manager_exit(struct _mp_state_ctx_t *worker_ctx, uint32_t timeout_ticks, uint32_t exit_code);
