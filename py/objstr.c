@@ -28,11 +28,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "py/nlr.h"
 #include "py/unicode.h"
 #include "py/objstr.h"
 #include "py/objlist.h"
-#include "py/runtime0.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 
@@ -1975,8 +1973,8 @@ const mp_obj_type_t mp_type_bytes = {
     .locals_dict = (mp_obj_dict_t*)&str8_locals_dict,
 };
 
-// the zero-length bytes
-const mp_obj_str_t mp_const_empty_bytes_obj = {{&mp_type_bytes}, 0, 0, NULL};
+// The zero-length bytes object, with data that includes a null-terminating byte
+const mp_obj_str_t mp_const_empty_bytes_obj = {{&mp_type_bytes}, 0, 0, (const byte*)""};
 
 // Create a str/bytes object using the given data.  New memory is allocated and
 // the data is copied across.

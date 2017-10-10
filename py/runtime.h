@@ -27,7 +27,6 @@
 #define MICROPY_INCLUDED_PY_RUNTIME_H
 
 #include "py/mpstate.h"
-#include "py/obj.h"
 
 typedef enum {
     MP_VM_RETURN_NORMAL,
@@ -57,9 +56,9 @@ typedef struct _mp_arg_t {
     mp_arg_val_t defval;
 } mp_arg_t;
 
-// defined in objtype.c
-extern const qstr mp_unary_op_method_name[];
-extern const qstr mp_binary_op_method_name[];
+// Tables mapping operator enums to qstrs, defined in objtype.c
+extern const uint16_t mp_unary_op_method_name[];
+extern const uint16_t mp_binary_op_method_name[];
 
 void mp_init(void);
 void mp_deinit(void);
