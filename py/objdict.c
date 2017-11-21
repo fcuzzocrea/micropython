@@ -407,8 +407,9 @@ STATIC const char *const mp_dict_view_names[] = {"dict_items", "dict_keys", "dic
 
 typedef struct _mp_obj_dict_view_it_t {
     mp_obj_base_t base;
-    mp_dict_view_kind_t kind;
     mp_obj_t dict;
+    size_t kind : 2;
+    size_t map_used : (8 * sizeof(size_t) - 2);
     size_t cur;
 } mp_obj_dict_view_it_t;
 
@@ -422,6 +423,10 @@ STATIC mp_obj_t dict_view_it_iternext(mp_obj_t self_in) {
     mp_check_self(MP_OBJ_IS_TYPE(self_in, &dict_view_it_type));
     mp_obj_dict_view_it_t *self = MP_OBJ_TO_PTR(self_in);
     mp_map_elem_t *next = dict_iter_next(MP_OBJ_TO_PTR(self->dict), &self->cur);
+
+    if (self->map_used != ((mp_obj_dict_t*)MP_OBJ_TO_PTR(self->dict))->map.used) {
+        mp_raise_msg(&mp_type_RuntimeError, "dict changed size");
+    }
 
     if (next == NULL) {
         return MP_OBJ_STOP_ITERATION;
@@ -455,6 +460,7 @@ STATIC mp_obj_t dict_view_getiter(mp_obj_t view_in, mp_obj_iter_buf_t *iter_buf)
     o->base.type = &dict_view_it_type;
     o->kind = view->kind;
     o->dict = view->dict;
+    o->map_used = ((mp_obj_dict_t*)MP_OBJ_TO_PTR(view->dict))->map.used;
     o->cur = 0;
     return MP_OBJ_FROM_PTR(o);
 }
