@@ -40,8 +40,8 @@ typedef struct _mp_obj_set_t {
 
 typedef struct _mp_obj_set_it_t {
     mp_obj_base_t base;
-    mp_fun_1_t iternext;
     mp_obj_set_t *set;
+    size_t set_used;
     size_t cur;
 } mp_obj_set_it_t;
 
@@ -134,6 +134,10 @@ STATIC mp_obj_t set_it_iternext(mp_obj_t self_in) {
     size_t max = self->set->set.alloc;
     mp_set_t *set = &self->set->set;
 
+    if (self->set_used != set->used) {
+        mp_raise_msg(&mp_type_RuntimeError, "set changed size");
+    }
+
     for (size_t i = self->cur; i < max; i++) {
         if (MP_SET_SLOT_IS_FILLED(set, i)) {
             self->cur = i + 1;
@@ -144,12 +148,19 @@ STATIC mp_obj_t set_it_iternext(mp_obj_t self_in) {
     return MP_OBJ_STOP_ITERATION;
 }
 
+STATIC const mp_obj_type_t set_it_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_iterator,
+    .getiter = mp_identity_getiter,
+    .iternext = set_it_iternext,
+};
+
 STATIC mp_obj_t set_getiter(mp_obj_t set_in, mp_obj_iter_buf_t *iter_buf) {
     assert(sizeof(mp_obj_set_it_t) <= sizeof(mp_obj_iter_buf_t));
     mp_obj_set_it_t *o = (mp_obj_set_it_t*)iter_buf;
-    o->base.type = &mp_type_polymorph_iter;
-    o->iternext = set_it_iternext;
+    o->base.type = &set_it_type;
     o->set = (mp_obj_set_t *)MP_OBJ_TO_PTR(set_in);
+    o->set_used = o->set->set.used;
     o->cur = 0;
     return MP_OBJ_FROM_PTR(o);
 }
