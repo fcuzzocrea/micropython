@@ -482,6 +482,31 @@ STATIC void dict_view_print(const mp_print_t *print, mp_obj_t self_in, mp_print_
 STATIC mp_obj_t dict_view_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
     // only supported for the 'keys' kind until sets and dicts are refactored
     mp_obj_dict_view_t *o = MP_OBJ_TO_PTR(lhs_in);
+
+    // Support checking equality of views
+    if (op == MP_BINARY_OP_EQUAL && MP_OBJ_IS_TYPE(rhs_in, &dict_view_type)) {
+        mp_obj_dict_view_t *rhs = MP_OBJ_TO_PTR(rhs_in);
+        if (o->kind != rhs->kind || o->kind == MP_DICT_VIEW_VALUES) {
+            return mp_const_false;
+        }
+        if (o->kind == MP_DICT_VIEW_ITEMS) {
+            return dict_binary_op(op, o->dict, rhs->dict);
+        }
+        mp_obj_dict_t *lhs_dict = MP_OBJ_TO_PTR(o->dict);
+        mp_map_t *rhs_map = &((mp_obj_dict_t*)MP_OBJ_TO_PTR(rhs->dict))->map;
+        if (lhs_dict->map.used != rhs_map->used) {
+            return mp_const_false;
+        }
+        size_t cur = 0;
+        mp_map_elem_t *next = NULL;
+        while ((next = dict_iter_next(lhs_dict, &cur)) != NULL) {
+            if (mp_map_lookup(rhs_map, next->key, MP_MAP_LOOKUP) == NULL) {
+                return mp_const_false;
+            }
+        }
+        return mp_const_true;
+    }
+
     if (o->kind != MP_DICT_VIEW_KEYS) {
         return MP_OBJ_NULL; // op not supported
     }
