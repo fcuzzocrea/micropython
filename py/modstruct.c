@@ -184,7 +184,7 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in, byte *p, size_t n_args, c
         mp_uint_t cnt = 1;
         if (*fmt == '\0') {
             // more arguments given than used by format string; CPython raises struct.error here
-            break;
+            mp_raise_ValueError("extra args given");
         }
         if (unichar_isdigit(*fmt)) {
             cnt = get_fmt_num(&fmt);
@@ -205,8 +205,15 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in, byte *p, size_t n_args, c
             while (cnt-- && i < n_args) {
                 mp_binary_set_val(fmt_type, *fmt, args[i++], &p);
             }
+            if (cnt != (mp_uint_t)-1) {
+                // ran out of args, error will be caught below because *fmt != '\0'
+                break;
+            }
         }
         fmt++;
+    }
+    if (*fmt != '\0') {
+        mp_raise_ValueError("not enough args given");
     }
 }
 
