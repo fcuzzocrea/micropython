@@ -1,0 +1,35 @@
+try:
+    print(round(float('inf')))
+except OverflowError:
+    print('OverflowError')
+try:
+    print(round(1.6e308, -308))
+except OverflowError:
+    print('OverflowError')
+try:
+    print(round(-1.7e308, -308))
+except OverflowError:
+    print('OverflowError')
+print(round(1e150, 300))
+print(round(1e300, 307))
+print(round(-3.1415, 308))
+print(round(1, 300))
+print(round(1, -300))
+print(round(-1, 300))
+print(round(-1, -300))
+print(round(1.0, 300))
+print(round(1.0, -300))
+print(round(-1.0, 300))
+print(round(-1.0, -300))
+print(round(125, -1))
+print(round(126, -1))
+print(round(135, -1))
+print(round(145, -1))
+print(round(149, -2))
+print(round(150, -2))
+print(round(151, -2))
+print(round(156, -2))
+print(round(166, -2))
+print(round(True, 0))
+print(round(True, 1))
+print(round(True, -1))
