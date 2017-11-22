@@ -453,25 +453,63 @@ MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_repr_obj, mp_builtin_repr);
 
 STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
     mp_obj_t o_in = args[0];
-    if (MP_OBJ_IS_INT(o_in)) {
-        return o_in;
+
+    if (MP_OBJ_IS_TYPE(o_in, &mp_type_bool)) {
+        // Convert bool to int
+        o_in = MP_OBJ_NEW_SMALL_INT(mp_obj_get_int(o_in));
     }
+
+    if (MP_OBJ_IS_INT(o_in)) {
+        mp_int_t num_dig = 0;
+        if (n_args > 1) {
+            num_dig = mp_obj_get_int(args[1]);
+        }
+        if (num_dig >= 0) {
+            // No rounding required, return original object
+            return o_in;
+        }
+
+        // Truncate unwanted digits by subtracting the remainder
+        mp_obj_t mult = mp_binary_op(MP_BINARY_OP_POWER, MP_OBJ_NEW_SMALL_INT(10), MP_OBJ_NEW_SMALL_INT(-num_dig));
+        mp_obj_tuple_t *divmod = (mp_obj_tuple_t*)MP_OBJ_TO_PTR(mp_binary_op(MP_BINARY_OP_DIVMOD, o_in, mult));
+        mp_obj_t rounded = mp_binary_op(MP_BINARY_OP_SUBTRACT, o_in, divmod->items[1]);
+
+        // Round answer up if needed, preferring even values in case of a rounding tie
+        mp_obj_t r2 = mp_binary_op(MP_BINARY_OP_ADD, divmod->items[1], divmod->items[1]);
+        if (mp_obj_is_true(mp_binary_op(MP_BINARY_OP_LESS, mult, r2))
+            || (mp_obj_is_true(mp_binary_op(MP_BINARY_OP_EQUAL, mult, r2))
+                && mp_obj_is_true(mp_binary_op(MP_BINARY_OP_AND, divmod->items[0], MP_OBJ_NEW_SMALL_INT(1))))) {
+            rounded = mp_binary_op(MP_BINARY_OP_ADD, rounded, mult);
+        }
+
+        return rounded;
+    }
+
 #if MICROPY_PY_BUILTINS_FLOAT
-    mp_int_t num_dig = 0;
+    mp_float_t val = mp_obj_get_float(o_in);
     if (n_args > 1) {
-        num_dig = mp_obj_get_int(args[1]);
-        mp_float_t val = mp_obj_get_float(o_in);
+        mp_int_t num_dig = mp_obj_get_int(args[1]);
         mp_float_t mult = MICROPY_FLOAT_C_FUN(pow)(10, num_dig);
-        // TODO may lead to overflow
-        mp_float_t rounded = MICROPY_FLOAT_C_FUN(nearbyint)(val * mult) / mult;
+        mp_float_t val_mult = val * mult;
+        if (!isfinite(val_mult)) {
+            if (num_dig >= 0) {
+                // Overflow in number of digits so just keep them all and return original number
+                return o_in;
+            } else {
+                // Round to zero to remove all digits, retaining the sign of the value to round
+                return mp_obj_new_float(0 * val);
+            }
+        }
+        mp_float_t rounded = MICROPY_FLOAT_C_FUN(nearbyint)(val_mult) / mult;
+        if (!isfinite(rounded)) {
+            mp_raise_msg(&mp_type_OverflowError, NULL);
+        }
         return mp_obj_new_float(rounded);
     }
-    mp_float_t val = mp_obj_get_float(o_in);
     mp_float_t rounded = MICROPY_FLOAT_C_FUN(nearbyint)(val);
     return mp_obj_new_int_from_float(rounded);
 #else
-    mp_int_t r = mp_obj_get_int(o_in);
-    return mp_obj_new_int(r);
+    mp_raise_TypeError("int required");
 #endif
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_round_obj, 1, 2, mp_builtin_round);
