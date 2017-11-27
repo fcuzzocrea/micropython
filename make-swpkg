@@ -15,6 +15,6 @@ fi
 
 /bin/ln -s . micropython-leon-$REV
 
-tar c --exclude='build*' --exclude="*.srec" --exclude=".gitignore" --exclude=".gitattributes" --exclude="mpy-cross/mpy-cross" --exclude="*.mpy" micropython-leon-$REV/{makeall,BUILD_GUIDE,CODING_GUIDE,TEST_RESULTS,py,lib/libc,lib/embed,lib/utils,extmod/*.[ch],extmod/crypto-algorithms,extmod/uzlib,tools/mpytool.py,tools/cc1,tools/unhexlify.py,docs/conf.py,mpy-cross,leon-common,leon-ex-minimal,leon-ex-tasks,leon-ex-manager,leon-ex-pystone,leon-for-tests,leon-tests,leon-obcp} | gzip > GRL_MPLEON_SWPKG_$REV.tgz
+tar c --exclude='build*' --exclude="*.srec" --exclude=".gitignore" --exclude=".gitattributes" --exclude="mpy-cross/mpy-cross" --exclude="*.mpy" micropython-leon-$REV/{makeall,BUILD_GUIDE,CODING_GUIDE,TEST_RESULTS,py,lib/libc,lib/utils,extmod/*.[ch],extmod/crypto-algorithms,extmod/uzlib,tools/mpytool.py,tools/cc1,tools/unhexlify.py,docs/conf.py,mpy-cross,leon-common,leon-ex-minimal,leon-ex-tasks,leon-ex-manager,leon-ex-pystone,leon-for-tests,leon-tests,leon-obcp} | gzip > GRL_MPLEON_SWPKG_$REV.tgz
 
 /bin/rm micropython-leon-$REV
