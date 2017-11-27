@@ -48,13 +48,14 @@ To build and run the code you will need:
     - make, bash, and Python (2.6+ or 3.3+)
     - a local/host C compiler and linker (usually gcc et al)
     - a cross compiler for SPARC V8 (eg sparc-rtems-gcc)
-    - the RTEMS library (rtems-4.8 is supported)
+    - the RTEMS library; 4.8 (Edisoft and normal) and 4.10, 4.11 are supported
     - a SPARC emulator (for running the code, eg leon2-emu)
 
 It is assumed that the host C compiler is in your path.
 
 The location of the SPARC compiler and the RTEMS library are configured in the
-leon-common/mkenv.mk file.
+leon-common/mkenv.mk file.  In this file you can select which RTEMS version you
+are using.
 
 To optimise the built-in hash tables you also need to configure the location of
 the SPARC cc1 executable in the tools/cc1 file, with the variable "cc1_path".
@@ -113,8 +114,8 @@ automatically by the Makefile):
     $ ../mpy-cross/mpy-cross ex2.py
     $ ../mpy-cross/mpy-cross ex3.py
     $ ../mpy-cross/mpy-cross ex4.py
-    $ ../tools/mpytool.py tosrec 0x40100000 ex1.mpy 0x40110000 ex2.mpy \
-        0x40120000 ex3.mpy 0x40130000 ex4.mpy > build/scripts.srec
+    $ ../tools/mpytool.py tosrec 0x40200000 ex1.mpy 0x40210000 ex2.mpy \
+        0x40220000 ex3.mpy 0x40230000 ex4.mpy > build/scripts.srec
 
 Another example is given using the VM manager.  To build and run do:
 
@@ -130,10 +131,10 @@ To build the binary for the test framework do:
     $ cd ../leon-for-tests
     $ make
 
-To run the core tests do:
+To run all the core tests do:
 
     $ cd ../leon-tests
-    $ ./run-tests.sh
+    $ ./all-tests.sh
 
 ================================================================================
 Configuration
