@@ -2,23 +2,9 @@
 1 192
 2 288
 3 384
-4 480
-5 576
-6 672
-7 768
-8 864
-9 960
-10 1056
-11 1152
-12 1248
-13 1344
-14 1440
-15 1536
-16 1632
-17 1728
-18 (stack overflow)
-19 1920
-20 (stack overflow)
-21 (stack overflow)
-22 (stack overflow)
-23 (stack overflow)
+4 (stack overflow)
+5 (stack overflow)
+6 (stack overflow)
+7 (stack overflow)
+8 (stack overflow)
+9 (stack overflow)

@@ -30,9 +30,11 @@ ValueError(0, 14)
 14 None
 ValueError(0, 15)
 15 None
-ValueError(0, 16)
+RuntimeError('maximum recursion depth exceeded',)
 16 None
-ValueError(0, 17)
+RuntimeError('maximum recursion depth exceeded',)
 17 None
+RuntimeError('maximum recursion depth exceeded',)
 18 None
+RuntimeError('maximum recursion depth exceeded',)
 19 None

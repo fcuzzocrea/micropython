@@ -11,7 +11,7 @@ def f(x):
         return len(l) + f(x - 1)
     return len(l)
 
-for i in range(24):
+for i in range(10):
     try:
         print(i, f(i))
     except RuntimeError:
