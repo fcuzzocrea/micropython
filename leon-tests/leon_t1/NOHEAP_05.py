@@ -6,7 +6,7 @@ import math
 # pre-create spots in global hash table
 x = None
 y = None
-lst = [1.2, 0, 2, -3.4, 5.6]
+lst = [1.2, 0, 2, -3.4, 5.7]
 
 import micropython
 micropython.heap_lock()
@@ -16,8 +16,8 @@ print(1.2)
 print(float(), float(1), float(1.2), float('1.2'), float('1.2e3'), float('1.2e-3'))
 
 # for following tests
-x = 1.2
-y = 3.4
+x = 1.3
+y = 3.5
 
 # print
 print(x, y)
@@ -33,7 +33,7 @@ print(x * 2, x * 2.0, x * y)
 print(y // 2, y // 2.0, y // x)
 print(x / 2, x / 2.0, round(x / y, 4))
 print(x % 2, x % 2.0, round(x % y, 4))
-print(x**2, x**2.0, round(x**y, 4))
+print(round(x**2, 2), round(x**2.0, 2), round(x**y, 4))
 
 # binary comparison
 print(x > x, x > 2, x > 2.2, x > y)
@@ -60,7 +60,7 @@ print(round(math.pow(x, y), 2))
 print(round(math.exp(x), 2))
 print(round(math.log(x), 2))
 print(round(math.cos(x), 2))
-print(round(math.sin(x), 3))
+print(round(math.sin(x), 2))
 print(round(math.tan(x), 2))
 print(round(math.acos(x / 10), 2))
 print(round(math.asin(x / 10), 2))
