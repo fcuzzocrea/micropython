@@ -13,7 +13,7 @@
 #define CONFIGURE_INIT_TASK_ENTRY_POINT Init
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-#define CONFIGURE_MAXIMUM_TASKS (12)
+#define CONFIGURE_MAXIMUM_TASKS (13)
 #define CONFIGURE_MAXIMUM_SEMAPHORES (4)
 #define CONFIGURE_MAXIMUM_MESSAGE_QUEUES (4)
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
@@ -94,7 +94,7 @@ rtems_task Init(rtems_task_argument ignored) {
 // MicroPython manager task
 
 // these variables define the location of the externally-loaded .mpy files
-#define MPY_MEM_BASE   (0x40100000)
+#define MPY_MEM_BASE   (0x40200000)
 #define MPY_MEM_STRIDE (0x00010000)
 
 #include "py/mpprint.h"
