@@ -31,6 +31,7 @@ rtems_task mp_worker_task(rtems_task_argument unused);
 #endif
 
 #include <rtems/confdefs.h>
+#include "leon-common/sparcisr.h"
 #include "leon-common/mpsem.h"
 
 /******************************************************************************/
@@ -38,6 +39,8 @@ rtems_task mp_worker_task(rtems_task_argument unused);
 // this task runs at highest priority and is non-preemptive
 
 rtems_task Init(rtems_task_argument ignored) {
+    sparc_install_ta_3_window_flush_isr();
+
     // set the time
     rtems_time_of_day time;
     time.year = 2016;

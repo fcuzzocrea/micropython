@@ -27,7 +27,7 @@ CFLAGS += -DRTEMS_4_8 -DRTEMS_4_8_EDISOFT
 CFLAGS += -I$(LEON_COMMON_FROM_HERE)/libc-include
 CFLAGS += -B/opt/rtems-4.8/sparc-rtems4.8/leon2/lib
 LIBS += -Wl,--start-group -lrtemscpu -lio -lno_event -lmsg -lsem -ltimer -lno_rtmon -lno_ext -lrtemsbsp -lrtemscpu -Wl,--end-group
-SRC_RTEMS = leon-common/leon2serial.c
+SRC_RTEMS = leon-common/sparcisr.c leon-common/leon2serial.c
 endif
 
 # Settings for RTEMS 4.8 Gaisler

@@ -15,6 +15,9 @@
     .global sparc_longjmp
     .type sparc_longjmp, #function
 
+    .global sparc_window_flush_trap_handler
+    .type sparc_window_flush_trap_handler, #function
+
 # sparc_setjmp(%o0=env)
 sparc_setjmp:
     # save the sp (%o6) and return pointer (%o7)
@@ -47,8 +50,7 @@ sparc_setjmp:
 
 # sparc_longjmp(env, val):
 sparc_longjmp:
-    call sparc_window_flush_trap_handler
-    nop
+    ta 3
     addcc  %o1, %g0, %g6
     be,a   .is_zero
     mov  1, %g6
@@ -82,11 +84,9 @@ sparc_longjmp:
 
     .size   sparc_longjmp, .-sparc_longjmp
 
+# from the ta 3, %l0 should contain the PSR
 # locals can be clobbered because they will be restored
 sparc_window_flush_trap_handler:
-    # need to get PSR
-    rd  %psr, %l0
-
     # save global registers
     mov  %g1, %l3
     mov  %g2, %l4
@@ -94,21 +94,17 @@ sparc_window_flush_trap_handler:
     mov  %g4, %l6
     mov  %g5, %l7
 
-    # disable interrupts
-    or  %l0, 0xf00, %g1
-    wr  %g1, %psr
-
     mov  %l0, %g1
     rd  %wim, %g2
 
     # %g3 = CWP (hard-coded for 8 windows)
     and  %l0, 7, %g3
 
-    # %g5 = (CWP + 0) % NWINDOWS
-    add  %g3, 0, %g5
+    # %g5 = (CWP + 1) % NWINDOWS
+    add  %g3, 1, %g5
     and  %g5, 7, %g5
 
-    # %g4 = 1 << ((CWP + 0) % NWINDOWS)
+    # %g4 = 1 << ((CWP + 1) % NWINDOWS)
     mov  1, %g4
     sll  %g4, %g5, %g4
 
@@ -134,11 +130,11 @@ sparc_window_flush_trap_handler:
     be  .save_frame_loop
     nop
 
-    # %g3 = (CWP + 1) % NWINDOWS
-    add  %g3, 1, %g3
+    # %g3 = (CWP + 2) % NWINDOWS
+    add  %g3, 2, %g3
     and  %g3, 7, %g3
 
-    # %wim = 1 << ((CWP + 1) % NWINDOWS)
+    # %wim = 1 << ((CWP + 2) % NWINDOWS)
     mov  1, %g4
     sll  %g4, %g3, %g4
     mov  %g4, %wim
@@ -157,7 +153,7 @@ sparc_window_flush_trap_handler:
     mov  %l7, %g5
 
     # return
-    retl
-    nop
+    jmp  %l2
+    rett  %l2 + 4
 
     .size   sparc_window_flush_trap_handler, .-sparc_window_flush_trap_handler

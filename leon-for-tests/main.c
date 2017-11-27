@@ -24,6 +24,7 @@ rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
 
 #include <rtems/confdefs.h>
+#include "leon-common/sparcisr.h"
 #include "leon-common/moddatapool.h"
 
 #define MICROPY_RTEMS_TASK_ATTRIBUTES (RTEMS_APPLICATION_TASK | RTEMS_FLOATING_POINT)
@@ -40,6 +41,8 @@ static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
 // this task runs at highest priority and is non-preemptive
 
 rtems_task Init(rtems_task_argument ignored) {
+    sparc_install_ta_3_window_flush_isr();
+
     // set the time
     rtems_time_of_day time;
     time.year = 2016;
