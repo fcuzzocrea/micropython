@@ -34,18 +34,6 @@ try:
 except NotImplementedError:
     print('NotImplementedError')
 
-# should raise type error
-try:
-    print(set('12') >= '1')
-except TypeError:
-    print('TypeError')
-
-# should raise type error
-try:
-    print(set('12') <= '123')
-except TypeError:
-    print('TypeError')
-
 # uPy raises TypeError, shold be ValueError
 try:
     '%c' % b'\x01\x02'
@@ -111,12 +99,6 @@ try:
     del [][2:3:4]
 except NotImplementedError:
     print('NotImplementedError')
-
-# struct pack with too many args, not checked by uPy
-print(ustruct.pack('bb', 1, 2, 3))
-
-# struct pack with too few args, not checked by uPy
-print(ustruct.pack('bb', 1))
 
 # array slice assignment with unsupported RHS
 try:
