@@ -5,6 +5,7 @@ def create_bufs(n, sz):
     bufs = []
     for i in range(n):
         bufs.append(bytearray(sz))
+    bufs.clear()
     bufs = None
 
 print('start')
