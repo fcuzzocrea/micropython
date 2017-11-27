@@ -1105,6 +1105,7 @@ unwind_return:
                     if (code_state->prev != NULL) {
                         mp_obj_t res = *sp;
                         mp_globals_set(code_state->old_globals);
+                        MP_STATE_THREAD(scope_flags) = code_state->old_scope_flags;
                         #if MICROPY_ENABLE_PYSTACK
                         mp_code_state_t *new_code_state = code_state->prev;
                         mp_pystack_free(code_state);
@@ -1476,6 +1477,7 @@ unwind_loop:
             #if MICROPY_STACKLESS
             } else if (code_state->prev != NULL) {
                 mp_globals_set(code_state->old_globals);
+                MP_STATE_THREAD(scope_flags) = code_state->old_scope_flags;
                 #if MICROPY_ENABLE_PYSTACK
                 mp_code_state_t *new_code_state = code_state->prev;
                 mp_pystack_free(code_state);

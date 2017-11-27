@@ -582,6 +582,9 @@ STATIC mp_obj_t mp_builtin_globals(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(mp_builtin_globals_obj, mp_builtin_globals);
 
 STATIC mp_obj_t mp_builtin_locals(void) {
+    if (!(MP_STATE_THREAD(scope_flags) & MP_SCOPE_FLAG_LOCALS_VALID)) {
+        mp_raise_NotImplementedError("locals() in this context");
+    }
     return MP_OBJ_FROM_PTR(mp_locals_get());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mp_builtin_locals_obj, mp_builtin_locals);

@@ -106,10 +106,18 @@ mp_vm_return_kind_t mp_obj_gen_resume(mp_obj_t self_in, mp_obj_t send_value, mp_
     } else {
         *self->code_state.sp = send_value;
     }
+
+    // uPy doesn't support locals() in a generator, so zero out the scope flags
+    self->code_state.old_scope_flags = MP_STATE_THREAD(scope_flags);
+    MP_STATE_THREAD(scope_flags) = 0;
+
     mp_obj_dict_t *old_globals = mp_globals_get();
     mp_globals_set(self->globals);
     mp_vm_return_kind_t ret_kind = mp_execute_bytecode(&self->code_state, throw_value);
     mp_globals_set(old_globals);
+
+    // restore the old scope flags
+    MP_STATE_THREAD(scope_flags) = self->code_state.old_scope_flags;
 
     switch (ret_kind) {
         case MP_VM_RETURN_NORMAL:

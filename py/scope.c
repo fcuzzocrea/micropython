@@ -56,6 +56,11 @@ scope_t *scope_new(scope_kind_t kind, mp_parse_node_t pn, qstr source_file, mp_u
     scope->id_info_alloc = MICROPY_ALLOC_SCOPE_ID_INIT;
     scope->id_info = m_new(id_info_t, scope->id_info_alloc);
 
+    // uPy only knows how to deal with locals() in module and class scopes
+    if (kind == SCOPE_MODULE || kind == SCOPE_CLASS) {
+        scope->scope_flags |= MP_SCOPE_FLAG_LOCALS_VALID;
+    }
+
     return scope;
 }
 

@@ -223,6 +223,9 @@ typedef struct _mp_state_thread_t {
     // Note: nlr asm code has the offset of this hard-coded
     nlr_buf_t *nlr_top; // ROOT POINTER
 
+    // Scope flags for the current function being executed
+    uint8_t scope_flags;
+
     // Stack top at the start of program
     char *stack_top;
 
