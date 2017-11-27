@@ -39,6 +39,22 @@ STATIC NORETURN void math_error(void) {
     mp_raise_ValueError("math domain error");
 }
 
+// asin() provided by LEON toolchain doesn't check domain, so we do it ourselves
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(asin_with_domain_check)(mp_float_t x) {
+    if (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0)) {
+        math_error();
+    }
+    return MICROPY_FLOAT_C_FUN(asin)(x);
+}
+
+// acos() provided by LEON toolchain doesn't check domain, so we do it ourselves
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(acos_with_domain_check)(mp_float_t x) {
+    if (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0)) {
+        math_error();
+    }
+    return MICROPY_FLOAT_C_FUN(acos)(x);
+}
+
 STATIC mp_obj_t math_generic_1(mp_obj_t x_obj, mp_float_t (*f)(mp_float_t)) {
     mp_float_t x = mp_obj_get_float(x_obj);
     mp_float_t ans = f(x);
@@ -126,9 +142,9 @@ MATH_FUN_1(sin, sin)
 // tan(x)
 MATH_FUN_1(tan, tan)
 // acos(x)
-MATH_FUN_1(acos, acos)
+MATH_FUN_1(acos, acos_with_domain_check)
 // asin(x)
-MATH_FUN_1(asin, asin)
+MATH_FUN_1(asin, asin_with_domain_check)
 // atan(x)
 MATH_FUN_1(atan, atan)
 // atan2(y, x)
