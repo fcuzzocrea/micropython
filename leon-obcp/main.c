@@ -8,12 +8,15 @@
 
 #include <stdio.h>
 #include <rtems.h>
+#include "obcp.h"
 
 #define CONFIGURE_INIT
 #define CONFIGURE_INIT_TASK_ENTRY_POINT Init
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
 #define CONFIGURE_MAXIMUM_TASKS (10)
+#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES (6)
+#define CONFIGURE_MAXIMUM_POSIX_SEMAPHORES (VM_WORKER_NUM_TASKS * 2)
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
 #define CONFIGURE_EXTRA_TASK_STACKS (20 * RTEMS_MINIMUM_STACK_SIZE)
 
@@ -22,7 +25,7 @@ rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
 
 #include <rtems/confdefs.h>
-#include "obcp.h"
+#include "leon-common/mpsem.h"
 #include "leon-common/mpvmmanage.h"
 #include "leon-common/moddatapool.h"
 
@@ -31,15 +34,27 @@ static double start_time;
 
 void set_start_time(void) {
     // can't do FP in Init task
+    #if RTEMS_4_8
     rtems_clock_time_value t;
     rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
     start_time = t.seconds + 1e-6 * t.microseconds;
+    #else
+    struct timeval t;
+    rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
+    start_time = t.tv_sec + 1e-6 * t.tv_usec;
+    #endif
 }
 
 double get_time(void) {
+    #if RTEMS_4_8
     rtems_clock_time_value t;
     rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
     return t.seconds + 1e-6 * t.microseconds - start_time;
+    #else
+    struct timeval t;
+    rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
+    return t.tv_sec + 1e-6 * t.tv_usec - start_time;
+    #endif
 }
 
 /******************************************************************************/
@@ -59,13 +74,21 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_clock_set(&time);
 
     // initialise the message queue subsystem
+    #if RTEMS_4_8
     _Message_queue_Manager_initialization(6);
+    #else
+    _Message_queue_Manager_initialization();
+    #endif
 
     // initialise the timer subsystem
+    #if RTEMS_4_8
     _Timer_Manager_initialization(2);
+    #else
+    _Timer_Manager_initialization();
+    #endif
 
-    // initialise POSIX components
-    _POSIX_Semaphore_Manager_initialization(VM_WORKER_NUM_TASKS * 2);
+    // initialise semaphores
+    mp_sem_init(VM_WORKER_NUM_TASKS * 2);
 
     // print a message to indicate start-up
     printf("\nOBCP program started\n");

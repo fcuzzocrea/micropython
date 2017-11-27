@@ -29,7 +29,7 @@ mp_state_ctx_t *get_vm_worker_ctx(int id) {
 }
 
 rtems_task obcp_task_mp_worker(rtems_task_argument task_index) {
-    printf("MicroPython worker task %d started\n", task_index);
+    printf("MicroPython worker task %d started\n", (int)task_index);
 
     // set the MicroPython context for this task
     _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
