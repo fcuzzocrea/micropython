@@ -244,7 +244,6 @@ PY_O_BASENAME = \
 	../extmod/vfs_fat_misc.o \
 	../extmod/utime_mphal.o \
 	../extmod/uos_dupterm.o \
-	../lib/embed/abort_.o \
 	../lib/utils/printf.o \
 
 # prepend the build destination prefix to the py object files
