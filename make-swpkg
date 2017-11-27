@@ -13,8 +13,19 @@ if [ ! -d leon-common ]; then
     exit 1
 fi
 
+if [ -r VERSION ]; then
+    echo "VERSION file should not exist"
+    exit 1
+fi
+
+echo -e "MicroPython port to SPARC/LEON/RTEMS platforms\nCopyright (c) 2015-2017 George Robotics Limited\nVersion $REV\nPackaged on $(date -u)\nSource repository tag $(git describe)" > VERSION
+
 /bin/ln -s . micropython-leon-$REV
 
-tar c --exclude='build*' --exclude="*.srec" --exclude=".gitignore" --exclude=".gitattributes" --exclude="mpy-cross/mpy-cross" --exclude="*.mpy" micropython-leon-$REV/{makeall,BUILD_GUIDE,CODING_GUIDE,TEST_RESULTS,py,lib/libc,lib/utils,extmod/*.[ch],extmod/crypto-algorithms,extmod/uzlib,tools/mpytool.py,tools/cc1,tools/unhexlify.py,docs/conf.py,mpy-cross,leon-common,leon-ex-minimal,leon-ex-tasks,leon-ex-manager,leon-ex-pystone,leon-for-tests,leon-tests,leon-obcp} | gzip > GRL_MPLEON_SWPKG_$REV.tgz
+tar c \
+    --exclude='build*' --exclude="*.srec" --exclude=".gitignore" --exclude=".gitattributes" \
+    --exclude="mpy-cross/mpy-cross" --exclude="*.mpy" --exclude="__pycache__" \
+    micropython-leon-$REV/{VERSION,makeall,BUILD_GUIDE,CODING_GUIDE,TEST_RESULTS,py,lib/libc,lib/utils,extmod/*.[ch],extmod/crypto-algorithms,extmod/uzlib,tools/mpytool.py,tools/cc1,tools/unhexlify.py,docs/conf.py,mpy-cross,leon-common,leon-ex-minimal,leon-ex-tasks,leon-ex-manager,leon-ex-pystone,leon-for-tests,leon-tests,leon-obcp} | gzip > GRL_MPLEON_SWPKG_$REV.tgz
 
+/bin/rm VERSION
 /bin/rm micropython-leon-$REV
