@@ -202,12 +202,12 @@ uint8_t mp_setup_code_state(mp_code_state_t *code_state, size_t n_args, size_t n
             }
             // Didn't find name match with positional args
             if ((scope_flags & MP_SCOPE_FLAG_VARKEYWORDS) == 0) {
-                if (MICROPY_ERROR_REPORTING == MICROPY_ERROR_REPORTING_TERSE) {
+                #if MICROPY_ERROR_REPORTING == MICROPY_ERROR_REPORTING_TERSE
                     mp_raise_TypeError("unexpected keyword argument");
-                } else {
+                #else
                     nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,
                         "unexpected keyword argument '%q'", MP_OBJ_QSTR_VALUE(wanted_arg_name)));
-                }
+                #endif
             }
             mp_obj_dict_store(dict, kwargs[2 * i], kwargs[2 * i + 1]);
 continue2:;
