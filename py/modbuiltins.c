@@ -142,19 +142,19 @@ STATIC mp_obj_t mp_builtin_chr(mp_obj_t o_in) {
     if (c < 0x80) {
         *str = c; len = 1;
     } else if (c < 0x800) {
-        str[0] = (uint8_t)(c >> 6) | 0xC0;
-        str[1] = (uint8_t)(c & 0x3F) | 0x80;
+        str[0] = (c >> 6) | 0xC0;
+        str[1] = (c & 0x3F) | 0x80;
         len = 2;
     } else if (c < 0x10000) {
-        str[0] = (uint8_t)((c >> 12) | 0xE0);
-        str[1] = (uint8_t)((c >> 6) & 0x3F) | 0x80;
-        str[2] = (uint8_t)(c & 0x3F) | 0x80;
+        str[0] = (c >> 12) | 0xE0;
+        str[1] = ((c >> 6) & 0x3F) | 0x80;
+        str[2] = (c & 0x3F) | 0x80;
         len = 3;
     } else if (c < 0x110000) {
-        str[0] = (int8_t)(c >> 18) | 0xF0;
-        str[1] = (int8_t)((c >> 12) & 0x3F) | 0x80;
-        str[2] = (int8_t)((c >> 6) & 0x3F) | 0x80;
-        str[3] = (int8_t)((c & 0x3F) | 0x80);
+        str[0] = (c >> 18) | 0xF0;
+        str[1] = ((c >> 12) & 0x3F) | 0x80;
+        str[2] = ((c >> 6) & 0x3F) | 0x80;
+        str[3] = (c & 0x3F) | 0x80;
         len = 4;
     } else {
         mp_raise_ValueError("chr() arg not in range(0x110000)");
