@@ -1201,12 +1201,12 @@ mp_obj_t mp_iternext(mp_obj_t o_in) {
                 }
             }
         } else {
-            #if MICROPY_ERROR_REPORTING == MICROPY_ERROR_REPORTING_TERSE
+            if (MICROPY_ERROR_REPORTING == MICROPY_ERROR_REPORTING_TERSE) {
                 mp_raise_TypeError("object not an iterator");
-            #else
+            } else {
                 nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_TypeError,
                     "'%s' object is not an iterator", mp_obj_get_type_str(o_in)));
-            #endif
+            }
         }
     }
 }
