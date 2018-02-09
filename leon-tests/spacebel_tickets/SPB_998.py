@@ -11,3 +11,7 @@ try:
     math.pow(0., -1,)
 except ValueError:
     print('ValueError')
+
+# these shouldn't raise an exception
+print(0.0 ** float('-inf'))
+print(pow(0.0, float('-inf')))
