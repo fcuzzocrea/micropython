@@ -34,6 +34,7 @@
 #include "lib/utils/pyexec.h"
 #include "lib/oofatfs/ff.h"
 #include "lib/oofatfs/diskio.h"
+#include "drivers/dht/dht.h"
 #include "gccollect.h"
 #include "stm32_it.h"
 #include "irq.h"
@@ -168,6 +169,9 @@ STATIC const mp_rom_map_elem_t pyb_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_sync), MP_ROM_PTR(&mod_os_sync_obj) },
     { MP_ROM_QSTR(MP_QSTR_mount), MP_ROM_PTR(&mp_vfs_mount_obj) },
 
+    // This function is not intended to be public and may be moved elsewhere
+    { MP_ROM_QSTR(MP_QSTR_dht_readinto), MP_ROM_PTR(&dht_readinto_obj) },
+
     { MP_ROM_QSTR(MP_QSTR_Timer), MP_ROM_PTR(&pyb_timer_type) },
 
 #if MICROPY_HW_ENABLE_RNG
@@ -203,7 +207,9 @@ STATIC const mp_rom_map_elem_t pyb_module_globals_table[] = {
 #if defined(MICROPY_HW_LED1)
     { MP_ROM_QSTR(MP_QSTR_LED), MP_ROM_PTR(&pyb_led_type) },
 #endif
+    #if MICROPY_HW_ENABLE_HW_I2C
     { MP_ROM_QSTR(MP_QSTR_I2C), MP_ROM_PTR(&pyb_i2c_type) },
+    #endif
     { MP_ROM_QSTR(MP_QSTR_SPI), MP_ROM_PTR(&pyb_spi_type) },
     { MP_ROM_QSTR(MP_QSTR_UART), MP_ROM_PTR(&pyb_uart_type) },
 #if MICROPY_HW_ENABLE_CAN

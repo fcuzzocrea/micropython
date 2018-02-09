@@ -82,7 +82,7 @@ build/genhdr/qstr.i.last: | $(Z_EXPORTS)
 LIBMICROPYTHON_EXTRA_CMD = -$(RM) -f outdir/$(OUTDIR_PREFIX)/zephyr.lnk
 
 # MicroPython's global clean cleans everything, fast
-CLEAN_EXTRA = outdir prj_*_merged.conf
+CLEAN_EXTRA = outdir libmicropython.a prj_*_merged.conf
 
 # Clean Zephyr things in Zephyr way
 z_clean:
@@ -105,3 +105,4 @@ outdir/$(BOARD)/Makefile: $(CONF_FILE)
 
 $(Z_EXPORTS): outdir/$(BOARD)/Makefile
 	make --no-print-directory -C outdir/$(BOARD) outputexports CMAKE_COMMAND=: >$@
+	make -C outdir/$(BOARD) syscall_macros_h_target syscall_list_h_target

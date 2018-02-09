@@ -27,15 +27,8 @@
 #include <stdio.h>
 
 #include "py/runtime.h"
-#include "py/pystack.h"
 
 #if MICROPY_ENABLE_PYSTACK
-
-// Enable this option to check that the amount of memory freed is equal to
-// the last amount that was allocated.
-#define CHECK_FREE_SIZE (0)
-
-#define ALLOC_ALIGN (8)
 
 void mp_pystack_init(void *start, void *end) {
     MP_STATE_THREAD(pystack_start) = start;
@@ -44,40 +37,20 @@ void mp_pystack_init(void *start, void *end) {
 }
 
 void *mp_pystack_alloc(size_t n_bytes) {
-    n_bytes = (n_bytes + (ALLOC_ALIGN - 1)) & ~(ALLOC_ALIGN - 1);
-    #if CHECK_FREE_SIZE
-    n_bytes += ALLOC_ALIGN;
+    n_bytes = (n_bytes + (MICROPY_PYSTACK_ALIGN - 1)) & ~(MICROPY_PYSTACK_ALIGN - 1);
+    #if MP_PYSTACK_DEBUG
+    n_bytes += MICROPY_PYSTACK_ALIGN;
     #endif
     if (MP_STATE_THREAD(pystack_cur) + n_bytes > MP_STATE_THREAD(pystack_end)) {
-        // out of memory
-        mp_exc_recursion_depth();
+        // out of memory in the pystack
+        mp_raise_recursion_depth();
     }
     void *ptr = MP_STATE_THREAD(pystack_cur);
     MP_STATE_THREAD(pystack_cur) += n_bytes;
-    #if CHECK_FREE_SIZE
-    *(size_t*)(MP_STATE_THREAD(pystack_cur) - ALLOC_ALIGN) = n_bytes;
+    #if MP_PYSTACK_DEBUG
+    *(size_t*)(MP_STATE_THREAD(pystack_cur) - MICROPY_PYSTACK_ALIGN) = n_bytes;
     #endif
     return ptr;
-}
-
-void mp_pystack_free(void *ptr) {
-    #if CHECK_FREE_SIZE
-    size_t n_bytes = MP_STATE_THREAD(pystack_cur) - (uint8_t*)ptr;
-    if (n_bytes != *(size_t*)(MP_STATE_THREAD(pystack_cur) - ALLOC_ALIGN)) {
-        printf("mp_pystack_free() failed: %u != %u\n", (uint)n_bytes,
-            (uint)*(size_t*)(MP_STATE_THREAD(pystack_cur) - ALLOC_ALIGN));
-        assert(0);
-    }
-    #endif
-    MP_STATE_THREAD(pystack_cur) = ptr;
-}
-
-size_t mp_pystack_usage(void) {
-    return MP_STATE_THREAD(pystack_cur) - MP_STATE_THREAD(pystack_start);
-}
-
-size_t mp_pystack_limit(void) {
-    return MP_STATE_THREAD(pystack_end) - MP_STATE_THREAD(pystack_start);
 }
 
 #endif

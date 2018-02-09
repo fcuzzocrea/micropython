@@ -7,7 +7,7 @@
 |see_cpython_module| :mod:`python:select`.
 
 This module provides functions to efficiently wait for events on multiple
-streams (select streams which are ready for operations).
+`streams <stream>` (select streams which are ready for operations).
 
 Functions
 ---------
@@ -33,7 +33,7 @@ Methods
 
 .. method:: poll.register(obj[, eventmask])
 
-   Register *obj* for polling. *eventmask* is logical OR of:
+   Register `stream` *obj* for polling. *eventmask* is logical OR of:
 
    * `uselect.POLLIN`  - data available for reading
    * `uselect.POLLOUT` - more data can be written
@@ -78,15 +78,15 @@ Methods
 
 .. method:: poll.ipoll(timeout=-1, flags=0)
 
-   Like :meth:`poll.poll`, but instead returns an iterator which yields
-   `callee-owned tuples`. This function provides efficient, allocation-free
+   Like :meth:`poll.poll`, but instead returns an iterator which yields a
+   `callee-owned tuple`. This function provides an efficient, allocation-free
    way to poll on streams.
 
    If *flags* is 1, one-shot behavior for events is employed: streams for
-   which events happened, event mask will be automatically reset (equivalent
-   to ``poll.modify(obj, 0)``), so new events for such a stream won't be
-   processed until new mask is set with `poll.modify()`. This behavior is
-   useful for asynchronous I/O schedulers.
+   which events happened will have their event masks automatically reset
+   (equivalent to ``poll.modify(obj, 0)``), so new events for such a stream
+   won't be processed until new mask is set with `poll.modify()`. This
+   behavior is useful for asynchronous I/O schedulers.
 
    .. admonition:: Difference to CPython
       :class: attention

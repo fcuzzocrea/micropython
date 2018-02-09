@@ -196,40 +196,55 @@ STATIC void dump_args(const mp_obj_t *a, size_t sz) {
 // than this will try to use the heap, with fallback to stack allocation.
 #define VM_MAX_STATE_ON_STACK (11 * sizeof(mp_uint_t))
 
-// Set this to enable a simple stack overflow check.
+// Set this to 1 to enable a simple stack overflow check.
 #define VM_DETECT_STACK_OVERFLOW (0)
+
+#define DECODE_CODESTATE_SIZE(bytecode, n_state_out_var, state_size_out_var) \
+    { \
+        /* bytecode prelude: state size and exception stack size */               \
+        n_state_out_var = mp_decode_uint_value(bytecode);                         \
+        size_t n_exc_stack = mp_decode_uint_value(mp_decode_uint_skip(bytecode)); \
+                                                                                  \
+        n_state += VM_DETECT_STACK_OVERFLOW;                                      \
+                                                                                  \
+        /* state size in bytes */                                                 \
+        state_size_out_var = n_state * sizeof(mp_obj_t) + n_exc_stack * sizeof(mp_exc_stack_t); \
+    }
+
+#define INIT_CODESTATE(code_state, _fun_bc, n_args, n_kw, args) \
+    code_state->fun_bc = _fun_bc; \
+    code_state->ip = 0; \
+    uint8_t scope_flags = mp_setup_code_state(code_state, n_args, n_kw, args); \
+    /* set the scope flags for this function */ \
+    code_state->old_scope_flags = MP_STATE_THREAD(scope_flags); \
+    MP_STATE_THREAD(scope_flags) = scope_flags; \
 
 #if MICROPY_STACKLESS
 mp_code_state_t *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     MP_STACK_CHECK();
     mp_obj_fun_bc_t *self = MP_OBJ_TO_PTR(self_in);
 
-    // bytecode prelude: state size and exception stack size
-    size_t n_state = mp_decode_uint_value(self->bytecode);
-    size_t n_exc_stack = mp_decode_uint_value(mp_decode_uint_skip(self->bytecode));
+    size_t n_state, state_size;
+    DECODE_CODESTATE_SIZE(self->bytecode, n_state, state_size);
 
-    // allocate state for locals and stack
-    size_t state_size = n_state * sizeof(mp_obj_t) + n_exc_stack * sizeof(mp_exc_stack_t);
     mp_code_state_t *code_state;
     #if MICROPY_ENABLE_PYSTACK
     code_state = mp_pystack_alloc(sizeof(mp_code_state_t) + state_size);
     #else
+    // If we use m_new_obj_var(), then on no memory, MemoryError will be
+    // raised. But this is not correct exception for a function call,
+    // RuntimeError should be raised instead. So, we use m_new_obj_var_maybe(),
+    // return NULL, then vm.c takes the needed action (either raise
+    // RuntimeError or fallback to stack allocation).
     code_state = m_new_obj_var_maybe(mp_code_state_t, byte, state_size);
     if (!code_state) {
         return NULL;
     }
     #endif
 
-    code_state->fun_bc = self;
-    code_state->ip = 0;
-    uint8_t scope_flags = mp_setup_code_state(code_state, n_args, n_kw, args);
-
-    // set the scope flags for this function
-    code_state->old_scope_flags = MP_STATE_THREAD(scope_flags);
-    MP_STATE_THREAD(scope_flags) = scope_flags;
+    INIT_CODESTATE(code_state, self, n_args, n_kw, args);
 
     // execute the byte code with the correct globals context
-    code_state->old_globals = mp_globals_get();
     mp_globals_set(self->globals);
 
     return code_state;
@@ -247,16 +262,10 @@ STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const 
     mp_obj_fun_bc_t *self = MP_OBJ_TO_PTR(self_in);
     DEBUG_printf("Func n_def_args: %d\n", self->n_def_args);
 
-    // bytecode prelude: state size and exception stack size
-    size_t n_state = mp_decode_uint_value(self->bytecode);
-    size_t n_exc_stack = mp_decode_uint_value(mp_decode_uint_skip(self->bytecode));
-
-#if VM_DETECT_STACK_OVERFLOW
-    n_state += 1;
-#endif
+    size_t n_state, state_size;
+    DECODE_CODESTATE_SIZE(self->bytecode, n_state, state_size);
 
     // allocate state for locals and stack
-    size_t state_size = n_state * sizeof(mp_obj_t) + n_exc_stack * sizeof(mp_exc_stack_t);
     mp_code_state_t *code_state = NULL;
     #if MICROPY_ENABLE_PYSTACK
     code_state = mp_pystack_alloc(sizeof(mp_code_state_t) + state_size);
@@ -270,16 +279,9 @@ STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const 
     }
     #endif
 
-    code_state->fun_bc = self;
-    code_state->ip = 0;
-    uint8_t scope_flags = mp_setup_code_state(code_state, n_args, n_kw, args);
-
-    // set the scope flags for this function
-    code_state->old_scope_flags = MP_STATE_THREAD(scope_flags);
-    MP_STATE_THREAD(scope_flags) = scope_flags;
+    INIT_CODESTATE(code_state, self, n_args, n_kw, args);
 
     // execute the byte code with the correct globals context
-    code_state->old_globals = mp_globals_get();
     mp_globals_set(self->globals);
     mp_vm_return_kind_t vm_return_kind = mp_execute_bytecode(code_state, MP_OBJ_NULL);
     mp_globals_set(code_state->old_globals);

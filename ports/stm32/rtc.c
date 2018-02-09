@@ -132,13 +132,14 @@ void rtc_init_start(bool force_init) {
             // provide some status information
             rtc_info |= 0x40000 | (RCC->BDCR & 7) | (RCC->CSR & 3) << 8;
             return;
-        } else if (((RCC->BDCR & RCC_BDCR_RTCSEL) == RCC_BDCR_RTCSEL_1) && ((RCC->CSR & 3) == 3)) {
-            // LSI configured & enabled & ready --> no need to (re-)init RTC
+        } else if ((RCC->BDCR & RCC_BDCR_RTCSEL) == RCC_BDCR_RTCSEL_1) {
+            // LSI configured as the RTC clock source --> no need to (re-)init RTC
             // remove Backup Domain write protection
             HAL_PWR_EnableBkUpAccess();
             // Clear source Reset Flag
             __HAL_RCC_CLEAR_RESET_FLAGS();
-            RCC->CSR |= 1;
+            // Turn the LSI on (it may need this even if the RTC is running)
+            RCC->CSR |= RCC_CSR_LSION;
             // provide some status information
             rtc_info |= 0x80000 | (RCC->BDCR & 7) | (RCC->CSR & 3) << 8;
             return;
@@ -162,7 +163,7 @@ void rtc_init_finalise() {
         return;
     }
 
-    rtc_info = 0x20000000 | (rtc_use_lse << 28);
+    rtc_info = 0x20000000;
     if (PYB_RTC_Init(&RTCHandle) != HAL_OK) {
         if (rtc_use_lse) {
             // fall back to LSI...
@@ -181,6 +182,9 @@ void rtc_init_finalise() {
             return;
         }
     }
+
+    // record if LSE or LSI is used
+    rtc_info |= (rtc_use_lse << 28);
 
     // record how long it took for the RTC to start up
     rtc_info |= (HAL_GetTick() - rtc_startup_tick) & 0xffff;
@@ -331,7 +335,11 @@ STATIC void PYB_RTC_MspInit_Kick(RTC_HandleTypeDef *hrtc, bool rtc_use_lse) {
     RCC_OscInitStruct.OscillatorType =  RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_LSE;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     if (rtc_use_lse) {
+        #if MICROPY_HW_RTC_USE_BYPASS
+        RCC_OscInitStruct.LSEState = RCC_LSE_BYPASS;
+        #else
         RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+        #endif
         RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
     } else {
         RCC_OscInitStruct.LSEState = RCC_LSE_OFF;

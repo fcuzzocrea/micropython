@@ -79,7 +79,7 @@
 //  - seeeeeee eeeeffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 64-bit fp, e != 0x7ff
 //  - s1111111 11110000 00000000 00000000 00000000 00000000 00000000 00000000 +/- inf
 //  - 01111111 11111000 00000000 00000000 00000000 00000000 00000000 00000000 normalised nan
-//  - 01111111 11111101 00000000 00000000 iiiiiiii iiiiiiii iiiiiiii iiiiiii1 small int
+//  - 01111111 11111101 iiiiiiii iiiiiiii iiiiiiii iiiiiiii iiiiiiii iiiiiii1 small int
 //  - 01111111 11111110 00000000 00000000 qqqqqqqq qqqqqqqq qqqqqqqq qqqqqqq1 str
 //  - 01111111 11111100 00000000 00000000 pppppppp pppppppp pppppppp pppppp00 ptr (4 byte alignment)
 // Stored as O = R + 0x8004000000000000, retrieved as R = O - 0x8004000000000000.
@@ -347,7 +347,7 @@
 #endif
 
 // Whether to enable optimisation of: a, b, c = d, e, f
-// Cost 156 bytes (Thumb2)
+// Requires MICROPY_COMP_DOUBLE_TUPLE_ASSIGN and costs 68 bytes (Thumb2)
 #ifndef MICROPY_COMP_TRIPLE_TUPLE_ASSIGN
 #define MICROPY_COMP_TRIPLE_TUPLE_ASSIGN (0)
 #endif
@@ -450,6 +450,11 @@
 // If enabled then the code must call mp_pystack_init before mp_init.
 #ifndef MICROPY_ENABLE_PYSTACK
 #define MICROPY_ENABLE_PYSTACK (0)
+#endif
+
+// Number of bytes that memory returned by mp_pystack_alloc will be aligned by.
+#ifndef MICROPY_PYSTACK_ALIGN
+#define MICROPY_PYSTACK_ALIGN (8)
 #endif
 
 // Whether to check C stack usage. C stack used for calling Python functions,
@@ -706,6 +711,15 @@ typedef double mp_float_t;
 #define MICROPY_PY_ASYNC_AWAIT (1)
 #endif
 
+// Non-standard .pend_throw() method for generators, allowing for
+// Future-like behavior with respect to exception handling: an
+// exception set with .pend_throw() will activate on the next call
+// to generator's .send() or .__next__(). (This is useful to implement
+// async schedulers.)
+#ifndef MICROPY_PY_GENERATOR_PEND_THROW
+#define MICROPY_PY_GENERATOR_PEND_THROW (1)
+#endif
+
 // Issue a warning when comparing str and bytes objects
 #ifndef MICROPY_PY_STR_BYTES_CMP_WARN
 #define MICROPY_PY_STR_BYTES_CMP_WARN (0)
@@ -949,7 +963,11 @@ typedef double mp_float_t;
 
 // Whether to provide "uio.resource_stream()" function with
 // the semantics of CPython's pkg_resources.resource_stream()
-// (allows to access resources in frozen packages).
+// (allows to access binary resources in frozen source packages).
+// Note that the same functionality can be achieved in "pure
+// Python" by prepocessing binary resources into Python source
+// and bytecode-freezing it (with a simple helper module available
+// e.g. in micropython-lib).
 #ifndef MICROPY_PY_IO_RESOURCE_STREAM
 #define MICROPY_PY_IO_RESOURCE_STREAM (0)
 #endif

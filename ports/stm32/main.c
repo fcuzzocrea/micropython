@@ -263,7 +263,7 @@ MP_NOINLINE STATIC bool init_flash_fs(uint reset_mode) {
 }
 
 #if MICROPY_HW_HAS_SDCARD
-STATIC bool init_sdcard_fs(bool first_soft_reset) {
+STATIC bool init_sdcard_fs(void) {
     bool first_part = true;
     for (int part_num = 1; part_num <= 4; ++part_num) {
         // create vfs object
@@ -308,12 +308,12 @@ STATIC bool init_sdcard_fs(bool first_soft_reset) {
                 }
             }
 
-            if (first_soft_reset) {
-                // use SD card as medium for the USB MSD
-                #if defined(USE_DEVICE_MODE)
+            #if defined(USE_DEVICE_MODE)
+            if (pyb_usb_storage_medium == PYB_USB_STORAGE_MEDIUM_NONE) {
+                // if no USB MSC medium is selected then use the SD card
                 pyb_usb_storage_medium = PYB_USB_STORAGE_MEDIUM_SDCARD;
-                #endif
             }
+            #endif
 
             #if defined(USE_DEVICE_MODE)
             // only use SD card as current directory if that's what the USB medium is
@@ -454,16 +454,21 @@ int main(void) {
     #endif
     pendsv_init();
     led_init();
-#if MICROPY_HW_HAS_SWITCH
+    #if MICROPY_HW_HAS_SWITCH
     switch_init0();
-#endif
-
-#if defined(USE_DEVICE_MODE)
-    // default to internal flash being the usb medium
-    pyb_usb_storage_medium = PYB_USB_STORAGE_MEDIUM_FLASH;
-#endif
-
-    int first_soft_reset = true;
+    #endif
+    machine_init();
+    #if MICROPY_HW_ENABLE_RTC
+    rtc_init_start(false);
+    #endif
+    spi_init0();
+    #if MICROPY_HW_ENABLE_HW_I2C
+    i2c_init0();
+    #endif
+    #if MICROPY_HW_HAS_SDCARD
+    sdcard_init();
+    #endif
+    storage_init();
 
 soft_reset:
 
@@ -479,24 +484,6 @@ soft_reset:
     led_state(4, 0);
     uint reset_mode = update_reset_mode(1);
 
-    machine_init();
-
-#if MICROPY_HW_ENABLE_RTC
-    if (first_soft_reset) {
-        rtc_init_start(false);
-    }
-#endif
-
-    // more sub-system init
-#if MICROPY_HW_HAS_SDCARD
-    if (first_soft_reset) {
-        sdcard_init();
-    }
-#endif
-    if (first_soft_reset) {
-        storage_init();
-    }
-
     // Python threading init
     #if MICROPY_PY_THREAD
     mp_thread_init();
@@ -510,6 +497,11 @@ soft_reset:
 
     // GC init
     gc_init(&_heap_start, &_heap_end);
+
+    #if MICROPY_ENABLE_PYSTACK
+    static mp_obj_t pystack[384];
+    mp_pystack_init(pystack, &pystack[384]);
+    #endif
 
     // MicroPython init
     mp_init();
@@ -547,12 +539,6 @@ soft_reset:
     can_init0();
 #endif
 
-#if MICROPY_HW_ENABLE_RNG
-    rng_init0();
-#endif
-
-    i2c_init0();
-    spi_init0();
     pyb_usb_init0();
 
     // Initialise the local flash filesystem.
@@ -565,10 +551,17 @@ soft_reset:
     if (sdcard_is_present()) {
         // if there is a file in the flash called "SKIPSD", then we don't mount the SD card
         if (!mounted_flash || f_stat(&fs_user_mount_flash.fatfs, "/SKIPSD", NULL) != FR_OK) {
-            mounted_sdcard = init_sdcard_fs(first_soft_reset);
+            mounted_sdcard = init_sdcard_fs();
         }
     }
 #endif
+
+    #if defined(USE_DEVICE_MODE)
+    // if the SD card isn't used as the USB MSC medium then use the internal flash
+    if (pyb_usb_storage_medium == PYB_USB_STORAGE_MEDIUM_NONE) {
+        pyb_usb_storage_medium = PYB_USB_STORAGE_MEDIUM_FLASH;
+    }
+    #endif
 
     // set sys.path based on mounted filesystems (/sd is first so it can override /flash)
     if (mounted_sdcard) {
@@ -689,11 +682,11 @@ soft_reset_exit:
 #if MICROPY_HW_ENABLE_CAN
     can_deinit();
 #endif
+    machine_deinit();
 
     #if MICROPY_PY_THREAD
     pyb_thread_deinit();
     #endif
 
-    first_soft_reset = false;
     goto soft_reset;
 }
