@@ -218,6 +218,8 @@
 #else
 // settings for Edisoft RTEMS
 #define MICROPY_NLR_SPARC (1)
+#define MICROPY_NLR_SETJMP (0)
+#define MICROPY_NO_ALLOCA (1)
 #endif
 
 // Root pointers
