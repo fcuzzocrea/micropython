@@ -34,7 +34,10 @@
 
 #include "py/mpconfig.h"
 
-#if !MICROPY_NLR_SPARC
+#if MICROPY_NLR_SPARC
+#define MICROPY_NLR_NUM_REGS (18)
+#else
+
 #include <limits.h>
 #include <setjmp.h>
 
@@ -68,8 +71,6 @@
 #endif
 #endif
 
-#else
-#define MICROPY_NLR_NUM_REGS (18)
 #endif
 
 #if MICROPY_NLR_SETJMP
@@ -118,26 +119,17 @@ struct _nlr_buf_t {
 // invalidated if the function which called setjmp() returns."
 // For this case it is safe to call nlr_push_tail() first.
 #define nlr_push(buf) (nlr_push_tail(buf), setjmp((buf)->jmpbuf))
-#else
-#if MICROPY_NLR_SPARC
+#elif MICROPY_NLR_SPARC
 // nlr_push() is a macro because it must not call the save/restore instructions
 // We write NULL to ret_val to keep static analysers happy (ret_val is read in
 // the "exception" handler and will be correctly set by nlr_jump).
 int sparc_setjmp(void *env);
-#if MICROPY_ENABLE_PYSTACK
 #define nlr_push(buf) ( \
     (buf)->prev = MP_STATE_THREAD(nlr_top), \
     (buf)->ret_val = NULL, \
-    (buf)->pystack = MP_STATE_THREAD(pystack_cur), \
+    MP_NLR_SAVE_PYSTACK(buf), \
     MP_STATE_THREAD(nlr_top) = (buf), \
     sparc_setjmp((buf)->regs))
-#else
-#define nlr_push(buf) ( \
-    (buf)->prev = MP_STATE_THREAD(nlr_top), \
-    (buf)->ret_val = NULL, \
-    MP_STATE_THREAD(nlr_top) = (buf), \
-    sparc_setjmp((buf)->regs))
-#endif
 #else
 unsigned int nlr_push(nlr_buf_t *);
 #endif

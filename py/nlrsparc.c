@@ -31,11 +31,6 @@
 
 NORETURN void sparc_longjmp(void *env, int val);
 
-void nlr_pop(void) {
-    nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);
-    *top = (*top)->prev;
-}
-
 NORETURN void nlr_jump(void *val) {
     nlr_buf_t **top_ptr = &MP_STATE_THREAD(nlr_top);
     nlr_buf_t *top = *top_ptr;
