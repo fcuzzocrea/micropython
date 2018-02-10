@@ -175,7 +175,9 @@ STATIC uint32_t mp_obj_exception_check_system_exit(mp_obj_t exc) {
 mp_obj_t mp_exec_mpy_with_exc(const byte *buf, size_t len) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
+        #if MICROPY_PY___FILE__
         mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(MP_QSTR___main__));
+        #endif
         mp_raw_code_t *raw_code = mp_raw_code_load_mem(buf, len);
         mp_obj_t f = mp_make_function_from_raw_code(raw_code, MP_OBJ_NULL, MP_OBJ_NULL);
         mp_call_function_0(f);
