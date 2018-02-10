@@ -111,7 +111,8 @@ void mp_obj_exception_get_location(mp_obj_t exc, mp_exc_location_t *exc_loc) {
     if (mp_obj_is_exception_instance(exc)) {
         size_t n, *values;
         mp_obj_exception_get_traceback(exc, &n, &values);
-        if (n >= 3) {
+        // The check for values!=NULL is to silence Polyspace
+        if (n >= 3 && values != NULL) {
             exc_loc->filename = qstr_str(values[0]);
             #if MICROPY_ENABLE_SOURCE_LINE
             exc_loc->line = values[1];
