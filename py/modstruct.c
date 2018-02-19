@@ -134,7 +134,13 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t *args) {
     byte *end_p = &p[bufinfo.len];
     mp_int_t offset = 0;
 
-    if (n_args > 2) {
+    if (n_args == 3 && args[2] == MP_OBJ_NULL) {
+        // A 3rd arg of MP_OBJ_NULL means struct.unpack() and we should check
+        // for the exact size of the input buffer (> is checked below).
+        if (p + total_sz < end_p) {
+            mp_raise_ValueError("buffer too large");
+        }
+    } else if (n_args > 2) {
         // offset arg provided
         offset = mp_obj_get_int(args[2]);
         if (offset < 0) {
@@ -173,6 +179,13 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t *args) {
     return MP_OBJ_FROM_PTR(res);
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(struct_unpack_from_obj, 2, 3, struct_unpack_from);
+
+STATIC mp_obj_t struct_unpack(mp_obj_t fmt, mp_obj_t buf) {
+    // Use MP_OBJ_NULL as 3rd arg to indicate a call from struct.unpack()
+    mp_obj_t args[3] = {fmt, buf, MP_OBJ_NULL};
+    return struct_unpack_from(3, args);
+}
+MP_DEFINE_CONST_FUN_OBJ_2(struct_unpack_obj, struct_unpack);
 
 // This function assumes there is enough room in p to store all the values
 STATIC void struct_pack_into_internal(mp_obj_t fmt_in, byte *p, size_t n_args, const mp_obj_t *args) {
@@ -260,7 +273,7 @@ STATIC const mp_rom_map_elem_t mp_module_struct_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_calcsize), MP_ROM_PTR(&struct_calcsize_obj) },
     { MP_ROM_QSTR(MP_QSTR_pack), MP_ROM_PTR(&struct_pack_obj) },
     { MP_ROM_QSTR(MP_QSTR_pack_into), MP_ROM_PTR(&struct_pack_into_obj) },
-    { MP_ROM_QSTR(MP_QSTR_unpack), MP_ROM_PTR(&struct_unpack_from_obj) },
+    { MP_ROM_QSTR(MP_QSTR_unpack), MP_ROM_PTR(&struct_unpack_obj) },
     { MP_ROM_QSTR(MP_QSTR_unpack_from), MP_ROM_PTR(&struct_unpack_from_obj) },
 };
 
