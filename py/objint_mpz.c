@@ -199,11 +199,12 @@ mp_obj_t mp_obj_int_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_i
     if (0) {
 #if MICROPY_PY_BUILTINS_FLOAT
     } else if (op == MP_BINARY_OP_TRUE_DIVIDE || op == MP_BINARY_OP_INPLACE_TRUE_DIVIDE) {
-        if (mpz_is_zero(zrhs)) {
-            goto zero_division_error;
-        }
         mp_float_t flhs = mpz_as_float(zlhs);
         mp_float_t frhs = mpz_as_float(zrhs);
+        if (frhs == 0) {
+            // We check the float val and call mp_raise_msg here to help Polyspace
+            mp_raise_msg(&mp_type_ZeroDivisionError, "division by zero");
+        }
         return mp_obj_new_float(flhs / frhs);
 #endif
 
