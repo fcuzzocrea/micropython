@@ -308,14 +308,14 @@ STATIC bool init_sdcard_fs(void) {
                 }
             }
 
-            #if defined(USE_DEVICE_MODE)
+            #if MICROPY_HW_ENABLE_USB
             if (pyb_usb_storage_medium == PYB_USB_STORAGE_MEDIUM_NONE) {
                 // if no USB MSC medium is selected then use the SD card
                 pyb_usb_storage_medium = PYB_USB_STORAGE_MEDIUM_SDCARD;
             }
             #endif
 
-            #if defined(USE_DEVICE_MODE)
+            #if MICROPY_HW_ENABLE_USB
             // only use SD card as current directory if that's what the USB medium is
             if (pyb_usb_storage_medium == PYB_USB_STORAGE_MEDIUM_SDCARD)
             #endif
@@ -428,10 +428,10 @@ int main(void) {
     SystemClock_Config();
 
     // enable GPIO clocks
-    __GPIOA_CLK_ENABLE();
-    __GPIOB_CLK_ENABLE();
-    __GPIOC_CLK_ENABLE();
-    __GPIOD_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
 
     #if defined(MCU_SERIES_F4) ||  defined(MCU_SERIES_F7)
         #if defined(__HAL_RCC_DTCMRAMEN_CLK_ENABLE)
@@ -539,7 +539,9 @@ soft_reset:
     can_init0();
 #endif
 
+    #if MICROPY_HW_ENABLE_USB
     pyb_usb_init0();
+    #endif
 
     // Initialise the local flash filesystem.
     // Create it if needed, mount in on /flash, and set it as current dir.
@@ -556,7 +558,7 @@ soft_reset:
     }
 #endif
 
-    #if defined(USE_DEVICE_MODE)
+    #if MICROPY_HW_ENABLE_USB
     // if the SD card isn't used as the USB MSC medium then use the internal flash
     if (pyb_usb_storage_medium == PYB_USB_STORAGE_MEDIUM_NONE) {
         pyb_usb_storage_medium = PYB_USB_STORAGE_MEDIUM_FLASH;
@@ -607,12 +609,12 @@ soft_reset:
     // or whose initialisation can be safely deferred until after running
     // boot.py.
 
-#if defined(USE_DEVICE_MODE)
+    #if MICROPY_HW_ENABLE_USB
     // init USB device to default setting if it was not already configured
     if (!(pyb_usb_flags & PYB_USB_FLAG_USB_MODE_CALLED)) {
         pyb_usb_dev_init(USBD_VID, USBD_PID_CDC_MSC, USBD_MODE_CDC_MSC, NULL);
     }
-#endif
+    #endif
 
 #if MICROPY_HW_HAS_MMA7660
     // MMA accel: init and reset

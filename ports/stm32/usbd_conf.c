@@ -39,10 +39,10 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#ifdef USE_USB_FS
+#if MICROPY_HW_USB_FS
 PCD_HandleTypeDef pcd_fs_handle;
 #endif
-#ifdef USE_USB_HS
+#if MICROPY_HW_USB_HS
 PCD_HandleTypeDef pcd_hs_handle;
 #endif
 /* Private function prototypes -----------------------------------------------*/
@@ -63,12 +63,12 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
   if(hpcd->Instance == USB_OTG_FS)
   {
     /* Configure USB FS GPIOs */
-    __GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
     
     GPIO_InitStruct.Pin = (GPIO_PIN_11 | GPIO_PIN_12);
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
     
@@ -113,19 +113,19 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     /* Enable USBFS Interrupt */
     HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
   } 
-#if defined(USE_USB_HS)
+#if MICROPY_HW_USB_HS
   else if(hpcd->Instance == USB_OTG_HS)
   {
-#if defined(USE_USB_HS_IN_FS)
+#if MICROPY_HW_USB_HS_IN_FS
 
     /* Configure USB FS GPIOs */
-    __GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
 
     /* Configure DM DP Pins */
     GPIO_InitStruct.Pin = (GPIO_PIN_14 | GPIO_PIN_15);
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF12_OTG_HS_FS;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -134,7 +134,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     GPIO_InitStruct.Pin = GPIO_PIN_13;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF12_OTG_HS_FS;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 #endif
@@ -144,7 +144,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     GPIO_InitStruct.Pin = GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF12_OTG_HS_FS;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 #endif
@@ -166,20 +166,20 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
 
     __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
 
-#else // !USE_USB_HS_IN_FS
+#else // !MICROPY_HW_USB_HS_IN_FS
 
     /* Configure USB HS GPIOs */
-    __GPIOA_CLK_ENABLE();
-    __GPIOB_CLK_ENABLE();
-    __GPIOC_CLK_ENABLE();
-    __GPIOH_CLK_ENABLE();
-    __GPIOI_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOI_CLK_ENABLE();
     
     /* CLK */
     GPIO_InitStruct.Pin = GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_OTG_HS;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
     
@@ -187,7 +187,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     GPIO_InitStruct.Pin = GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_OTG_HS;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
     
@@ -223,7 +223,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     /* Enable USB HS Clocks */
     __USB_OTG_HS_CLK_ENABLE();
     __USB_OTG_HS_ULPI_CLK_ENABLE();
-#endif // !USE_USB_HS_IN_FS
+#endif // !MICROPY_HW_USB_HS_IN_FS
     
     /* Set USBHS Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(OTG_HS_IRQn, IRQ_PRI_OTG_HS, IRQ_SUBPRI_OTG_HS);
@@ -231,7 +231,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     /* Enable USBHS Interrupt */
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
   }   
-#endif  // USE_USB_HS
+#endif  // MICROPY_HW_USB_HS
 }
 /**
   * @brief  DeInitializes the PCD MSP.
@@ -246,7 +246,7 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef *hpcd)
     __USB_OTG_FS_CLK_DISABLE();
     __SYSCFG_CLK_DISABLE(); 
   }
-  #if defined(USE_USB_HS)
+  #if MICROPY_HW_USB_HS
   else if(hpcd->Instance == USB_OTG_HS)
   {  
     /* Disable USB FS Clocks */ 
@@ -410,7 +410,7 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
   */
 USBD_StatusTypeDef  USBD_LL_Init (USBD_HandleTypeDef *pdev, int high_speed)
 { 
-#if defined(USE_USB_FS)
+#if MICROPY_HW_USB_FS
 if (pdev->id ==  USB_PHY_FS_ID)
 {
   /*Set LL Driver parameters */
@@ -445,10 +445,10 @@ if (pdev->id ==  USB_PHY_FS_ID)
   HAL_PCD_SetTxFiFo(&pcd_fs_handle, 3, 0x40);
 }
 #endif
-#if defined(USE_USB_HS)
+#if MICROPY_HW_USB_HS
 if (pdev->id == USB_PHY_HS_ID)
 {
-#if defined(USE_USB_HS_IN_FS)
+#if MICROPY_HW_USB_HS_IN_FS
   /*Set LL Driver parameters */
   pcd_hs_handle.Instance = USB_OTG_HS;
   pcd_hs_handle.Init.dev_endpoints = 4;
@@ -484,7 +484,7 @@ if (pdev->id == USB_PHY_HS_ID)
   HAL_PCD_SetTxFiFo(&pcd_hs_handle, 1, 0x100);
   HAL_PCD_SetTxFiFo(&pcd_hs_handle, 2, 0x20);
   HAL_PCD_SetTxFiFo(&pcd_hs_handle, 3, 0xc0);
-#else // !defined(USE_USB_HS_IN_FS)
+#else // !MICROPY_HW_USB_HS_IN_FS
   /*Set LL Driver parameters */
   pcd_hs_handle.Instance = USB_OTG_HS;
   pcd_hs_handle.Init.dev_endpoints = 6;
@@ -513,9 +513,9 @@ if (pdev->id == USB_PHY_HS_ID)
   HAL_PCD_SetTxFiFo(&pcd_hs_handle, 0, 0x80);
   HAL_PCD_SetTxFiFo(&pcd_hs_handle, 1, 0x174);
 
-#endif  // !USE_USB_HS_IN_FS
+#endif  // !MICROPY_HW_USB_HS_IN_FS
 }
-#endif  // USE_USB_HS
+#endif  // MICROPY_HW_USB_HS
   return USBD_OK;
 }
 

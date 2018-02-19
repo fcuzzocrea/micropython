@@ -175,7 +175,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_chr_obj, mp_builtin_chr);
 STATIC mp_obj_t mp_builtin_dir(size_t n_args, const mp_obj_t *args) {
     mp_obj_t dir = mp_obj_new_list(0, NULL);
     if (n_args == 0) {
-        // make a list of names in the local name space
+        // Make a list of names in the local namespace
         mp_obj_dict_t *dict = mp_locals_get();
         for (size_t i = 0; i < dict->map.alloc; i++) {
             if (MP_MAP_SLOT_IS_FILLED(&dict->map, i)) {
@@ -183,14 +183,9 @@ STATIC mp_obj_t mp_builtin_dir(size_t n_args, const mp_obj_t *args) {
             }
         }
     } else { // n_args == 1
-        // make a list of names in the given object
-        // This is implemented by probing all possible qstrs with mp_load_method_maybe.
-        // This is very simple, doesn't require recursion, and allows to list all methods
-        // of user-defined classes (without duplicates) even if they have multiple
-        // inheritance with a common parent.  The downside is that it can be slow, but
-        // the "dir()" function is anyway mostly used for testing frameworks and user
-        // introspection of types, so speed is not considered a priority.
-        size_t nqstr = MP_STATE_VM(last_pool)->total_prev_len + MP_STATE_VM(last_pool)->len;
+        // Make a list of names in the given object
+        // Implemented by probing all possible qstrs with mp_load_method_maybe
+        size_t nqstr = QSTR_TOTAL();
         for (size_t i = 1; i < nqstr; ++i) {
             mp_obj_t dest[2];
             mp_load_method_maybe(args[0], i, dest);
@@ -326,19 +321,19 @@ MP_DEFINE_CONST_FUN_OBJ_1(mp_builtin_oct_obj, mp_builtin_oct);
 
 STATIC mp_obj_t mp_builtin_ord(mp_obj_t o_in) {
     size_t len;
-    const char *str = mp_obj_str_get_data(o_in, &len);
+    const byte *str = (const byte*)mp_obj_str_get_data(o_in, &len);
     #if MICROPY_PY_BUILTINS_STR_UNICODE
     if (MP_OBJ_IS_STR(o_in)) {
-        len = unichar_charlen(str, len);
+        len = utf8_charlen(str, len);
         if (len == 1) {
-            return mp_obj_new_int(utf8_get_char((const byte*)str));
+            return mp_obj_new_int(utf8_get_char(str));
         }
     } else
     #endif
     {
         // a bytes object, or a str without unicode support (don't sign extend the char)
         if (len == 1) {
-            return MP_OBJ_NEW_SMALL_INT(((const byte*)str)[0]);
+            return MP_OBJ_NEW_SMALL_INT(str[0]);
         }
     }
 
