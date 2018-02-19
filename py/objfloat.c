@@ -307,7 +307,8 @@ mp_obj_t mp_obj_float_binary_op(mp_binary_op_t op, mp_float_t lhs_val, mp_obj_t 
             break;
         case MP_BINARY_OP_DIVMOD: {
             if (rhs_val == 0) {
-                goto zero_division_error;
+                // We call mp_raise_msg explicitly here to help Polyspace
+                mp_raise_msg(&mp_type_ZeroDivisionError, "division by zero");
             }
             mp_obj_float_divmod(&lhs_val, &rhs_val);
             mp_obj_t tuple[2] = {
