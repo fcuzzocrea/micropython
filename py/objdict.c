@@ -61,9 +61,11 @@ STATIC void dict_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
     {
         kind = PRINT_REPR;
     }
-    if (MICROPY_PY_COLLECTIONS_ORDEREDDICT && self->base.type != &mp_type_dict) {
+    #if MICROPY_PY_COLLECTIONS_ORDEREDDICT
+    if (self->base.type != &mp_type_dict) {
         mp_printf(print, "%q(", self->base.type->name);
     }
+    #endif
     mp_print_str(print, "{");
     size_t cur = 0;
     mp_map_elem_t *next = NULL;
@@ -77,9 +79,11 @@ STATIC void dict_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_
         mp_obj_print_helper(print, next->value, kind);
     }
     mp_print_str(print, "}");
-    if (MICROPY_PY_COLLECTIONS_ORDEREDDICT && self->base.type != &mp_type_dict) {
+    #if MICROPY_PY_COLLECTIONS_ORDEREDDICT
+    if (self->base.type != &mp_type_dict) {
         mp_print_str(print, ")");
     }
+    #endif
 }
 
 STATIC mp_obj_t dict_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {

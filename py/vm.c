@@ -841,14 +841,14 @@ unwind_jump:;
                     if ((unum & 3) == 0) {
                         mp_obj_list_append(obj, sp[0]);
                         sp--;
-                    } else if (!MICROPY_PY_BUILTINS_SET || (unum & 3) == 1) {
-                        mp_obj_dict_store(obj, sp[0], sp[-1]);
-                        sp -= 2;
                     #if MICROPY_PY_BUILTINS_SET
-                    } else {
+                    } else if ((unum & 3) == 2) {
                         mp_obj_set_store(obj, sp[0]);
                         sp--;
                     #endif
+                    } else {
+                        mp_obj_dict_store(obj, sp[0], sp[-1]);
+                        sp -= 2;
                     }
                     // next opcode is always JUMP
                     ip += 1;
