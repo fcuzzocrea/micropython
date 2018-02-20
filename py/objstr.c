@@ -351,8 +351,8 @@ mp_obj_t mp_obj_str_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_i
     // easy to "fix" this with a bit of extra logic below, but it costs code
     // size and execution time so we don't.
 
-    const byte *rhs_data;
-    size_t rhs_len;
+    const byte *rhs_data = NULL;
+    size_t rhs_len = 0;
     if (lhs_type == mp_obj_get_type(rhs_in)) {
         GET_STR_DATA_LEN(rhs_in, rhs_data_, rhs_len_);
         rhs_data = rhs_data_;
