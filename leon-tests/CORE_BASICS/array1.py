@@ -16,7 +16,11 @@ print(len(a), a[0])
 a1 = array.array('l', [1, 2, 3])
 a2 = array.array('L', [1, 2, 3])
 print(a2[1])
-print(a1 == a2)
+print(a1 == array.array('l', [1, 2, 3]))
+try:
+    print(a1 == a2)
+except NotImplementedError:
+    print('NotImplementedError')
 
 # Empty arrays
 print(len(array.array('h')))
