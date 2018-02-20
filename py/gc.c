@@ -785,6 +785,8 @@ void *gc_realloc(void *ptr_in, size_t n_bytes, bool allow_move) {
 }
 #endif // Alternative gc_realloc impl
 
+#if EXTENSIVE_HEAP_PROFILING || MICROPY_PY_MICROPYTHON_MEM_INFO
+
 void gc_dump_info(void) {
     gc_info_t info;
     gc_info(&info);
@@ -903,6 +905,8 @@ void gc_dump_alloc_table(void) {
     mp_print_str(&mp_plat_print, "\n");
     GC_EXIT();
 }
+
+#endif // EXTENSIVE_HEAP_PROFILING || MICROPY_PY_MICROPYTHON_MEM_INFO
 
 #if DEBUG_PRINT
 void gc_test(void) {

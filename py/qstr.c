@@ -261,6 +261,7 @@ const byte *qstr_data(qstr q, size_t *len) {
     return Q_GET_DATA(qd);
 }
 
+#if MICROPY_PY_MICROPYTHON_MEM_INFO
 void qstr_pool_info(size_t *n_pool, size_t *n_qstr, size_t *n_str_data_bytes, size_t *n_total_bytes) {
     QSTR_ENTER();
     *n_pool = 0;
@@ -283,7 +284,6 @@ void qstr_pool_info(size_t *n_pool, size_t *n_qstr, size_t *n_str_data_bytes, si
     QSTR_EXIT();
 }
 
-#if MICROPY_PY_MICROPYTHON_MEM_INFO
 void qstr_dump_data(void) {
     QSTR_ENTER();
     for (qstr_pool_t *pool = MP_STATE_VM(last_pool); pool != NULL && pool != &CONST_POOL; pool = pool->prev) {
