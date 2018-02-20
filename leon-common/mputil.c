@@ -6,6 +6,8 @@
  * MicroPython to LEON platforms", contract number 4000114080/15/NL/FE/as.
  */
 
+#include <string.h>
+
 #include "py/nlr.h"
 #include "py/compile.h"
 #include "py/runtime.h"
@@ -282,6 +284,8 @@ mp_import_stat_t mp_import_stat(const char *path) {
             return MP_IMPORT_STAT_FILE;
         }
     }
+    #else
+    (void)path;
     #endif
 
     // the requested file is not found
@@ -296,12 +300,15 @@ mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
             return rf->raw_code;
         }
     }
+    #else
+    (void)filename;
     #endif
 
     // the requested file is not found
     nlr_raise(mp_obj_new_exception_msg(&mp_type_RuntimeError, "can't import"));
 }
 
+#if defined(MICROPY_SPARC_NUM_REG_WINDOWS)
 // This is called by the memory manager when a garbage collection is needed.
 void gc_collect(void) {
     gc_collect_start();
@@ -326,6 +333,7 @@ void gc_collect(void) {
 
     gc_collect_end();
 }
+#endif
 
 // This is called if there is no exception handler registered to catch an exception.
 void nlr_jump_fail(void *val) {
