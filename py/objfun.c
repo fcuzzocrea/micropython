@@ -215,9 +215,9 @@ STATIC void dump_args(const mp_obj_t *a, size_t sz) {
     code_state->fun_bc = _fun_bc; \
     code_state->ip = 0; \
     uint8_t scope_flags = mp_setup_code_state(code_state, n_args, n_kw, args); \
-    /* set the scope flags for this function */ \
     code_state->old_scope_flags = MP_STATE_THREAD(scope_flags); \
     MP_STATE_THREAD(scope_flags) = scope_flags; \
+    code_state->old_globals = mp_globals_get(); \
 
 #if MICROPY_STACKLESS
 mp_code_state_t *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
