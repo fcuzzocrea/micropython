@@ -1,7 +1,7 @@
 # test await expression
 
 import sys
-if sys.implementation.name == 'micropython':
+if not hasattr(sys.implementation, 'name') or sys.implementation.name == 'micropython':
     # uPy allows normal generators to be awaitables
     coroutine = lambda f: f
 else:
