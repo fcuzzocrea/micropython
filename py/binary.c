@@ -231,18 +231,26 @@ mp_obj_t mp_binary_get_val(char struct_type, char val_type, byte **ptr) {
 }
 
 void mp_binary_set_int(mp_uint_t val_sz, bool big_endian, byte *dest, mp_uint_t val) {
-    if (MP_ENDIANNESS_LITTLE && !big_endian) {
+    #if MP_ENDIANNESS_LITTLE
+    if (!big_endian) {
         memcpy(dest, &val, val_sz);
-    } else if (MP_ENDIANNESS_BIG && big_endian) {
+        return;
+    }
+    #endif
+    #if MP_ENDIANNESS_BIG
+    if (big_endian) {
         // only copy the least-significant val_sz bytes
         memcpy(dest, (byte*)&val + sizeof(mp_uint_t) - val_sz, val_sz);
-    } else {
+        return;
+    }
+    #endif
+    {
         const byte *src;
-        if (MP_ENDIANNESS_LITTLE) {
+        #if MP_ENDIANNESS_LITTLE
             src = (const byte*)&val + val_sz;
-        } else {
+        #else
             src = (const byte*)&val + sizeof(mp_uint_t);
-        }
+        #endif
         while (val_sz--) {
             *dest++ = *--src;
         }
@@ -257,11 +265,11 @@ void mp_binary_set_val(char struct_type, char val_type, mp_obj_t val_in, byte **
     if (struct_type == '@') {
         // Make pointer aligned
         p = (byte*)MP_ALIGN(p, (size_t)align);
-        if (MP_ENDIANNESS_LITTLE) {
+        #if MP_ENDIANNESS_LITTLE
             struct_type = '<';
-        } else {
+        #else
             struct_type = '>';
-        }
+        #endif
     }
     *ptr = p + size;
 
