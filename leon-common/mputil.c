@@ -337,7 +337,7 @@ void gc_collect(void) {
 
 // This is called if there is no exception handler registered to catch an exception.
 void nlr_jump_fail(void *val) {
-    mp_printf(&mp_plat_print, "fatal error: nlr_jump_fail\n");
+    mp_printf(&mp_plat_print, "FATAL: uncaught NLR %p\n", val);
     for (;;) {
     }
 }
