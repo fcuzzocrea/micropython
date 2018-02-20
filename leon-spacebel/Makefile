@@ -48,6 +48,7 @@ SRC_C = \
 	lib/libc/strcmp.c \
 	lib/libc/strlen.c \
 	lib/libc/strncmp.c \
+	$(LEON_COMMON)/nearbyint.c \
 	$(LEON_COMMON)/mputil.c \
 	$(LEON_COMMON)/mphalport.c \
 	$(LEON_COMMON)/modtime.c \
