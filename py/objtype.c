@@ -85,7 +85,7 @@ STATIC mp_obj_t native_base_init_wrapper(size_t n_args, const mp_obj_t *args) {
     mp_obj_instance_t *self = MP_OBJ_TO_PTR(args[0]);
     const mp_obj_type_t *native_base = NULL;
     instance_count_native_bases(self->base.type, &native_base);
-    self->subobj[0] = native_base->make_new(native_base, n_args - 1, 0, args + 1); /* polyspace DEFECT:NULL_PTR [No action planned:Low] "native_base won't be NULL" */
+    self->subobj[0] = native_base->make_new(native_base, n_args - 1, 0, args + 1);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(native_base_init_wrapper_obj, 1, MP_OBJ_FUN_ARGS_MAX, native_base_init_wrapper);
