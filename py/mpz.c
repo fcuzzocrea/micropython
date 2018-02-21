@@ -434,7 +434,7 @@ STATIC size_t mpn_mul(mpz_dig_t *idig, mpz_dig_t *jdig, size_t jlen, mpz_dig_t *
 
         size_t jl = jlen;
         for (mpz_dig_t *jd = jdig; jl > 0; --jl, ++jd, ++id) {
-            carry += (mpz_dbl_dig_t)*id + (mpz_dbl_dig_t)*jd * (mpz_dbl_dig_t)*kdig; // will never overflow so long as DIG_SIZE <= 8*sizeof(mpz_dbl_dig_t)/2 /* polyspace DEFECT:NULL_PTR [No action planned:Low] "jd won't be NULL; kdig won't be NULL" */
+            carry += (mpz_dbl_dig_t)*id + (mpz_dbl_dig_t)*jd * (mpz_dbl_dig_t)*kdig; // will never overflow so long as DIG_SIZE <= 8*sizeof(mpz_dbl_dig_t)/2
             *id = carry & DIG_MASK;
             carry >>= DIG_SIZE;
         }
@@ -1346,7 +1346,7 @@ void mpz_pow_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs) {
     mpz_set_from_int(dest, 1);
 
     while (n->len > 0) {
-        if ((n->dig[0] & 1) != 0) { /* polyspace DEFECT:NULL_PTR [No action planned:Low] "n->dig won't be NULL" */
+        if ((n->dig[0] & 1) != 0) {
             mpz_mul_inpl(dest, dest, x);
         }
         n->len = mpn_shr(n->dig, n->dig, n->len, 1);
@@ -1380,7 +1380,7 @@ void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t 
     mpz_t quo; mpz_init_zero(&quo);
 
     while (n->len > 0) {
-        if ((n->dig[0] & 1) != 0) { /* polyspace DEFECT:NULL_PTR [No action planned:Low] "n->dig won't be NULL" */
+        if ((n->dig[0] & 1) != 0) {
             mpz_mul_inpl(dest, dest, x);
             mpz_divmod_inpl(&quo, dest, dest, mod);
         }
