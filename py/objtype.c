@@ -86,6 +86,9 @@ STATIC mp_obj_t native_base_init_wrapper(size_t n_args, const mp_obj_t *args) {
     const mp_obj_type_t *native_base = NULL;
     instance_count_native_bases(self->base.type, &native_base);
     self->subobj[0] = native_base->make_new(native_base, n_args - 1, 0, args + 1);
+    if (native_base != NULL) {
+        self->subobj[0] = native_base->make_new(native_base, n_args - 1, 0, args + 1);
+    }
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(native_base_init_wrapper_obj, 1, MP_OBJ_FUN_ARGS_MAX, native_base_init_wrapper);
