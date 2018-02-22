@@ -105,12 +105,12 @@ char *vstr_extend(vstr_t *vstr, size_t size) {
 
 STATIC void vstr_ensure_extra(vstr_t *vstr, size_t size) {
     if (vstr->len + size > vstr->alloc) {
-        if (vstr->fixed_buf) {
+        size_t new_alloc = ROUND_ALLOC((vstr->len + size) + 16);
+        if (vstr->fixed_buf || new_alloc == 0) {
             // We can't reallocate, and the caller is expecting the space to
             // be there, so the only safe option is to raise an exception.
             mp_raise_msg(&mp_type_RuntimeError, NULL);
         }
-        size_t new_alloc = ROUND_ALLOC((vstr->len + size) + 16);
         char *new_buf = m_renew(char, vstr->buf, vstr->alloc, new_alloc);
         vstr->alloc = new_alloc;
         vstr->buf = new_buf;

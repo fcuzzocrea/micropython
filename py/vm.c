@@ -1377,6 +1377,9 @@ exception_handler:
             MP_STATE_VM(cur_exception) = nlr.ret_val;
             #endif
 
+            // Appease static analysers
+            if (nlr.ret_val == NULL) nlr.ret_val = MP_OBJ_TO_PTR(mp_obj_new_exception(&mp_type_RuntimeError));
+
             #if SELECTIVE_EXC_IP
             // with selective ip, we store the ip 1 byte past the opcode, so move ptr back
             code_state->ip -= 1;
