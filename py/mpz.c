@@ -1313,9 +1313,6 @@ void mpz_mul_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs) {
         rhs = temp = mpz_clone(rhs);
     }
 
-    // Appease static analysers
-    if (lhs->dig == NULL || rhs->dig == NULL) { mpz_set_from_int(dest, 0); return; }
-
     mpz_need_dig(dest, lhs->len + rhs->len); // min mem l+r-1, max mem l+r
     memset(dest->dig, 0, dest->alloc * sizeof(mpz_dig_t));
     dest->len = mpn_mul(dest->dig, lhs->dig, lhs->len, rhs->dig, rhs->len);
@@ -1345,9 +1342,6 @@ void mpz_pow_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs) {
 
     mpz_t *x = mpz_clone(lhs);
     mpz_t *n = mpz_clone(rhs);
-
-    // Appease static analysers
-    if (n->dig == NULL) { mpz_set_from_int(dest, 0); return; }
 
     mpz_set_from_int(dest, 1);
 
@@ -1383,9 +1377,6 @@ void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t 
 
     mpz_t *x = mpz_clone(lhs);
     mpz_t *n = mpz_clone(rhs);
-
-    // Appease static analysers
-    if (n->dig == NULL) { mpz_set_from_int(dest, 0); return; }
 
     mpz_t quo; mpz_init_zero(&quo);
 
