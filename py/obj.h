@@ -169,12 +169,12 @@ static inline bool MP_OBJ_IS_OBJ(mp_const_obj_t o)
 #elif MICROPY_OBJ_REPR == MICROPY_OBJ_REPR_D
 
 static inline bool MP_OBJ_IS_SMALL_INT(mp_const_obj_t o)
-    { return ((((mp_int_t)(o)) & 0xffff000000000000) == 0x0001000000000000); }
+    { return ((((mp_int_t)(o)) & 0xffff000000000000ULL) == 0x0001000000000000ULL); }
 #define MP_OBJ_SMALL_INT_VALUE(o) (((mp_int_t)((o) << 16)) >> 17)
 #define MP_OBJ_NEW_SMALL_INT(small_int) (((((uint64_t)(small_int)) & 0x7fffffffffff) << 1) | 0x0001000000000001)
 
 static inline bool MP_OBJ_IS_QSTR(mp_const_obj_t o)
-    { return ((((mp_int_t)(o)) & 0xffff000000000000) == 0x0002000000000000); }
+    { return ((((mp_int_t)(o)) & 0xffff000000000000ULL) == 0x0002000000000000ULL); }
 #define MP_OBJ_QSTR_VALUE(o) ((((uint32_t)(o)) >> 1) & 0xffffffff)
 #define MP_OBJ_NEW_QSTR(qst) ((mp_obj_t)((((mp_uint_t)(qst)) << 1) | 0x0002000000000001))
 
@@ -183,13 +183,13 @@ static inline bool MP_OBJ_IS_QSTR(mp_const_obj_t o)
 #define mp_const_float_pi {((mp_obj_t)((uint64_t)0x400921fb54442d18 + 0x8004000000000000))}
 
 static inline bool mp_obj_is_float(mp_const_obj_t o) {
-    return ((uint64_t)(o) & 0xfffc000000000000) != 0;
+    return ((uint64_t)(o) & 0xfffc000000000000ULL) != 0;
 }
 static inline mp_float_t mp_obj_float_get(mp_const_obj_t o) {
     union {
         mp_float_t f;
         uint64_t r;
-    } num = {.r = o - 0x8004000000000000};
+    } num = {.r = o - 0x8004000000000000ULL};
     return num.f;
 }
 static inline mp_obj_t mp_obj_new_float(mp_float_t f) {
@@ -197,12 +197,12 @@ static inline mp_obj_t mp_obj_new_float(mp_float_t f) {
         mp_float_t f;
         uint64_t r;
     } num = {.f = f};
-    return num.r + 0x8004000000000000;
+    return num.r + 0x8004000000000000ULL;
 }
 #endif
 
 static inline bool MP_OBJ_IS_OBJ(mp_const_obj_t o)
-    { return ((((uint64_t)(o)) & 0xffff000000000000) == 0x0000000000000000); }
+    { return ((((uint64_t)(o)) & 0xffff000000000000ULL) == 0x0000000000000000); }
 #define MP_OBJ_TO_PTR(o) ((void*)(uintptr_t)(o))
 #define MP_OBJ_FROM_PTR(p) ((mp_obj_t)((uintptr_t)(p)))
 
