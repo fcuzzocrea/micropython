@@ -28,9 +28,10 @@
 #include <string.h>
 
 #include "py/runtime.h"
-#include "extmod/machine_spi.h"
 
 #if MICROPY_PY_MACHINE_SPI
+
+#include "extmod/machine_spi.h"
 
 // if a port didn't define MSB/LSB constants then provide them
 #ifndef MICROPY_PY_MACHINE_SPI_MSB
