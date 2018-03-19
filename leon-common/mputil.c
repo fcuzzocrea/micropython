@@ -309,6 +309,8 @@ mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
 }
 
 #if defined(MICROPY_SPARC_NUM_REG_WINDOWS)
+#include <rtems.h> // for sparc_disable_interrupts, sparc_enable_interrupts
+
 // This is called by the memory manager when a garbage collection is needed.
 void gc_collect(void) {
     gc_collect_start();
