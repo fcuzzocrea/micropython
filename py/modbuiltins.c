@@ -473,9 +473,15 @@ STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
     mp_float_t val = mp_obj_get_float(o_in);
     if (n_args > 1) {
         mp_int_t num_dig = mp_obj_get_int(args[1]);
-        mp_float_t mult = MICROPY_FLOAT_C_FUN(pow)(10, num_dig);
-        mp_float_t val_mult = val * mult;
-        if (!isfinite(val_mult)) {
+        mp_float_t mult0 = 1;
+        if (num_dig > 30) {
+            // Split up the power so it doesn't overflow (single or double prec)
+            mult0 = 1e30;
+            num_dig -= 30;
+        }
+        mp_float_t mult1 = MICROPY_FLOAT_C_FUN(pow)(10, num_dig);
+        mp_float_t val_mult = val * mult0 * mult1;
+        if (!isfinite(val_mult) || mult1 == 0) {
             if (num_dig >= 0) {
                 // Overflow in number of digits so just keep them all and return original number
                 return o_in;
@@ -484,7 +490,7 @@ STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
                 return mp_obj_new_float(0 * val);
             }
         }
-        mp_float_t rounded = MICROPY_FLOAT_C_FUN(nearbyint)(val_mult) / mult;
+        mp_float_t rounded = MICROPY_FLOAT_C_FUN(nearbyint)(val_mult) / mult0 / mult1;
         if (!isfinite(rounded)) {
             mp_raise_msg(&mp_type_OverflowError, NULL);
         }
