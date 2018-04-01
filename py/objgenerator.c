@@ -33,6 +33,7 @@
 #include "py/bc.h"
 #include "py/objgenerator.h"
 #include "py/objfun.h"
+#include "py/stackctrl.h"
 
 /******************************************************************************/
 /* generator wrapper                                                          */
