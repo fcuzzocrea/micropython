@@ -754,8 +754,8 @@ void mp_call_prepare_args_n_kw_var(bool have_self, size_t n_args_n_kw, const mp_
             if (MP_MAP_SLOT_IS_FILLED(map, i)) {
                 // the key must be a qstr, so intern it if it's a string
                 mp_obj_t key = map->table[i].key;
-                if (MP_OBJ_IS_TYPE(key, &mp_type_str)) {
-                    key = mp_obj_str_intern(key);
+                if (!MP_OBJ_IS_QSTR(key)) {
+                    key = mp_obj_str_intern_checked(key);
                 }
                 args2[args2_len++] = key;
                 args2[args2_len++] = map->table[i].value;
@@ -784,8 +784,8 @@ void mp_call_prepare_args_n_kw_var(bool have_self, size_t n_args_n_kw, const mp_
             }
 
             // the key must be a qstr, so intern it if it's a string
-            if (MP_OBJ_IS_TYPE(key, &mp_type_str)) {
-                key = mp_obj_str_intern(key);
+            if (!MP_OBJ_IS_QSTR(key)) {
+                key = mp_obj_str_intern_checked(key);
             }
 
             // get the value corresponding to the key
@@ -1290,7 +1290,7 @@ mp_vm_return_kind_t mp_resume(mp_obj_t self_in, mp_obj_t send_value, mp_obj_t th
         // will be propagated up. This behavior is approved by test_pep380.py
         // test_delegation_of_close_to_non_generator(),
         //  test_delegating_throw_to_non_generator()
-        *ret_val = throw_value;
+        *ret_val = mp_make_raise_obj(throw_value);
         return MP_VM_RETURN_EXCEPTION;
     }
 }

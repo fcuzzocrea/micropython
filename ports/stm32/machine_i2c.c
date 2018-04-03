@@ -31,14 +31,13 @@
 #include "py/mphal.h"
 #include "py/mperrno.h"
 #include "extmod/machine_i2c.h"
-#include "genhdr/pins.h"
 #include "i2c.h"
 
 #if MICROPY_HW_ENABLE_HW_I2C
 
 STATIC const mp_obj_type_t machine_hard_i2c_type;
 
-#if defined(MCU_SERIES_F4)
+#if defined(STM32F4)
 
 // F4xx specific driver for I2C hardware peripheral
 // The hardware-specific I2C code below is based heavily on the code from
@@ -425,22 +424,22 @@ typedef mp_machine_soft_i2c_obj_t machine_hard_i2c_obj_t;
 
 STATIC machine_hard_i2c_obj_t machine_hard_i2c_obj[] = {
     #if defined(MICROPY_HW_I2C1_SCL)
-    {{&machine_hard_i2c_type}, 1, 500, &MICROPY_HW_I2C1_SCL, &MICROPY_HW_I2C1_SDA},
+    {{&machine_hard_i2c_type}, 1, 500, MICROPY_HW_I2C1_SCL, MICROPY_HW_I2C1_SDA},
     #else
     {{NULL}, 0, 0, NULL, NULL},
     #endif
     #if defined(MICROPY_HW_I2C2_SCL)
-    {{&machine_hard_i2c_type}, 1, 500, &MICROPY_HW_I2C2_SCL, &MICROPY_HW_I2C2_SDA},
+    {{&machine_hard_i2c_type}, 1, 500, MICROPY_HW_I2C2_SCL, MICROPY_HW_I2C2_SDA},
     #else
     {{NULL}, 0, 0, NULL, NULL},
     #endif
     #if defined(MICROPY_HW_I2C3_SCL)
-    {{&machine_hard_i2c_type}, 1, 500, &MICROPY_HW_I2C3_SCL, &MICROPY_HW_I2C3_SDA},
+    {{&machine_hard_i2c_type}, 1, 500, MICROPY_HW_I2C3_SCL, MICROPY_HW_I2C3_SDA},
     #else
     {{NULL}, 0, 0, NULL, NULL},
     #endif
     #if defined(MICROPY_HW_I2C4_SCL)
-    {{&machine_hard_i2c_type}, 1, 500, &MICROPY_HW_I2C4_SCL, &MICROPY_HW_I2C4_SDA},
+    {{&machine_hard_i2c_type}, 1, 500, MICROPY_HW_I2C4_SCL, MICROPY_HW_I2C4_SDA},
     #else
     {{NULL}, 0, 0, NULL, NULL},
     #endif

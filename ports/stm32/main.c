@@ -338,6 +338,7 @@ STATIC bool init_sdcard_fs(void) {
 }
 #endif
 
+#if !MICROPY_HW_USES_BOOTLOADER
 STATIC uint update_reset_mode(uint reset_mode) {
 #if MICROPY_HW_HAS_SWITCH
     if (switch_get()) {
@@ -412,8 +413,9 @@ STATIC uint update_reset_mode(uint reset_mode) {
 #endif
     return reset_mode;
 }
+#endif
 
-int main(void) {
+void stm32_main(uint32_t reset_mode) {
     // TODO disable JTAG
 
     /* STM32F4xx HAL library initialization:
@@ -433,7 +435,7 @@ int main(void) {
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
-    #if defined(MCU_SERIES_F4) ||  defined(MCU_SERIES_F7)
+    #if defined(STM32F4) ||  defined(STM32F7)
         #if defined(__HAL_RCC_DTCMRAMEN_CLK_ENABLE)
         // The STM32F746 doesn't really have CCM memory, but it does have DTCM,
         // which behaves more or less like normal SRAM.
@@ -478,7 +480,6 @@ int main(void) {
 
 soft_reset:
 
-    // check if user switch held to select the reset mode
 #if defined(MICROPY_HW_LED2)
     led_state(1, 0);
     led_state(2, 1);
@@ -488,7 +489,11 @@ soft_reset:
 #endif
     led_state(3, 0);
     led_state(4, 0);
-    uint reset_mode = update_reset_mode(1);
+
+    #if !MICROPY_HW_USES_BOOTLOADER
+    // check if user switch held to select the reset mode
+    reset_mode = update_reset_mode(1);
+    #endif
 
     // Python threading init
     #if MICROPY_PY_THREAD
