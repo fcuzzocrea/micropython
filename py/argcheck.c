@@ -28,8 +28,10 @@
 #include <assert.h>
 
 #include "py/runtime.h"
+#include "py/stackctrl.h"
 
 void mp_arg_check_num(size_t n_args, size_t n_kw, size_t n_args_min, size_t n_args_max, bool takes_kw) {
+    MP_STACK_CHECK();
     // TODO maybe take the function name as an argument so we can print nicer error messages
 
     if (n_kw && !takes_kw) {

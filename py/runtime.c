@@ -222,6 +222,7 @@ void mp_delete_global(qstr qst) {
 }
 
 mp_obj_t mp_unary_op(mp_unary_op_t op, mp_obj_t arg) {
+    MP_STACK_CHECK();
     DEBUG_OP_printf("unary " UINT_FMT " %q %p\n", op, mp_unary_op_method_name[op], arg);
 
     if (op == MP_UNARY_OP_NOT) {
@@ -283,6 +284,7 @@ mp_obj_t mp_unary_op(mp_unary_op_t op, mp_obj_t arg) {
 }
 
 mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
+    MP_STACK_CHECK();
     DEBUG_OP_printf("binary " UINT_FMT " %q %p %p\n", op, mp_binary_op_method_name[op], lhs, rhs);
 
     // TODO correctly distinguish inplace operators for mutable objects
@@ -608,6 +610,7 @@ mp_obj_t mp_call_function_2(mp_obj_t fun, mp_obj_t arg1, mp_obj_t arg2) {
 
 // args contains, eg: arg0  arg1  key0  value0  key1  value1
 mp_obj_t mp_call_function_n_kw(mp_obj_t fun_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
+    MP_STACK_CHECK();
     // TODO improve this: fun object can specify its type and we parse here the arguments,
     // passing to the function arrays of fixed and keyword arguments
 

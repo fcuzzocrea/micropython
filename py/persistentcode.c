@@ -33,6 +33,7 @@
 #include "py/emitglue.h"
 #include "py/persistentcode.h"
 #include "py/bc.h"
+#include "py/stackctrl.h"
 
 #if MICROPY_PERSISTENT_CODE_LOAD || MICROPY_PERSISTENT_CODE_SAVE
 
@@ -165,6 +166,7 @@ STATIC void load_bytecode_qstrs(mp_reader_t *reader, byte *ip, byte *ip_top) {
 }
 
 STATIC mp_raw_code_t *load_raw_code(mp_reader_t *reader) {
+    MP_STACK_CHECK();
     // load bytecode
     size_t bc_len = read_uint(reader);
     byte *bytecode = m_new(byte, bc_len);

@@ -32,6 +32,7 @@
 
 #include "py/objtype.h"
 #include "py/runtime.h"
+#include "py/stackctrl.h"
 
 #if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
@@ -47,6 +48,7 @@ STATIC mp_obj_t static_class_method_make_new(const mp_obj_type_t *self_in, size_
 // instance object
 
 STATIC int instance_count_native_bases(const mp_obj_type_t *type, const mp_obj_type_t **last_native_base) {
+    MP_STACK_CHECK();
     int count = 0;
     for (;;) {
         if (type == &mp_type_object) {
@@ -133,6 +135,7 @@ struct class_lookup_data {
 };
 
 STATIC void mp_obj_class_lookup(struct class_lookup_data  *lookup, const mp_obj_type_t *type) {
+    MP_STACK_CHECK();
     assert(lookup->dest[0] == MP_OBJ_NULL);
     assert(lookup->dest[1] == MP_OBJ_NULL);
     for (;;) {
@@ -272,6 +275,7 @@ STATIC void instance_print(const mp_print_t *print, mp_obj_t self_in, mp_print_k
 }
 
 mp_obj_t mp_obj_instance_make_new(const mp_obj_type_t *self, size_t n_args, size_t n_kw, const mp_obj_t *args) {
+    MP_STACK_CHECK();
     assert(mp_obj_is_instance_type(self));
 
     // look for __new__ function
@@ -1198,6 +1202,7 @@ void mp_load_super_method(qstr attr, mp_obj_t *dest) {
 // object and classinfo should be type objects
 // (but the function will fail gracefully if they are not)
 bool mp_obj_is_subclass_fast(mp_const_obj_t object, mp_const_obj_t classinfo) {
+    MP_STACK_CHECK();
     for (;;) {
         if (object == classinfo) {
             return true;

@@ -160,6 +160,7 @@ bool mp_obj_is_callable(mp_obj_t o_in) {
 // comparison returns NotImplemented, == and != are decided by comparing the object
 // pointer."
 bool mp_obj_equal(mp_obj_t o1, mp_obj_t o2) {
+    MP_STACK_CHECK();
     // Float (and complex) NaN is never equal to anything, not even itself,
     // so we must have a special check here to cover those cases.
     if (o1 == o2

@@ -30,6 +30,7 @@
 
 #include "py/gc.h"
 #include "py/runtime.h"
+#include "py/stackctrl.h"
 
 #if MICROPY_ENABLE_GC && !MICROPY_ENABLE_IMMORTAL_GC
 
@@ -357,6 +358,7 @@ void gc_collect_root(void **ptrs, size_t len) {
 }
 
 void gc_collect_end(void) {
+    MP_STACK_CHECK();
     gc_deal_with_stack_overflow();
     gc_sweep();
     MP_STATE_MEM(gc_last_free_atb_index) = 0;
