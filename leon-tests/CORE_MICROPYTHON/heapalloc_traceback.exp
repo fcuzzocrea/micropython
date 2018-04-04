@@ -1,0 +1,4 @@
+StopIteration
+Traceback (most recent call last):
+  File "CORE_MICROPYTHON/heapalloc_traceback.py", line 18, in test
+StopIteration: 

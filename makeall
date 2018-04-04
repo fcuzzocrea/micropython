@@ -14,6 +14,7 @@ make -C leon-for-tests || exit $?
 (cd leon-tests && ./run-tests.sh CORE_EXTMOD/*.exp)
 (cd leon-tests && ./run-tests.sh CORE_MISC/*.exp)
 (cd leon-tests && ./run-tests.sh CORE_MICROPYTHON/*.exp)
+(cd leon-tests && ./run-tests.sh CORE_STRESS/*.exp)
 (cd leon-tests && ./run-tests.sh spacebel_tickets/*.exp)
 (cd leon-tests && ./run-tests.sh leon_t1/*.exp)
 (cd leon-tests && ./run-tests.sh -t 2 leon_t2/*.exp)

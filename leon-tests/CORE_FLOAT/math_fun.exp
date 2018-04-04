@@ -188,7 +188,8 @@ log
 1
 1.585
 0.86135
-math domain error
-math domain error
-math domain error
-math domain error
+<class 'ValueError'>
+<class 'ValueError'>
+<class 'ValueError'>
+<class 'ValueError'>
+<class 'ZeroDivisionError'>

@@ -16,7 +16,7 @@ def test(num, num_str):
                 print('FAIL', num_str, fmt, s, len(s), check)
 
 # check most powers of 10, making sure to include exponents with 3 digits
-for e in (-101, -100, -99, -50, -10, -9, -1, 0, 1, 5, 20, 99, 100, 101):
+for e in (-101, -100, -99, -50, -10, -9, -1, 0, 1, 5, 20, 30, 99, 100, 101):
     print(e)
     num = pow(10, e)
     test(num, '1e%d' % e)
