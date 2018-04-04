@@ -15,6 +15,9 @@ s = sem.create('ssss')
 
 er = None # global variable needed for try/except below
 
+# test printing the sem object
+print(repr(s)[:9])
+
 micropython.heap_lock()
 
 # simple obtain/release

@@ -1,4 +1,5 @@
 ValueError('name must be 4 bytes long',)
+rtems_queue
 1
 7
 bytearray(b'message\x00\x00\x00')

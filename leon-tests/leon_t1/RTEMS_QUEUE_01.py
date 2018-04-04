@@ -15,6 +15,9 @@ buf = bytearray(10)
 
 er = None # global variable needed for try/except below
 
+# test printing the queue object
+print(repr(q)[:11])
+
 micropython.heap_lock()
 
 q.send('message')

@@ -1,4 +1,5 @@
 ValueError('name must be 4 bytes long',)
+rtems_sem
 have sem
 have sem
 have sem
