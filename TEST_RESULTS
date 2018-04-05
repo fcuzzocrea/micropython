@@ -1,84 +1,107 @@
-CORE_COVERAGE results (file, lines, covered):
-py/argcheck.c 45 97.78%
-py/bc.c 84 100.00%
-py/binary.c 162 85.19%
-py/obj.h 17 100.00%
-py/builtinevex.c 48 100.00%
-py/runtime.h 4 100.00%
-py/builtinimport.c 152 87.50%
-py/compile.c 1638 98.78%
-py/emitbc.c 543 99.45%
-py/emitcommon.c 30 100.00%
-py/emitglue.c 28 92.86%
-py/formatfloat.c 159 78.62%
-py/frozenmod.c 11 81.82%
-py/gc.c 222 89.64%
-py/lexer.c 372 92.74%
-py/lexerstr.c 18 88.89%
-py/lexerunix.c 33 87.88%
-py/malloc.c 55 81.82%
-py/map.c 202 91.58%
-py/modbuiltins.c 252 94.84%
-py/modcmath.c 34 100.00%
-py/modgc.c 17 100.00%
-py/modmath.c 62 100.00%
-py/modmicropython.c 20 100.00%
-py/modstruct.c 91 100.00%
-py/modsys.c 24 100.00%
-py/mpprint.c 265 98.49%
-py/mpz.c 647 96.91%
-py/objarray.c 223 96.86%
-py/objattrtuple.c 31 100.00%
-py/objbool.c 27 96.30%
-py/objboundmeth.c 33 96.97%
-py/obj.c 218 93.12%
-py/objcell.c 20 95.00%
-py/objclosure.c 32 96.88%
-py/objcomplex.c 108 99.07%
-py/objdict.c 286 95.80%
-py/objenumerate.c 15 100.00%
-py/objexcept.c 143 91.61%
-py/objfilter.c 17 100.00%
-py/objfloat.c 83 98.80%
-py/objfun.c 87 97.70%
-py/objgenerator.c 84 86.90%
-py/objgetitemiter.c 18 100.00%
-py/objint.c 107 96.26%
-py/objint\_mpz.c 188 96.81%
-py/objlist.c 265 97.74%
-py/objmap.c 20 100.00%
-py/objmodule.c 57 89.47%
-py/objnamedtuple.c 67 100.00%
-py/objnone.c 10 90.00%
-py/objobject.c 13 100.00%
-py/objpolyiter.c 3 100.00%
-py/objproperty.c 33 100.00%
-py/objrange.c 78 98.72%
-py/objreversed.c 17 100.00%
-py/objset.c 269 98.88%
-py/objsingleton.c 4 100.00%
-py/objslice.c 34 97.06%
-py/objstr.c 954 99.79%
-py/objstringio.c 53 100.00%
-py/objstrunicode.c 119 96.64%
-py/objtuple.c 131 93.89%
-py/objtype.c 446 98.21%
-py/objzip.c 21 100.00%
-py/opmethods.c 12 100.00%
-py/parse.c 481 88.57%
-py/parsenumbase.c 28 100.00%
-py/parsenum.c 126 99.21%
-py/qstr.c 111 96.40%
-py/runtime.c 554 92.06%
-py/scope.c 76 93.42%
-py/sequence.c 110 100.00%
-py/smallint.c 25 100.00%
-py/stackctrl.c 14 100.00%
-py/stream.c 173 90.17%
-py/unicode.c 54 85.19%
-py/vm.c 479 98.33%
-py/vstr.c 193 87.56%
-py/warning.c 10 60.00%
+Code coverage results from x86-64 unix port running full test suite.
+Only files from the py/ directory are reported here.
+
+  %hit  #miss   #hit #lines filename
+ 83.33      1      5      6 nlrx64.c.gcov
+ 90.48      4     38     42 scheduler.c.gcov
+ 91.07      5     51     56 objmodule.c.gcov
+ 91.67      5     55     60 reader.c.gcov
+ 92.79      8    103    111 objstringio.c.gcov
+ 93.58      7    102    109 qstr.c.gcov
+ 95.00      1     19     20 objcell.c.gcov
+ 95.39     10    207    217 modbuiltins.c.gcov
+ 95.65      7    154    161 objexcept.c.gcov
+ 95.74      2     45     47 argcheck.c.gcov
+ 96.09      9    221    230 obj.c.gcov
+ 96.12      4     99    103 persistentcode.c.gcov
+ 96.15      1     25     26 modsys.c.gcov
+ 96.88      1     31     32 objclosure.c.gcov
+ 96.92      2     63     65 modio.c.gcov
+ 97.22      1     35     36 nativeglue.c.gcov
+ 97.56      1     40     41 asmbase.c.gcov
+ 97.68      6    253    259 stream.c.gcov
+ 98.08      5    256    261 asmx64.c.gcov
+ 98.58      2    139    141 vstr.c.gcov
+ 98.80      1     82     83 modthread.c.gcov
+ 98.86      2    173    175 builtinimport.c.gcov
+ 99.19      1    123    124 repl.c.gcov
+ 99.30      4    567    571 vm.c.gcov
+ 99.42      2    342    344 showbc.c.gcov
+ 99.43      1    174    175 formatfloat.c.gcov
+ 99.66      1    294    295 gc.c.gcov
+ 99.84      1    629    630 runtime.c.gcov
+100.00      0    109    109 bc.c.gcov
+100.00      0    220    220 binary.c.gcov
+100.00      0     51     51 builtinevex.c.gcov
+100.00      0     65     65 builtinhelp.c.gcov
+100.00      0   1789   1789 compile.c.gcov
+100.00      0    562    562 emitbc.c.gcov
+100.00      0     26     26 emitcommon.c.gcov
+100.00      0     44     44 emitglue.c.gcov
+100.00      0     56     56 frozenmod.c.gcov
+100.00      0    332    332 lexer.c.gcov
+100.00      0     52     52 malloc.c.gcov
+100.00      0    200    200 map.c.gcov
+100.00      0      3      3 misc.h.gcov
+100.00      0     34     34 modcmath.c.gcov
+100.00      0     27     27 modgc.c.gcov
+100.00      0     81     81 modmath.c.gcov
+100.00      0     41     41 modmicropython.c.gcov
+100.00      0    115    115 modstruct.c.gcov
+100.00      0      5      5 moduerrno.c.gcov
+100.00      0    275    275 mpprint.c.gcov
+100.00      0    668    668 mpz.c.gcov
+100.00      0      3      3 mpz.h.gcov
+100.00      0      9      9 nlr.c.gcov
+100.00      0    242    242 objarray.c.gcov
+100.00      0     31     31 objattrtuple.c.gcov
+100.00      0     23     23 objbool.c.gcov
+100.00      0     38     38 objboundmeth.c.gcov
+100.00      0    120    120 objcomplex.c.gcov
+100.00      0     52     52 objdeque.c.gcov
+100.00      0    279    279 objdict.c.gcov
+100.00      0     15     15 objenumerate.c.gcov
+100.00      0     16     16 objfilter.c.gcov
+100.00      0    129    129 objfloat.c.gcov
+100.00      0    130    130 objfun.c.gcov
+100.00      0     98     98 objgenerator.c.gcov
+100.00      0     18     18 objgetitemiter.c.gcov
+100.00      0      9      9 obj.h.gcov
+100.00      0    132    132 objint.c.gcov
+100.00      0    205    205 objint_mpz.c.gcov
+100.00      0    260    260 objlist.c.gcov
+100.00      0     19     19 objmap.c.gcov
+100.00      0      2      2 objmodule.h.gcov
+100.00      0     77     77 objnamedtuple.c.gcov
+100.00      0      5      5 objnone.c.gcov
+100.00      0     11     11 objobject.c.gcov
+100.00      0      3      3 objpolyiter.c.gcov
+100.00      0     26     26 objproperty.c.gcov
+100.00      0     93     93 objrange.c.gcov
+100.00      0     16     16 objreversed.c.gcov
+100.00      0    264    264 objset.c.gcov
+100.00      0      4      4 objsingleton.c.gcov
+100.00      0     34     34 objslice.c.gcov
+100.00      0   1025   1025 objstr.c.gcov
+100.00      0    123    123 objstrunicode.c.gcov
+100.00      0    133    133 objtuple.c.gcov
+100.00      0    506    506 objtype.c.gcov
+100.00      0     20     20 objzip.c.gcov
+100.00      0     12     12 opmethods.c.gcov
+100.00      0    481    481 parse.c.gcov
+100.00      0      4      4 parse.h.gcov
+100.00      0     29     29 parsenumbase.c.gcov
+100.00      0    133    133 parsenum.c.gcov
+100.00      0      9      9 pystack.h.gcov
+100.00      0      5      5 runtime.h.gcov
+100.00      0     14     14 runtime_utils.c.gcov
+100.00      0     64     64 scope.c.gcov
+100.00      0    126    126 sequence.c.gcov
+100.00      0     25     25 smallint.c.gcov
+100.00      0     15     15 stackctrl.c.gcov
+100.00      0     70     70 unicode.c.gcov
+100.00      0     11     11 warning.c.gcov
+ 99.30    100  14248  14348
 
 pass  CORE_BASICS/0prelim
 pass  CORE_BASICS/andor
@@ -87,50 +110,84 @@ pass  CORE_BASICS/array_add
 pass  CORE_BASICS/array_construct2
 pass  CORE_BASICS/array_construct_endian
 pass  CORE_BASICS/array_construct
-pass  CORE_BASICS/array_q
+pass  CORE_BASICS/array_intbig
+pass  CORE_BASICS/array_micropython
 pass  CORE_BASICS/assign1
+pass  CORE_BASICS/async_await2
+pass  CORE_BASICS/async_await
+pass  CORE_BASICS/async_def
+pass  CORE_BASICS/async_for2
+pass  CORE_BASICS/async_for
+pass  CORE_BASICS/async_with2
+pass  CORE_BASICS/async_with
 pass  CORE_BASICS/attrtuple1
 pass  CORE_BASICS/bool1
 pass  CORE_BASICS/boundmeth1
 pass  CORE_BASICS/break
 pass  CORE_BASICS/builtin_abs
+pass  CORE_BASICS/builtin_abs_intbig
 pass  CORE_BASICS/builtin_allany
 pass  CORE_BASICS/builtin_bin
+pass  CORE_BASICS/builtin_bin_intbig
 pass  CORE_BASICS/builtin_callable
 pass  CORE_BASICS/builtin_chr
-pass  CORE_BASICS/builtin_dict
+pass  CORE_BASICS/builtin_delattr
 pass  CORE_BASICS/builtin_dir
 pass  CORE_BASICS/builtin_divmod
+pass  CORE_BASICS/builtin_divmod_intbig
 pass  CORE_BASICS/builtin_ellipsis
+pass  CORE_BASICS/builtin_enumerate
+pass  CORE_BASICS/builtin_filter
+pass  CORE_BASICS/builtin_getattr
+pass  CORE_BASICS/builtin_hasattr
 pass  CORE_BASICS/builtin_hash
+pass  CORE_BASICS/builtin_hash_gen
+pass  CORE_BASICS/builtin_hash_intbig
 pass  CORE_BASICS/builtin_hex
+pass  CORE_BASICS/builtin_hex_intbig
 pass  CORE_BASICS/builtin_id
 pass  CORE_BASICS/builtin_issubclass
 pass  CORE_BASICS/builtin_len1
+pass  CORE_BASICS/builtin_locals
+pass  CORE_BASICS/builtin_map
 pass  CORE_BASICS/builtin_minmax
 pass  CORE_BASICS/builtin_oct
+pass  CORE_BASICS/builtin_oct_intbig
 pass  CORE_BASICS/builtin_ord
+pass  CORE_BASICS/builtin_pow3
+pass  CORE_BASICS/builtin_pow3_intbig
 pass  CORE_BASICS/builtin_pow
+pass  CORE_BASICS/builtin_print
 pass  CORE_BASICS/builtin_property
+pass  CORE_BASICS/builtin_range_attrs
+pass  CORE_BASICS/builtin_range_binop
 pass  CORE_BASICS/builtin_range
 pass  CORE_BASICS/builtin_reversed
 pass  CORE_BASICS/builtin_round
+pass  CORE_BASICS/builtin_setattr
 pass  CORE_BASICS/builtin_slice
 pass  CORE_BASICS/builtin_sorted
 pass  CORE_BASICS/builtin_sum
 pass  CORE_BASICS/builtin_type
+pass  CORE_BASICS/builtin_zip
 pass  CORE_BASICS/bytearray1
 pass  CORE_BASICS/bytearray_add
+pass  CORE_BASICS/bytearray_append
+pass  CORE_BASICS/bytearray_construct_array
 pass  CORE_BASICS/bytearray_construct_endian
 pass  CORE_BASICS/bytearray_construct
-pass  CORE_BASICS/bytearray_longint
+pass  CORE_BASICS/bytearray_intbig
 pass  CORE_BASICS/bytearray_slice_assign
+pass  CORE_BASICS/bytes_add_array
 pass  CORE_BASICS/bytes_add_endian
 pass  CORE_BASICS/bytes_add
 pass  CORE_BASICS/bytes_compare2
+pass  CORE_BASICS/bytes_compare_array
 pass  CORE_BASICS/bytes_compare
+pass  CORE_BASICS/bytes_construct_array
 pass  CORE_BASICS/bytes_construct_endian
 pass  CORE_BASICS/bytes_construct
+pass  CORE_BASICS/bytes_construct_intbig
 pass  CORE_BASICS/bytes_count
 pass  CORE_BASICS/bytes
 pass  CORE_BASICS/bytes_find
@@ -154,15 +211,20 @@ pass  CORE_BASICS/class_emptybases
 pass  CORE_BASICS/class_getattr
 pass  CORE_BASICS/class_inherit1
 pass  CORE_BASICS/class_inherit_mul
+pass  CORE_BASICS/class_inplace_op
 pass  CORE_BASICS/class_instance_override
 pass  CORE_BASICS/class_item
+pass  CORE_BASICS/class_misc
 pass  CORE_BASICS/class_new
 pass  CORE_BASICS/class_number
 pass  CORE_BASICS/class_staticclassmethod
 pass  CORE_BASICS/class_store_class
 pass  CORE_BASICS/class_store
 pass  CORE_BASICS/class_str
+pass  CORE_BASICS/class_super_aslocal
+pass  CORE_BASICS/class_super_closure
 pass  CORE_BASICS/class_super
+pass  CORE_BASICS/class_super_multinherit
 pass  CORE_BASICS/class_super_object
 pass  CORE_BASICS/class_use_other
 pass  CORE_BASICS/closure1
@@ -188,6 +250,7 @@ pass  CORE_BASICS/dict_construct
 pass  CORE_BASICS/dict_copy
 pass  CORE_BASICS/dict_del
 pass  CORE_BASICS/dict_from_iter
+pass  CORE_BASICS/dict_fromkeys2
 pass  CORE_BASICS/dict_fromkeys
 pass  CORE_BASICS/dict_get
 pass  CORE_BASICS/dict_intern
@@ -198,19 +261,20 @@ pass  CORE_BASICS/dict_setdefault
 pass  CORE_BASICS/dict_specialmeth
 pass  CORE_BASICS/dict_update
 pass  CORE_BASICS/dict_views
-pass  CORE_BASICS/enumerate
 pass  CORE_BASICS/equal_class
 pass  CORE_BASICS/equal
 pass  CORE_BASICS/exception1
 pass  CORE_BASICS/exception_chain
 pass  CORE_BASICS/except_match_tuple
+pass  CORE_BASICS/exceptpoly2
 pass  CORE_BASICS/exceptpoly
-pass  CORE_BASICS/filter
 pass  CORE_BASICS/floordivide
+pass  CORE_BASICS/floordivide_intbig
 pass  CORE_BASICS/for1
 pass  CORE_BASICS/for2
 pass  CORE_BASICS/for3
 pass  CORE_BASICS/for_break
+pass  CORE_BASICS/for_else
 pass  CORE_BASICS/for_range
 pass  CORE_BASICS/for_return
 pass  CORE_BASICS/frozenset1
@@ -223,11 +287,13 @@ pass  CORE_BASICS/fun1
 pass  CORE_BASICS/fun2
 pass  CORE_BASICS/fun3
 pass  CORE_BASICS/fun_annotations
+pass  CORE_BASICS/fun_calldblstar3
 pass  CORE_BASICS/fun_calldblstar
 pass  CORE_BASICS/fun_callstardblstar
 pass  CORE_BASICS/fun_callstar
 pass  CORE_BASICS/fun_defargs2
 pass  CORE_BASICS/fun_defargs
+pass  CORE_BASICS/fun_error2
 pass  CORE_BASICS/fun_error
 pass  CORE_BASICS/fun_kwargs
 pass  CORE_BASICS/fun_kwonlydef
@@ -244,6 +310,7 @@ pass  CORE_BASICS/generator_args
 pass  CORE_BASICS/generator_close
 pass  CORE_BASICS/generator_closure
 pass  CORE_BASICS/generator_exc
+pass  CORE_BASICS/generator_pend_throw
 pass  CORE_BASICS/generator_return
 pass  CORE_BASICS/generator_send
 pass  CORE_BASICS/gen_yield_from_close
@@ -252,15 +319,21 @@ pass  CORE_BASICS/gen_yield_from_exc
 pass  CORE_BASICS/gen_yield_from
 pass  CORE_BASICS/gen_yield_from_iter
 pass  CORE_BASICS/gen_yield_from_send
+pass  CORE_BASICS/gen_yield_from_stopped
+pass  CORE_BASICS/gen_yield_from_throw2
+pass  CORE_BASICS/gen_yield_from_throw3
 pass  CORE_BASICS/gen_yield_from_throw
-pass  CORE_BASICS/getattr1
 pass  CORE_BASICS/getattr
 pass  CORE_BASICS/getitem
 pass  CORE_BASICS/globals_del
-pass  CORE_BASICS/hasattr1
 pass  CORE_BASICS/ifcond
+pass  CORE_BASICS/ifexpr
 pass  CORE_BASICS/int1
 pass  CORE_BASICS/int2
+pass  CORE_BASICS/int_big1
+pass  CORE_BASICS/int_big_add
+pass  CORE_BASICS/int_big_and2
+pass  CORE_BASICS/int_big_and3
 pass  CORE_BASICS/int_big_and
 pass  CORE_BASICS/int_big_cmp
 pass  CORE_BASICS/int_big_div
@@ -268,18 +341,24 @@ pass  CORE_BASICS/int_big_error
 pass  CORE_BASICS/int_big_lshift
 pass  CORE_BASICS/int_big_mod
 pass  CORE_BASICS/int_big_mul
+pass  CORE_BASICS/int_big_or2
+pass  CORE_BASICS/int_big_or3
 pass  CORE_BASICS/int_big_or
 pass  CORE_BASICS/int_big_pow
 pass  CORE_BASICS/int_big_rshift
 pass  CORE_BASICS/int_big_unary
+pass  CORE_BASICS/int_big_xor2
+pass  CORE_BASICS/int_big_xor3
 pass  CORE_BASICS/int_big_xor
 pass  CORE_BASICS/int_big_zeroone
 pass  CORE_BASICS/int_bytes
+pass  CORE_BASICS/int_bytes_intbig
 pass  CORE_BASICS/int_constfolding
+pass  CORE_BASICS/int_constfolding_intbig
 pass  CORE_BASICS/int_divmod
+pass  CORE_BASICS/int_divmod_intbig
 pass  CORE_BASICS/int_divzero
-pass  CORE_BASICS/int_long
-pass  CORE_BASICS/int_mpz
+pass  CORE_BASICS/int_intbig
 pass  CORE_BASICS/int_small
 pass  CORE_BASICS/is_isnot
 pass  CORE_BASICS/iter0
@@ -306,10 +385,12 @@ pass  CORE_BASICS/list_slice_assign_grow
 pass  CORE_BASICS/list_slice
 pass  CORE_BASICS/list_sort
 pass  CORE_BASICS/list_sum
-pass  CORE_BASICS/map
+pass  CORE_BASICS/logic_constfolding
 pass  CORE_BASICS/memoryerror
 pass  CORE_BASICS/memoryview1
+pass  CORE_BASICS/memoryview2
 pass  CORE_BASICS/memoryview_gc
+pass  CORE_BASICS/memoryview_intbig
 pass  CORE_BASICS/module1
 pass  CORE_BASICS/module2
 pass  CORE_BASICS/namedtuple1
@@ -317,17 +398,21 @@ pass  CORE_BASICS/object1
 pass  CORE_BASICS/object_dict
 pass  CORE_BASICS/object_new
 pass  CORE_BASICS/op_error
+pass  CORE_BASICS/op_error_intbig
+pass  CORE_BASICS/op_error_memoryview
+pass  CORE_BASICS/op_precedence
 pass  CORE_BASICS/ordereddict1
-pass  CORE_BASICS/print
+pass  CORE_BASICS/ordereddict_eq
 pass  CORE_BASICS/return1
 pass  CORE_BASICS/scope
 pass  CORE_BASICS/self_type_check
 pass  CORE_BASICS/seq_unpack
-pass  CORE_BASICS/set1
 pass  CORE_BASICS/set_add
-pass  CORE_BASICS/setattr1
+pass  CORE_BASICS/set_basic
 pass  CORE_BASICS/set_binop
 pass  CORE_BASICS/set_clear
+pass  CORE_BASICS/set_comprehension
+pass  CORE_BASICS/set_containment
 pass  CORE_BASICS/set_copy
 pass  CORE_BASICS/set_difference
 pass  CORE_BASICS/set_discard
@@ -335,24 +420,32 @@ pass  CORE_BASICS/set_intersection
 pass  CORE_BASICS/set_isdisjoint
 pass  CORE_BASICS/set_isfooset
 pass  CORE_BASICS/set_iter
+pass  CORE_BASICS/set_iter_of_iter
 pass  CORE_BASICS/set_pop
 pass  CORE_BASICS/set_remove
 pass  CORE_BASICS/set_specialmeth
 pass  CORE_BASICS/set_symmetric_difference
+pass  CORE_BASICS/set_type
 pass  CORE_BASICS/set_union
 pass  CORE_BASICS/set_unop
 pass  CORE_BASICS/set_update
+pass  CORE_BASICS/slice_intbig
 pass  CORE_BASICS/slots_bool_len
+pass  CORE_BASICS/special_methods
 pass  CORE_BASICS/string1
 pass  CORE_BASICS/string_compare
 pass  CORE_BASICS/string_count
 pass  CORE_BASICS/string_cr_conversion
 pass  CORE_BASICS/string_crlf_conversion
 pass  CORE_BASICS/string_endswith
+pass  CORE_BASICS/string_endswith_upy
 pass  CORE_BASICS/string_escape
 pass  CORE_BASICS/string_find
+pass  CORE_BASICS/string_format2
+pass  CORE_BASICS/string_format_error
 pass  CORE_BASICS/string_format
 pass  CORE_BASICS/string_format_modulo
+pass  CORE_BASICS/string_format_modulo_int
 pass  CORE_BASICS/string_index
 pass  CORE_BASICS/string_istest
 pass  CORE_BASICS/string_join
@@ -369,9 +462,13 @@ pass  CORE_BASICS/string_slice
 pass  CORE_BASICS/string_split
 pass  CORE_BASICS/string_splitlines
 pass  CORE_BASICS/string_startswith
+pass  CORE_BASICS/string_startswith_upy
 pass  CORE_BASICS/string_strip
 pass  CORE_BASICS/string_upperlow
 pass  CORE_BASICS/struct1
+pass  CORE_BASICS/struct1_intbig
+pass  CORE_BASICS/struct2
+pass  CORE_BASICS/struct_micropython
 pass  CORE_BASICS/subclass_classmethod
 pass  CORE_BASICS/subclass_native1
 pass  CORE_BASICS/subclass_native2_list
@@ -381,6 +478,9 @@ pass  CORE_BASICS/subclass_native4
 pass  CORE_BASICS/subclass_native5
 pass  CORE_BASICS/subclass_native_buffer
 pass  CORE_BASICS/subclass_native_cmp
+pass  CORE_BASICS/subclass_native_containment
+pass  CORE_BASICS/subclass_native_init
+pass  CORE_BASICS/subclass_native_iter
 pass  CORE_BASICS/subclass_native_specmeth
 pass  CORE_BASICS/sys1
 pass  CORE_BASICS/true_value
@@ -389,13 +489,16 @@ pass  CORE_BASICS/try2
 pass  CORE_BASICS/try3
 pass  CORE_BASICS/try4
 pass  CORE_BASICS/try_as_var
+pass  CORE_BASICS/try_continue
 pass  CORE_BASICS/try_error
 pass  CORE_BASICS/try_finally1
+pass  CORE_BASICS/try_finally2
 pass  CORE_BASICS/try_finally_loops
 pass  CORE_BASICS/try_finally_return2
 pass  CORE_BASICS/try_finally_return
 pass  CORE_BASICS/try_reraise2
 pass  CORE_BASICS/try_reraise
+pass  CORE_BASICS/try_return
 pass  CORE_BASICS/tuple1
 pass  CORE_BASICS/tuple_compare
 pass  CORE_BASICS/tuple_count
@@ -413,9 +516,8 @@ pass  CORE_BASICS/with1
 pass  CORE_BASICS/with_break
 pass  CORE_BASICS/with_continue
 pass  CORE_BASICS/with_return
-pass  CORE_BASICS/zip
-334 tests performed (11714 individual testcases)
-334 tests passed
+413 tests performed (12374 individual testcases)
+413 tests passed
 
 pass  CORE_UNICODE/unicode_chr
 pass  CORE_UNICODE/unicode
@@ -426,22 +528,31 @@ pass  CORE_UNICODE/unicode_ord
 pass  CORE_UNICODE/unicode_pos
 pass  CORE_UNICODE/unicode_str_format
 pass  CORE_UNICODE/unicode_str_modulo
-9 tests performed (189 individual testcases)
-9 tests passed
+pass  CORE_UNICODE/unicode_subscr
+10 tests performed (204 individual testcases)
+10 tests passed
 
 pass  CORE_FLOAT/array_construct
+pass  CORE_FLOAT/builtin_float_hash
 pass  CORE_FLOAT/builtin_float_minmax
 pass  CORE_FLOAT/builtin_float_round
+pass  CORE_FLOAT/builtin_float_round_intbig
 pass  CORE_FLOAT/bytearray_construct
 pass  CORE_FLOAT/bytes_construct
 pass  CORE_FLOAT/cmath_fun
 pass  CORE_FLOAT/complex1
+pass  CORE_FLOAT/complex1_intbig
 pass  CORE_FLOAT/float1
-pass  CORE_FLOAT/float2int_doubleprec
-pass  CORE_FLOAT/float2int
+pass  CORE_FLOAT/float2int_doubleprec_intbig
+pass  CORE_FLOAT/float2int_fp30_intbig
+pass  CORE_FLOAT/float2int_intbig
 pass  CORE_FLOAT/float_array
+pass  CORE_FLOAT/float_compare
 pass  CORE_FLOAT/float_divmod
 pass  CORE_FLOAT/float_divmod_relaxed
+pass  CORE_FLOAT/float_format
+pass  CORE_FLOAT/float_parse_doubleprec
+pass  CORE_FLOAT/float_parse
 pass  CORE_FLOAT/float_struct
 pass  CORE_FLOAT/int_big_float
 pass  CORE_FLOAT/int_divzero
@@ -449,38 +560,112 @@ pass  CORE_FLOAT/int_power
 pass  CORE_FLOAT/list_index
 pass  CORE_FLOAT/math_fun_bool
 pass  CORE_FLOAT/math_fun
+pass  CORE_FLOAT/math_fun_intbig
+pass  CORE_FLOAT/math_fun_int
+pass  CORE_FLOAT/string_format2
 pass  CORE_FLOAT/string_format
+pass  CORE_FLOAT/string_format_fp30
+pass  CORE_FLOAT/string_format_modulo2
+pass  CORE_FLOAT/string_format_modulo2_intbig
+pass  CORE_FLOAT/string_format_modulo3
 pass  CORE_FLOAT/string_format_modulo
 pass  CORE_FLOAT/true_value
 pass  CORE_FLOAT/types
-24 tests performed (2715 individual testcases)
-24 tests passed
+39 tests performed (2888 individual testcases)
+39 tests passed
 
 pass  CORE_EXTMOD/ubinascii_a2b_base64
 pass  CORE_EXTMOD/ubinascii_b2a_base64
 pass  CORE_EXTMOD/ubinascii_hexlify
+pass  CORE_EXTMOD/ubinascii_micropython
 pass  CORE_EXTMOD/ubinascii_unhexlify
-pass  CORE_EXTMOD/ujson_dumps
-pass  CORE_EXTMOD/ujson_dumps_extra
-pass  CORE_EXTMOD/ujson_dumps_float
-pass  CORE_EXTMOD/ujson_loads
-pass  CORE_EXTMOD/ujson_loads_float
-9 tests performed (76 individual testcases)
-9 tests passed
+5 tests performed (39 individual testcases)
+5 tests passed
 
 pass  CORE_MISC/features
 pass  CORE_MISC/non_compliant
 pass  CORE_MISC/recursion
 pass  CORE_MISC/recursive_iternext
 pass  CORE_MISC/rge_sm
-5 tests performed (114 individual testcases)
+5 tests performed (119 individual testcases)
 5 tests passed
 
+pass  CORE_MICROPYTHON/const2
 pass  CORE_MICROPYTHON/const
+pass  CORE_MICROPYTHON/const_intbig
 pass  CORE_MICROPYTHON/decorator
+pass  CORE_MICROPYTHON/emg_exc
+pass  CORE_MICROPYTHON/extreme_exc
+pass  CORE_MICROPYTHON/heapalloc_exc_raise
 pass  CORE_MICROPYTHON/heapalloc
-3 tests performed (14 individual testcases)
-3 tests passed
+pass  CORE_MICROPYTHON/heapalloc_inst_call
+pass  CORE_MICROPYTHON/heapalloc_int_from_bytes
+pass  CORE_MICROPYTHON/heapalloc_iter
+pass  CORE_MICROPYTHON/heapalloc_str
+pass  CORE_MICROPYTHON/heapalloc_traceback
+pass  CORE_MICROPYTHON/heap_lock
+pass  CORE_MICROPYTHON/stack_use
+15 tests performed (78 individual testcases)
+15 tests passed
+
+pass  CORE_STRESS/dict_create
+pass  CORE_STRESS/dict_create_max
+pass  CORE_STRESS/gc_trace
+pass  CORE_STRESS/list_sort
+4 tests performed (6 individual testcases)
+4 tests passed
+
+pass  spacebel_tickets/SPB_1000
+pass  spacebel_tickets/SPB_1001
+pass  spacebel_tickets/SPB_1002
+pass  spacebel_tickets/SPB_1458
+pass  spacebel_tickets/SPB_1550
+pass  spacebel_tickets/SPB_1593
+pass  spacebel_tickets/SPB_1603
+pass  spacebel_tickets/SPB_1604
+pass  spacebel_tickets/SPB_1651
+pass  spacebel_tickets/SPB_1689
+pass  spacebel_tickets/SPB_1781
+pass  spacebel_tickets/SPB_542
+pass  spacebel_tickets/SPB_543
+pass  spacebel_tickets/SPB_544
+pass  spacebel_tickets/SPB_553
+pass  spacebel_tickets/SPB_561
+pass  spacebel_tickets/SPB_562
+pass  spacebel_tickets/SPB_563
+pass  spacebel_tickets/SPB_566
+pass  spacebel_tickets/SPB_567
+pass  spacebel_tickets/SPB_572
+pass  spacebel_tickets/SPB_702
+pass  spacebel_tickets/SPB_709
+pass  spacebel_tickets/SPB_711
+pass  spacebel_tickets/SPB_712
+pass  spacebel_tickets/SPB_713
+pass  spacebel_tickets/SPB_714
+pass  spacebel_tickets/SPB_716
+pass  spacebel_tickets/SPB_717
+pass  spacebel_tickets/SPB_721
+pass  spacebel_tickets/SPB_851
+pass  spacebel_tickets/SPB_852
+pass  spacebel_tickets/SPB_854
+pass  spacebel_tickets/SPB_861
+pass  spacebel_tickets/SPB_862
+pass  spacebel_tickets/SPB_868
+pass  spacebel_tickets/SPB_869
+pass  spacebel_tickets/SPB_872
+pass  spacebel_tickets/SPB_877
+pass  spacebel_tickets/SPB_883
+pass  spacebel_tickets/SPB_942
+pass  spacebel_tickets/SPB_946
+pass  spacebel_tickets/SPB_963
+pass  spacebel_tickets/SPB_996
+FAIL  spacebel_tickets/SPB_997
+pass  spacebel_tickets/SPB_998
+pass  spacebel_tickets/SPB_999
+pass  spacebel_tickets/SPB_extra
+48 tests performed (201 individual testcases)
+47 tests passed
+1 tests failed - SPB_997
 
 pass  leon_t1/DATAPOOL_01
 pass  leon_t1/DATAPOOL_02
@@ -500,17 +685,17 @@ pass  leon_t1/ROB_INPUT_03
 pass  leon_t1/ROB_INPUT_04
 pass  leon_t1/ROB_STACK_01
 pass  leon_t1/ROB_STACK_02
-FAIL  leon_t1/ROB_STACK_03
-pass  leon_t1/ROB_STACK_04
+pass  leon_t1/ROB_STACK_03
+FAIL  leon_t1/ROB_STACK_04
 pass  leon_t1/RTEMS_01
 pass  leon_t1/RTEMS_CONST_01
 pass  leon_t1/RTEMS_QUEUE_01
 pass  leon_t1/RTEMS_SEM_01
 pass  leon_t1/RTEMS_SEM_02
 pass  leon_t1/RTEMS_TASK_01
-26 tests performed (354 individual testcases)
+26 tests performed (396 individual testcases)
 25 tests passed
-1 tests failed - ROB_STACK_03
+1 tests failed - ROB_STACK_04
 
 pass  leon_t2/DATAPOOL_05
 pass  leon_t2/ROB_TASK_01
@@ -531,49 +716,26 @@ pass  leon_t10/ROB_TASK_02
 1 tests passed
 
 leon_perf/PERF_CPU_01:
-Pystone(1.2) time for 500 passes = 23.7942
-This machine benchmarks at 21.0135 pystones/second
+Pystone(1.2) time for 500 passes = 13.9091
+This machine benchmarks at 35.9477 pystones/second
 
 leon_perf/PERF_CPU_02:
-time: 0.02709293365478516
-time: 1.510602951049805
+time: 0.02634978294372559
+time: 1.670806884765625
 
 leon_perf/PERF_RAM_01:
 -- calling f1 --
-stack: 1712 out of 10240
-GC: total: 48512, used: 1024, free: 47488
- No. of 1-blocks: 12, 2-blocks: 3, max blk sz: 4
-stack: 2248 out of 10240
-GC: total: 48512, used: 1024, free: 47488
- No. of 1-blocks: 12, 2-blocks: 3, max blk sz: 4
-stack: 2784 out of 10240
-GC: total: 48512, used: 1024, free: 47488
- No. of 1-blocks: 12, 2-blocks: 3, max blk sz: 4
-stack: 3320 out of 10240
-GC: total: 48512, used: 1024, free: 47488
- No. of 1-blocks: 12, 2-blocks: 3, max blk sz: 4
-stack: 3856 out of 10240
-GC: total: 48512, used: 1024, free: 47488
- No. of 1-blocks: 12, 2-blocks: 3, max blk sz: 4
+1104 128
+1104 200
+1104 272
+1104 344
+1104 416
 -- calling f2 --
-stack: 1720 out of 10240
-GC: total: 48512, used: 1056, free: 47456
- No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
-stack: 2264 out of 10240
-GC: total: 48512, used: 1056, free: 47456
- No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
-stack: 2808 out of 10240
-GC: total: 48512, used: 1056, free: 47456
- No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
-stack: 3352 out of 10240
-GC: total: 48512, used: 1056, free: 47456
- No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
-stack: 3896 out of 10240
-GC: total: 48512, used: 1056, free: 47456
- No. of 1-blocks: 13, 2-blocks: 3, max blk sz: 4
+1104 136
+1104 216
+1104 296
+1104 376
+1104 456
 
 Running test: VM_MANAGER
-test passed
-
-Running test: OBCP_01
 test passed
