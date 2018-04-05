@@ -21,3 +21,7 @@ print(A.x, A.y)
 # test overflow of 47-bit small-int in nan-boxing config
 i = -0x3fffffffffff
 print(-(i - 1))
+
+# test pystack_use()
+import micropython
+print(type(micropython.pystack_use()))
