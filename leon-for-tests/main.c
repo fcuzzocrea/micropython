@@ -97,16 +97,16 @@ rtems_task Init(rtems_task_argument ignored) {
 #define MPY_MEM_BASE   (0x40200000)
 #define MPY_MEM_STRIDE (0x00010000)
 
-#include "py/mpprint.h"
 #include "py/mphal.h"
+#include "leon-common/leonprintf.h"
 
 // this function is used as a hook to set a breakpoint to terminate emu
 void emu_terminate(void) {
-    mp_printf(&mp_plat_print, "emu_terminate\n");
+    leon_printf("emu_terminate\n");
 }
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
+    leon_printf("\nMicroPython manager task started\n");
 
     // detect the number of tasks needed by looking for valid scripts
     int num_tasks = 0;
@@ -120,7 +120,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             break;
         }
     }
-    mp_printf(&mp_plat_print, "Detected %u scripts\n", num_tasks);
+    leon_printf("Detected %u scripts\n", num_tasks);
 
     // we must use hexlified output so it isn't modified by the UART
     mp_hal_stdout_enable_hexlify();
@@ -137,12 +137,12 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id[i]
         );
         if (status != RTEMS_SUCCESSFUL) {
-            mp_printf(&mp_plat_print, "Error creating task #%u: %u\n", i, status);
+            leon_printf("Error creating task #%u: %u\n", i, status);
             emu_terminate();
         }
         status = rtems_task_start(task_id[i], mp_worker_task, i);
         if (status != RTEMS_SUCCESSFUL) {
-            mp_printf(&mp_plat_print, "Error starting task #%u: %u\n", i, status);
+            leon_printf("Error starting task #%u: %u\n", i, status);
             emu_terminate();
         }
     }

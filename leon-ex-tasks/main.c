@@ -85,10 +85,10 @@ rtems_task Init(rtems_task_argument ignored) {
 /******************************************************************************/
 // MicroPython manager task
 
-#include "py/mpprint.h"
+#include "leon-common/leonprintf.h"
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
+    leon_printf("\nMicroPython manager task started\n");
 
     rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];

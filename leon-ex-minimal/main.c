@@ -86,15 +86,15 @@ rtems_task Init(rtems_task_argument ignored) {
 /******************************************************************************/
 // MicroPython manager task
 
-#include "py/mpprint.h"
+#include "leon-common/leonprintf.h"
 
 // this function is used as a hook to set a breakpoint to terminate emu
 void emu_terminate(void) {
-    mp_printf(&mp_plat_print, "emu_terminate\n");
+    leon_printf("emu_terminate\n");
 }
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
-    mp_printf(&mp_plat_print, "\nMicroPython manager task started\n");
+    leon_printf("\nMicroPython manager task started\n");
 
     rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
