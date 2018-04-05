@@ -35,6 +35,7 @@
 #include "py/obj.h"
 #include "py/objint.h"
 #include "py/runtime.h"
+#include "py/stackctrl.h"
 
 #if MICROPY_PY_BUILTINS_FLOAT
 #include "py/formatfloat.h"
@@ -386,6 +387,7 @@ int mp_printf(const mp_print_t *print, const char *fmt, ...) {
 }
 
 int mp_vprintf(const mp_print_t *print, const char *fmt, va_list args) {
+    MP_STACK_CHECK();
     int chrs = 0;
     for (;;) {
         {
