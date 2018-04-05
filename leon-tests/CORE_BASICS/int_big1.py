@@ -102,8 +102,12 @@ x = 4611686018427387904 # big
 x = -4611686018427387904 # big
 
 # sys.maxsize is a constant mpz, so test it's compatible with dynamic ones
+# (sys.maxsize may not be available in all configurations)
 import sys
-print(sys.maxsize + 1 - 1 == sys.maxsize)
+try:
+    assert sys.maxsize + 1 - 1 == sys.maxsize
+except AttributeError:
+    pass
 
 # test extraction of big int value via mp_obj_get_int_maybe
 x = 1 << 70
