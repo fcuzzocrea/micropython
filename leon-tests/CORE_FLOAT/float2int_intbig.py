@@ -5,30 +5,31 @@ try:
 except:
     import struct
 
-import sys
-
-maxsize_bits = 0
-maxsize = sys.maxsize
-while maxsize:
-    maxsize >>= 1
-    maxsize_bits += 1
-
-# work out configuration values
-is_64bit = maxsize_bits > 32
-# 0 = none, 1 = long long, 2 = mpz
-ll_type = None
-if is_64bit:
-    if maxsize_bits < 63:
-        ll_type = 0
-else:
-    if maxsize_bits < 31:
-        ll_type = 0
-if ll_type is None:
-    one = 1
-    if one << 65 < one << 62:
-        ll_type = 1
-    else:
-        ll_type = 2
+#import sys
+#
+#maxsize_bits = 0
+#maxsize = sys.maxsize
+#while maxsize:
+#    maxsize >>= 1
+#    maxsize_bits += 1
+#
+## work out configuration values
+#is_64bit = maxsize_bits > 32
+## 0 = none, 1 = long long, 2 = mpz
+#ll_type = None
+#if is_64bit:
+#    if maxsize_bits < 63:
+#        ll_type = 0
+#else:
+#    if maxsize_bits < 31:
+#        ll_type = 0
+#if ll_type is None:
+#    one = 1
+#    if one << 65 < one << 62:
+#        ll_type = 1
+#    else:
+#        ll_type = 2
+is_64bit = False
 ll_type = 2 # force mpz
 
 
