@@ -2,6 +2,15 @@
 
 import micropython
 
+# Check for stackless build, which can't call functions without
+# allocating a frame on the heap.
+try:
+    def stackless(): pass
+    micropython.heap_lock(); stackless(); micropython.heap_unlock()
+except RuntimeError:
+    print("SKIP")
+    raise SystemExit
+
 # some ports need to allocate heap for the emergency exception
 try:
     micropython.alloc_emergency_exception_buf(256)
@@ -26,7 +35,7 @@ def main():
     except Exception as er:
         e = er
     micropython.heap_unlock()
-    print(repr(e)[:50])
+    print(repr(e)[:10])
 
     # create an exception with a long formatted error message while heap is low
     # should use the heap and truncate the message
@@ -40,8 +49,9 @@ def main():
         f(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=1)
     except Exception as er:
         e = er
+    lst[0] = None
     lst = None
-    print(repr(e))
+    print(repr(e)[:10])
 
     # raise a deep exception with the heap locked
     # should use emergency exception and be unable to resize traceback array
@@ -53,7 +63,7 @@ def main():
     except Exception as er:
         e = er
     micropython.heap_unlock()
-    print(repr(e))
+    print(repr(e)[:13])
 
     # create an exception on the heap with some traceback on the heap, but then
     # raise it with the heap locked so it can't allocate any more traceback
