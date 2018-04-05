@@ -298,6 +298,39 @@ MP_DEFINE_EXCEPTION(Exception, BaseException)
     MP_DEFINE_EXCEPTION(ResourceWarning, Warning)
     */
 
+// Create a new exception object using only the emergency object/buffer.
+// This function will not call any other functions so is safe from recursion,
+// does not attemp to allocate on the heap, and uses minimal C stack.
+mp_obj_t mp_obj_new_exception_emg(const mp_obj_type_t *exc_type, mp_obj_t arg) {
+    mp_obj_exception_t *o_exc = &MP_STATE_VM(mp_emergency_exception_obj);
+
+    // Populate the exception object, with a default of the empty tuple for args
+    o_exc->base.type = exc_type;
+    o_exc->traceback_data = NULL;
+    o_exc->args = (mp_obj_tuple_t*)&mp_const_empty_tuple_obj;
+
+    #if MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF
+    // Check if we have some room in the emergency buffer to create a 1-tuple for the args
+    if (mp_emergency_exception_buf_size >=
+        EMG_TRACEBACK_ALLOC * sizeof(size_t) + sizeof(mp_obj_tuple_t) + sizeof(mp_obj_t)) {
+
+        // Get a pointer into the buffer for the tuple object
+        mp_obj_tuple_t *o_tuple = (mp_obj_tuple_t*)
+            ((uint8_t*)MP_STATE_VM(mp_emergency_exception_buf) + EMG_TRACEBACK_ALLOC * sizeof(size_t));
+
+        // Create the tuple
+        o_tuple->base.type = &mp_type_tuple;
+        o_tuple->len = 1;
+        o_tuple->items[0] = arg;
+
+        // Store the tuple of args in the exception object
+        o_exc->args = o_tuple;
+    }
+    #endif
+
+    return MP_OBJ_FROM_PTR(o_exc);
+}
+
 mp_obj_t mp_obj_new_exception(const mp_obj_type_t *exc_type) {
     return mp_obj_new_exception_args(exc_type, 0, NULL);
 }
