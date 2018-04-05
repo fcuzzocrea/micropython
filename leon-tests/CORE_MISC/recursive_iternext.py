@@ -1,6 +1,6 @@
 # This tests that recursion with iternext doesn't lead to segfault.
 
-N = 200
+N = 300
 
 try:
     x = (1, 2)
