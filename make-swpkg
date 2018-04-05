@@ -18,7 +18,7 @@ if [ -r VERSION ]; then
     exit 1
 fi
 
-echo -e "MicroPython port to SPARC/LEON/RTEMS platforms\nCopyright (c) 2015-2017 George Robotics Limited\nVersion $REV\nPackaged on $(date -u)\nSource repository tag $(git describe)" > VERSION
+echo -e "MicroPython port to SPARC/LEON/RTEMS platforms\nCopyright (c) 2015-2018 George Robotics Limited\nVersion $REV\nPackaged on $(date -u)\nSource repository tag $(git describe)" > VERSION
 
 /bin/ln -s . micropython-leon-$REV
 
