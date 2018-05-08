@@ -24,7 +24,7 @@ echo -e "MicroPython port to SPARC/LEON/RTEMS platforms\nCopyright (c) 2015-2018
 
 tar c \
     --exclude='build*' --exclude="*.srec" --exclude=".gitignore" --exclude=".gitattributes" \
-    --exclude="mpy-cross/mpy-cross" --exclude="*.mpy" --exclude="__pycache__" \
+    --exclude="mpy-cross/mpy-cross" --exclude="mpy-cross/mpy-cross.map" --exclude="*.mpy" --exclude="__pycache__" \
     micropython-leon-$REV/{VERSION,makeall,BUILD_GUIDE,CODING_GUIDE,TEST_RESULTS,py,lib/libc,lib/utils,extmod/*.[ch],extmod/crypto-algorithms,extmod/uzlib,tools/mpytool.py,tools/cc1,tools/unhexlify.py,docs/conf.py,mpy-cross,leon-common,leon-ex-minimal,leon-ex-tasks,leon-ex-manager,leon-ex-pystone,leon-for-tests,leon-tests,leon-obcp,leon-spacebel} | gzip > GRL_MPLEON_SWPKG_$REV.tgz
 
 /bin/rm VERSION
