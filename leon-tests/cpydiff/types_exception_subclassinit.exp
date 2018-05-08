@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "cpydiff/types_exception_subclassinit.py", line 15, in <module>
+  File "cpydiff/types_exception_subclassinit.py", line 13, in __init__
+AttributeError: type object 'Exception' has no attribute '__init__'
+retval = 1

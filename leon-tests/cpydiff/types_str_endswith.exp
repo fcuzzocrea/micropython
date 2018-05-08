@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_str_endswith.py", line 7, in <module>
+NotImplementedError: start/end indices
+retval = 1

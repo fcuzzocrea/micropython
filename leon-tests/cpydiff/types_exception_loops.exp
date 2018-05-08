@@ -1,0 +1,6 @@
+iter
+iter
+Traceback (most recent call last):
+  File "cpydiff/types_exception_loops.py", line 12, in <module>
+IndexError: list index out of range
+retval = 1

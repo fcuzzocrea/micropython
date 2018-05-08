@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_exception_chaining.py", line 10, in <module>
+ValueError: 
+retval = 1

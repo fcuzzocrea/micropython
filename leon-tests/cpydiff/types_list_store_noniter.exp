@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_list_store_noniter.py", line 8, in <module>
+TypeError: object 'range' is not a tuple or list
+retval = 1

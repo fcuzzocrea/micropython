@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "cpydiff/core_locals.py", line 11, in <module>
+  File "cpydiff/core_locals.py", line 9, in test
+NotImplementedError: locals() in this context
+retval = 1

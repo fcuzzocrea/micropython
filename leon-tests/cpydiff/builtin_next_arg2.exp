@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/builtin_next_arg2.py", line 12, in <module>
+TypeError: function takes 1 positional arguments but 2 were given
+retval = 1

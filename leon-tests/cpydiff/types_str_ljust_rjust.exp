@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_str_ljust_rjust.py", line 7, in <module>
+AttributeError: 'str' object has no attribute 'ljust'
+retval = 1

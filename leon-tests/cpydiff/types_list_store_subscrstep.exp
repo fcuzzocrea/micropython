@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_list_store_subscrstep.py", line 8, in <module>
+NotImplementedError: 
+retval = 1

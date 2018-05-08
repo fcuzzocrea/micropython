@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_bytearray_sliceassign.py", line 8, in <module>
+NotImplementedError: array/bytes required on right side
+retval = 1

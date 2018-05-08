@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/modules_array_deletion.py", line 9, in <module>
+TypeError: 'array' object does not support item deletion
+retval = 1

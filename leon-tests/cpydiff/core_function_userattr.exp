@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/core_function_userattr.py", line 10, in <module>
+AttributeError: 'function' object has no attribute 'x'
+retval = 1

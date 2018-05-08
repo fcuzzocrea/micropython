@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_exception_instancevar.py", line 8, in <module>
+AttributeError: 'Exception' object has no attribute 'x'
+retval = 1

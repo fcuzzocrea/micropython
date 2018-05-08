@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/modules_array_subscrstep.py", line 9, in <module>
+NotImplementedError: only slices with step=1 (aka None) are supported
+retval = 1

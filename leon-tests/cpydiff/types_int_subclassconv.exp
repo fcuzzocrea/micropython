@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "cpydiff/types_int_subclassconv.py", line 11, in <module>
+  File "cpydiff/types_int_subclassconv.py", line 8, in <lambda>
+TypeError: can't convert A to int
+retval = 1

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_str_rsplitnone.py", line 7, in <module>
+NotImplementedError: rsplit(None,n)
+retval = 1

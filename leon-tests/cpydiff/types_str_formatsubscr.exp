@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "cpydiff/types_str_formatsubscr.py", line 7, in <module>
+NotImplementedError: attributes not supported yet
+retval = 1
