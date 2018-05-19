@@ -85,7 +85,7 @@ mp_int_t mp_float_hash(mp_float_t src) {
     }
 
     if (u.p.sgn) {
-        val = -val;
+        val = -(mp_uint_t)val;
     }
 
     return val;
