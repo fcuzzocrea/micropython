@@ -119,13 +119,22 @@ mp_vm_return_kind_t mp_obj_gen_resume(mp_obj_t self_in, mp_obj_t send_value, mp_
         }
     }
 
+    // We set self->globals=NULL while executing, for a sentinel to ensure the generator
+    // cannot be reentered during execution
+    if (self->globals == NULL) {
+        mp_raise_ValueError("generator already executing");
+    }
+
     // uPy doesn't support locals() in a generator, so zero out the scope flags
     self->code_state.old_scope_flags = MP_STATE_THREAD(scope_flags);
     MP_STATE_THREAD(scope_flags) = 0;
 
+    // Set up the correct globals context for the generator and execute it
     mp_obj_dict_t *old_globals = mp_globals_get();
     mp_globals_set(self->globals);
+    self->globals = NULL;
     mp_vm_return_kind_t ret_kind = mp_execute_bytecode(&self->code_state, throw_value);
+    self->globals = mp_globals_get();
     mp_globals_set(old_globals);
 
     // restore the old scope flags
