@@ -197,7 +197,12 @@ static inline mp_obj_t mp_obj_new_float(mp_float_t f) {
         mp_float_t f;
         uint64_t r;
     } num = {.f = f};
-    return num.r + 0x8004000000000000ULL;
+    mp_obj_t o = num.r + 0x8004000000000000ULL;
+    if (mp_obj_is_float(o)) {
+        return o; // object is a valid float object
+    } else {
+        return 0x7ff8000000000000ULL + 0x8004000000000000ULL; // return plain nan
+    }
 }
 #endif
 
