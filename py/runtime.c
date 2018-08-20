@@ -573,7 +573,7 @@ generic_binary_op:
         mp_obj_t iter = mp_getiter(lhs, &iter_buf);
         mp_obj_t next;
         while ((next = mp_iternext(iter)) != MP_OBJ_STOP_ITERATION) {
-            if (mp_obj_equal(next, rhs)) {
+            if (next == rhs || mp_obj_equal(next, rhs)) {
                 return mp_const_true;
             }
         }

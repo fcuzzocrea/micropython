@@ -210,7 +210,7 @@ bool mp_seq_cmp_objs(mp_uint_t op, const mp_obj_t *items1, size_t len1, const mp
     size_t len = len1 < len2 ? len1 : len2;
     for (size_t i = 0; i < len; i++) {
         // If current elements equal, can't decide anything - go on
-        if (mp_obj_equal(items1[i], items2[i])) {
+        if (items1[i] == items2[i] || mp_obj_equal(items1[i], items2[i])) {
             continue;
         }
 
@@ -266,7 +266,7 @@ mp_obj_t mp_seq_index_obj(const mp_obj_t *items, size_t len, size_t n_args, cons
 mp_obj_t mp_seq_count_obj(const mp_obj_t *items, size_t len, mp_obj_t value) {
     size_t count = 0;
     for (size_t i = 0; i < len; i++) {
-         if (mp_obj_equal(items[i], value)) {
+         if (items[i] == value || mp_obj_equal(items[i], value)) {
               count++;
          }
     }

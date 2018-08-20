@@ -354,7 +354,7 @@ mp_obj_t mp_set_lookup(mp_set_t *set, mp_obj_t index, mp_map_lookup_kind_t looku
             if (avail_slot == NULL) {
                 avail_slot = &set->table[pos];
             }
-        } else if (mp_obj_equal(elem, index)) {
+        } else if (elem == index || mp_obj_equal(elem, index)) {
             // found index
             if (lookup_kind & MP_MAP_LOOKUP_REMOVE_IF_FOUND) {
                 // delete element
