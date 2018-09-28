@@ -13,3 +13,4 @@
 ./run-tests.sh -t 2 leon_t2/*.exp
 ./run-tests.sh -t 10 leon_t10/*.exp
 ./run-tests.sh -o leon_perf/*.py
+./run-tests-mpy-cross.sh mpy_cross/*.py

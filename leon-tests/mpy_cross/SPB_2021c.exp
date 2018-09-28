@@ -1,0 +1,3 @@
+Traceback (most recent call last):
+  File "mpy_cross/SPB_2021c.py", line 11, in foo
+SyntaxError: 'return' within nested finally
