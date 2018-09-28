@@ -21,6 +21,7 @@ make -C leon-for-tests || exit $?
 (cd leon-tests && ./run-tests.sh -t 2 leon_t2/*.exp)
 (cd leon-tests && ./run-tests.sh -t 10 leon_t10/*.exp)
 (cd leon-tests && ./run-tests.sh -o leon_perf/*.exp)
+(cd leon-tests && ./run-tests-mpy-cross.sh mpy_cross/*.py)
 (cd leon-ex-manager && ./run-test.sh)
 
 # The OBCP example is not supported with Edisoft RTEMS 4.8

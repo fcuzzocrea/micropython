@@ -626,6 +626,8 @@ pass  spacebel_tickets/SPB_1604
 pass  spacebel_tickets/SPB_1651
 pass  spacebel_tickets/SPB_1689
 pass  spacebel_tickets/SPB_1781
+pass  spacebel_tickets/SPB_1852
+pass  spacebel_tickets/SPB_2000
 pass  spacebel_tickets/SPB_542
 pass  spacebel_tickets/SPB_543
 pass  spacebel_tickets/SPB_544
@@ -663,9 +665,44 @@ FAIL  spacebel_tickets/SPB_997
 pass  spacebel_tickets/SPB_998
 pass  spacebel_tickets/SPB_999
 pass  spacebel_tickets/SPB_extra
-48 tests performed (201 individual testcases)
-47 tests passed
+50 tests performed (210 individual testcases)
+49 tests passed
 1 tests failed - SPB_997
+
+pass  cpydiff/builtin_next_arg2
+pass  cpydiff/core_class_delnotimpl
+pass  cpydiff/core_class_mro
+pass  cpydiff/core_class_supermultiple
+pass  cpydiff/core_class_superproperty
+pass  cpydiff/core_function_argcount
+pass  cpydiff/core_function_userattr
+pass  cpydiff/core_generator_noexit
+pass  cpydiff/core_locals
+pass  cpydiff/modules_array_containment
+pass  cpydiff/modules_array_deletion
+pass  cpydiff/modules_array_subscrstep
+pass  cpydiff/types_bytearray_sliceassign
+pass  cpydiff/types_bytes_keywords
+pass  cpydiff/types_bytes_subscrstep
+pass  cpydiff/types_exception_chaining
+pass  cpydiff/types_exception_instancevar
+pass  cpydiff/types_exception_loops
+pass  cpydiff/types_exception_subclassinit
+pass  cpydiff/types_float_rounding
+pass  cpydiff/types_int_subclassconv
+pass  cpydiff/types_list_delete_subscrstep
+pass  cpydiff/types_list_store_noniter
+pass  cpydiff/types_list_store_subscrstep
+pass  cpydiff/types_str_endswith
+pass  cpydiff/types_str_formatsubscr
+pass  cpydiff/types_str_keywords
+pass  cpydiff/types_str_ljust_rjust
+pass  cpydiff/types_str_rsplitnone
+pass  cpydiff/types_str_subclassequality
+pass  cpydiff/types_str_subscrstep
+pass  cpydiff/types_tuple_subscrstep
+32 tests performed (113 individual testcases)
+32 tests passed
 
 pass  leon_t1/DATAPOOL_01
 pass  leon_t1/DATAPOOL_02
@@ -686,7 +723,7 @@ pass  leon_t1/ROB_INPUT_04
 pass  leon_t1/ROB_STACK_01
 pass  leon_t1/ROB_STACK_02
 pass  leon_t1/ROB_STACK_03
-FAIL  leon_t1/ROB_STACK_04
+pass  leon_t1/ROB_STACK_04
 pass  leon_t1/RTEMS_01
 pass  leon_t1/RTEMS_CONST_01
 pass  leon_t1/RTEMS_QUEUE_01
@@ -694,8 +731,7 @@ pass  leon_t1/RTEMS_SEM_01
 pass  leon_t1/RTEMS_SEM_02
 pass  leon_t1/RTEMS_TASK_01
 26 tests performed (396 individual testcases)
-25 tests passed
-1 tests failed - ROB_STACK_04
+26 tests passed
 
 pass  leon_t2/DATAPOOL_05
 pass  leon_t2/ROB_TASK_01
@@ -736,6 +772,12 @@ leon_perf/PERF_RAM_01:
 1104 296
 1104 376
 1104 456
+
+pass  mpy_cross/SPB_2021a
+pass  mpy_cross/SPB_2021b
+pass  mpy_cross/SPB_2021c
+3 tests performed (9 individual testcases)
+3 tests passed
 
 Running test: VM_MANAGER
 test passed
