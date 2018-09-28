@@ -145,6 +145,10 @@ typedef struct _compiler_t {
     emit_inline_asm_t *emit_inline_asm;                                   // current emitter for inline asm
     const emit_inline_asm_method_table_t *emit_inline_asm_method_table;   // current emit method table for inline asm
     #endif
+
+    // Keep track of current depth within the finally handler of a try-finally,
+    // to prevent break/continue/return within finally that can crash the VM.
+    unsigned int within_finally_depth;
 } compiler_t;
 
 STATIC void compile_error_set_line(compiler_t *comp, mp_parse_node_t pn) {
@@ -946,6 +950,9 @@ STATIC void compile_del_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
 }
 
 STATIC void compile_break_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
+    if (comp->within_finally_depth > 0) {
+        compile_syntax_error(comp, (mp_parse_node_t)pns, "'break' within finally");
+    }
     if (comp->break_label == INVALID_LABEL) {
         compile_syntax_error(comp, (mp_parse_node_t)pns, "'break' outside loop");
     }
@@ -954,6 +961,9 @@ STATIC void compile_break_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
 }
 
 STATIC void compile_continue_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
+    if (comp->within_finally_depth > 0) {
+        compile_syntax_error(comp, (mp_parse_node_t)pns, "'continue' within finally");
+    }
     if (comp->continue_label == INVALID_LABEL) {
         compile_syntax_error(comp, (mp_parse_node_t)pns, "'continue' outside loop");
     }
@@ -962,6 +972,9 @@ STATIC void compile_continue_stmt(compiler_t *comp, mp_parse_node_struct_t *pns)
 }
 
 STATIC void compile_return_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
+    if (comp->within_finally_depth > 1) {
+        compile_syntax_error(comp, (mp_parse_node_t)pns, "'return' within nested finally");
+    }
     if (comp->scope_cur->kind != SCOPE_FUNCTION) {
         compile_syntax_error(comp, (mp_parse_node_t)pns, "'return' outside function");
         return;
@@ -1620,7 +1633,9 @@ STATIC void compile_try_finally(compiler_t *comp, mp_parse_node_t pn_body, int n
     EMIT(pop_block);
     EMIT_ARG(load_const_tok, MP_TOKEN_KW_NONE);
     EMIT_ARG(label_assign, l_finally_block);
+    ++comp->within_finally_depth;
     compile_node(comp, pn_finally);
+    --comp->within_finally_depth;
 
     compile_decrease_except_level(comp);
     EMIT(end_finally);
