@@ -324,6 +324,16 @@ void mp_binary_set_val(char struct_type, char val_type, mp_obj_t val_in, byte **
 
 void mp_binary_set_val_array(char typecode, void *p, mp_uint_t index, mp_obj_t val_in) {
     switch (typecode) {
+        // Special case for bytearray to check bounds
+        case BYTEARRAY_TYPECODE: {
+            mp_int_t val = mp_obj_get_int(val_in);
+            if (val < 0 || val > 255) {
+                mp_raise_msg(&mp_type_ValueError, "byte out of range");
+            }
+            ((uint8_t*)p)[index] = val & 0xff;
+            break;
+        }
+
 #if MICROPY_PY_BUILTINS_FLOAT
         case 'f':
             ((float*)p)[index] = mp_obj_get_float(val_in);
