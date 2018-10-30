@@ -231,7 +231,6 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in, byte *p, size_t n_args, c
 }
 
 STATIC mp_obj_t struct_pack(size_t n_args, const mp_obj_t *args) {
-    // TODO: "The arguments must match the values required by the format exactly."
     mp_int_t size = MP_OBJ_SMALL_INT_VALUE(struct_calcsize(args[0]));
     vstr_t vstr;
     vstr_init_len(&vstr, size);

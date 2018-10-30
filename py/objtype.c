@@ -568,7 +568,6 @@ STATIC void mp_obj_instance_load_attr(mp_obj_t self_in, qstr attr, mp_obj_t *des
     mp_map_elem_t *elem = mp_map_lookup(&self->members, MP_OBJ_NEW_QSTR(attr), MP_MAP_LOOKUP);
     if (elem != NULL) {
         // object member, always treated as a value
-        // TODO should we check for properties?
         dest[0] = elem->value;
         return;
     }
@@ -975,8 +974,6 @@ STATIC void type_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
         mp_obj_class_lookup(&lookup, self);
     } else {
         // delete/store attribute
-
-        // TODO CPython allows STORE_ATTR to a class, but is this the correct implementation?
 
         if (self->locals_dict != NULL) {
             assert(self->locals_dict->base.type == &mp_type_dict); // MicroPython restriction, for now
