@@ -235,6 +235,7 @@ typedef struct _mp_state_thread_t {
 
     #if MICROPY_STACK_CHECK
     size_t stack_limit;
+    size_t peak_stack_usage;
     #endif
 
     #if MICROPY_ENABLE_PYSTACK

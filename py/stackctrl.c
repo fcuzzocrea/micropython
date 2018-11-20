@@ -39,13 +39,24 @@ void mp_stack_set_top(void *top) {
 mp_uint_t mp_stack_usage(void) {
     // Assumes descending stack
     volatile int stack_dummy;
-    return MP_STATE_THREAD(stack_top) - (char*)&stack_dummy;
+    mp_uint_t usage = MP_STATE_THREAD(stack_top) - (char*)&stack_dummy;
+    #if MICROPY_STACK_CHECK
+    if (usage > MP_STATE_THREAD(peak_stack_usage)) {
+        MP_STATE_THREAD(peak_stack_usage) = usage;
+    }
+    #endif
+    return usage;
 }
 
 #if MICROPY_STACK_CHECK
 
 void mp_stack_set_limit(mp_uint_t limit) {
     MP_STATE_THREAD(stack_limit) = limit;
+    MP_STATE_THREAD(peak_stack_usage) = 0;
+}
+
+size_t mp_peak_stack_usage(void) {
+    return MP_STATE_THREAD(peak_stack_usage);
 }
 
 void mp_stack_check(void) {
