@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include "leon-common/sparcisr.h"
 
+#if RTEMS_4_8_EDISOFT
+
 // This function retrieves the value of the Trap Base Register, to be used
 // to install a window flushing trap handler next.
 static void TRAP_read_TBR(volatile uint32_t* const tbrPtr) {
@@ -31,3 +33,11 @@ void sparc_install_ta_3_window_flush_isr(void) {
     m[2] = 0x81c52000 | (addr & 0x3ff); // jmp %l4 + (addr & 0x3ff)
     m[3] = 0xa6102083; // mov 0x83, %l3
 }
+
+#else
+
+// For non-Edisoft builds the "ta 3" ISR is already installed.
+void sparc_install_ta_3_window_flush_isr(void) {
+}
+
+#endif
