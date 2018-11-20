@@ -533,6 +533,7 @@ pass  CORE_UNICODE/unicode_subscr
 10 tests passed
 
 pass  CORE_FLOAT/array_construct
+pass  CORE_FLOAT/builtin_float_abs
 pass  CORE_FLOAT/builtin_float_hash
 pass  CORE_FLOAT/builtin_float_minmax
 pass  CORE_FLOAT/builtin_float_round
@@ -571,8 +572,8 @@ pass  CORE_FLOAT/string_format_modulo3
 pass  CORE_FLOAT/string_format_modulo
 pass  CORE_FLOAT/true_value
 pass  CORE_FLOAT/types
-39 tests performed (2888 individual testcases)
-39 tests passed
+40 tests performed (2896 individual testcases)
+40 tests passed
 
 pass  CORE_EXTMOD/ubinascii_a2b_base64
 pass  CORE_EXTMOD/ubinascii_b2a_base64
@@ -654,6 +655,7 @@ pass  spacebel_tickets/SPB_861
 pass  spacebel_tickets/SPB_862
 pass  spacebel_tickets/SPB_868
 pass  spacebel_tickets/SPB_869
+pass  spacebel_tickets/SPB_871
 pass  spacebel_tickets/SPB_872
 pass  spacebel_tickets/SPB_877
 pass  spacebel_tickets/SPB_883
@@ -665,8 +667,8 @@ FAIL  spacebel_tickets/SPB_997
 pass  spacebel_tickets/SPB_998
 pass  spacebel_tickets/SPB_999
 pass  spacebel_tickets/SPB_extra
-50 tests performed (210 individual testcases)
-49 tests passed
+51 tests performed (218 individual testcases)
+50 tests passed
 1 tests failed - SPB_997
 
 pass  cpydiff/builtin_next_arg2
