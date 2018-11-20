@@ -37,6 +37,7 @@ __attribute__((used)) unsigned int nlr_push_tail(nlr_buf_t *nlr);
 #endif
 #endif
 
+#if !MICROPY_NLR_SPARC
 unsigned int nlr_push_tail(nlr_buf_t *nlr) {
     nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);
     nlr->prev = *top;
@@ -44,6 +45,7 @@ unsigned int nlr_push_tail(nlr_buf_t *nlr) {
     *top = nlr;
     return 0; // normal return
 }
+#endif
 
 void nlr_pop(void) {
     nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);

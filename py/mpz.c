@@ -1359,6 +1359,7 @@ void mpz_pow_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs) {
     mpz_free(n);
 }
 
+#if MICROPY_PY_BUILTINS_POW3
 /* computes dest = (lhs ** rhs) % mod
    can have dest, lhs, rhs the same; mod can't be the same as dest
 */
@@ -1396,6 +1397,7 @@ void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t 
     mpz_free(x);
     mpz_free(n);
 }
+#endif
 
 #if 0
 these functions are unused

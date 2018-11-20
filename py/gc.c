@@ -604,6 +604,7 @@ void gc_free(void *ptr) {
     }
 }
 
+#if MICROPY_PY_MICROPYTHON_MEM_INFO
 size_t gc_nbytes(const void *ptr) {
     GC_ENTER();
     if (VERIFY_PTR(ptr)) {
@@ -623,6 +624,7 @@ size_t gc_nbytes(const void *ptr) {
     GC_EXIT();
     return 0;
 }
+#endif
 
 #if 0
 // old, simple realloc that didn't expand memory in place

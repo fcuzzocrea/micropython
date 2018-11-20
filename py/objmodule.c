@@ -97,6 +97,7 @@ const mp_obj_type_t mp_type_module = {
     .attr = module_attr,
 };
 
+#if MICROPY_ENABLE_EXTERNAL_IMPORT
 mp_obj_t mp_obj_new_module(qstr module_name) {
     mp_map_t *mp_loaded_modules_map = &MP_STATE_VM(mp_loaded_modules_dict).map;
     mp_map_elem_t *el = mp_map_lookup(mp_loaded_modules_map, MP_OBJ_NEW_QSTR(module_name), MP_MAP_LOOKUP_ADD_IF_NOT_FOUND);
@@ -120,6 +121,7 @@ mp_obj_t mp_obj_new_module(qstr module_name) {
     // return the new module
     return MP_OBJ_FROM_PTR(o);
 }
+#endif
 
 mp_obj_dict_t *mp_obj_module_get_globals(mp_obj_t self_in) {
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_module));
@@ -261,10 +263,12 @@ mp_obj_t mp_module_get(qstr module_name) {
     return el->value;
 }
 
+#if MICROPY_MODULE_BUILTIN_INIT
 void mp_module_register(qstr qst, mp_obj_t module) {
     mp_map_t *mp_loaded_modules_map = &MP_STATE_VM(mp_loaded_modules_dict).map;
     mp_map_lookup(mp_loaded_modules_map, MP_OBJ_NEW_QSTR(qst), MP_MAP_LOOKUP_ADD_IF_NOT_FOUND)->value = module;
 }
+#endif
 
 #if MICROPY_MODULE_BUILTIN_INIT
 void mp_module_call_init(qstr module_name, mp_obj_t module_obj) {

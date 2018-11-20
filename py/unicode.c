@@ -136,9 +136,11 @@ bool unichar_isxdigit(unichar c) {
     return c < 128 && (attr[c] & FL_XDIGIT) != 0;
 }
 
+#if MICROPY_HELPER_REPL
 bool unichar_isident(unichar c) {
     return c < 128 && ((attr[c] & (FL_ALPHA | FL_DIGIT)) != 0 || c == '_');
 }
+#endif
 
 bool unichar_isupper(unichar c) {
     return c < 128 && (attr[c] & FL_UPPER) != 0;
