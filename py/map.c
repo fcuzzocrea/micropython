@@ -137,10 +137,6 @@ STATIC void mp_map_rehash(mp_map_t *map) {
     m_del(mp_map_elem_t, old_table, old_alloc);
 }
 
-#if !MICROPY_PY_COLLECTIONS_ORDEREDDICT
-static mp_map_elem_t dummy_map_elem; // Used to appease static analysers
-#endif
-
 // MP_MAP_LOOKUP behaviour:
 //  - returns NULL if not found, else the slot it was found in with key,value non-null
 // MP_MAP_LOOKUP_ADD_IF_NOT_FOUND behaviour:
@@ -206,7 +202,6 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
         }
         return elem;
         #else
-        if (lookup_kind == MP_MAP_LOOKUP_ADD_IF_NOT_FOUND) { return &dummy_map_elem; } // To appease static analysers
         return NULL;
         #endif
     }
