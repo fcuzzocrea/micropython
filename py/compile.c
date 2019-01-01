@@ -1582,27 +1582,34 @@ STATIC void compile_try_except(compiler_t *comp, mp_parse_node_t pn_body, int n_
             compile_store_id(comp, qstr_exception_local);
         }
 
+        // If the exception is bound to a variable <e> then the <body> of the
+        // exception handler is wrapped in a try-finally so that the name <e> can
+        // be deleted (per Python semantics) even if the <body> has an exception.
+        // In such a case the generated code for the exception handler is:
+        //      try:
+        //          <body>
+        //      finally:
+        //          <e> = None
+        //          del <e>
         uint l3 = 0;
         if (qstr_exception_local != 0) {
             l3 = comp_next_label(comp);
             EMIT_ARG(setup_finally, l3);
             compile_increase_except_level(comp);
         }
-        compile_node(comp, pns_except->nodes[1]);
+        compile_node(comp, pns_except->nodes[1]); // the <body>
         if (qstr_exception_local != 0) {
             EMIT(pop_block);
-        }
-        EMIT(pop_except);
-        if (qstr_exception_local != 0) {
             EMIT_ARG(load_const_tok, MP_TOKEN_KW_NONE);
             EMIT_ARG(label_assign, l3);
             EMIT_ARG(load_const_tok, MP_TOKEN_KW_NONE);
             compile_store_id(comp, qstr_exception_local);
             compile_delete_id(comp, qstr_exception_local);
-
             compile_decrease_except_level(comp);
             EMIT(end_finally);
         }
+
+        EMIT(pop_except);
         EMIT_ARG(jump, l2);
         EMIT_ARG(label_assign, end_finally_label);
         EMIT_ARG(adjust_stack_size, 1); // stack adjust for the exception instance
