@@ -988,6 +988,11 @@ typedef double mp_float_t;
 #define MICROPY_PY_MATH_SPECIAL_FUNCTIONS (0)
 #endif
 
+// Whether to provide math.isclose function
+#ifndef MICROPY_PY_MATH_ISCLOSE
+#define MICROPY_PY_MATH_ISCLOSE (0)
+#endif
+
 // Whether to provide "cmath" module
 #ifndef MICROPY_PY_CMATH
 #define MICROPY_PY_CMATH (0)
