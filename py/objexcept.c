@@ -153,7 +153,7 @@ mp_obj_t mp_obj_exception_make_new(const mp_obj_type_t *type, size_t n_args, siz
         // reserved room (after the traceback data) for a tuple with 1 element.
         // Otherwise we are free to use the whole buffer after the traceback data.
         if (o_tuple == NULL && mp_emergency_exception_buf_size >=
-            EMG_TRACEBACK_ALLOC * sizeof(size_t) + sizeof(mp_obj_tuple_t) + n_args * sizeof(mp_obj_t)) {
+            (mp_int_t)(EMG_TRACEBACK_ALLOC * sizeof(size_t) + sizeof(mp_obj_tuple_t) + n_args * sizeof(mp_obj_t))) {
             o_tuple = (mp_obj_tuple_t*)
                 ((uint8_t*)MP_STATE_VM(mp_emergency_exception_buf) + EMG_TRACEBACK_ALLOC * sizeof(size_t));
         }
@@ -362,7 +362,7 @@ mp_obj_t mp_obj_new_exception_msg(const mp_obj_type_t *exc_type, const char *msg
     #define EMG_BUF_TUPLE_SIZE(n_args)  (sizeof(mp_obj_tuple_t) + n_args * sizeof(mp_obj_t))
     #define EMG_BUF_STR_OFFSET          (EMG_BUF_TUPLE_OFFSET + EMG_BUF_TUPLE_SIZE(1))
     if (o_str == NULL
-        && mp_emergency_exception_buf_size >= EMG_BUF_STR_OFFSET + sizeof(mp_obj_str_t)) {
+        && mp_emergency_exception_buf_size >= (mp_int_t)(EMG_BUF_STR_OFFSET + sizeof(mp_obj_str_t))) {
         o_str = (mp_obj_str_t*)((uint8_t*)MP_STATE_VM(mp_emergency_exception_buf)
             + EMG_BUF_STR_OFFSET);
     }
@@ -432,8 +432,8 @@ mp_obj_t mp_obj_new_exception_msg_varg(const mp_obj_type_t *exc_type, const char
     // that buffer to store the string object and its data (at least 16 bytes for
     // the string data), reserving room at the start for the traceback and 1-tuple.
     if ((o_str == NULL || o_str_buf == NULL)
-        && mp_emergency_exception_buf_size >= EMG_TRACEBACK_ALLOC * sizeof(size_t)
-            + sizeof(mp_obj_tuple_t) + sizeof(mp_obj_t) + sizeof(mp_obj_str_t) + 16) {
+        && mp_emergency_exception_buf_size >= (mp_int_t)(EMG_TRACEBACK_ALLOC * sizeof(size_t)
+            + sizeof(mp_obj_tuple_t) + sizeof(mp_obj_t) + sizeof(mp_obj_str_t) + 16)) {
         used_emg_buf = true;
         o_str = (mp_obj_str_t*)((uint8_t*)MP_STATE_VM(mp_emergency_exception_buf)
             + EMG_TRACEBACK_ALLOC * sizeof(size_t) + sizeof(mp_obj_tuple_t) + sizeof(mp_obj_t));
@@ -530,7 +530,7 @@ void mp_obj_exception_add_traceback(mp_obj_t self_in, qstr file, size_t line, qs
         self->traceback_data = m_new_maybe(size_t, TRACEBACK_ENTRY_LEN);
         if (self->traceback_data == NULL) {
             #if MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF
-            if (mp_emergency_exception_buf_size >= EMG_TRACEBACK_ALLOC * sizeof(size_t)) {
+            if (mp_emergency_exception_buf_size >= (mp_int_t)(EMG_TRACEBACK_ALLOC * sizeof(size_t))) {
                 // There is room in the emergency buffer for traceback data
                 size_t *tb = (size_t*)MP_STATE_VM(mp_emergency_exception_buf);
                 self->traceback_data = tb;
