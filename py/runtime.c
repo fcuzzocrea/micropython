@@ -273,6 +273,12 @@ mp_obj_t mp_unary_op(mp_unary_op_t op, mp_obj_t arg) {
                 return result;
             }
         }
+        if (op == MP_UNARY_OP_BOOL) {
+            // Type doesn't have unary_op (or didn't handle MP_UNARY_OP_BOOL),
+            // so is implicitly True as this code path is impossible to reach
+            // if arg==mp_const_none.
+            return mp_const_true;
+        }
         #if MICROPY_ERROR_REPORTING == MICROPY_ERROR_REPORTING_TERSE
             mp_raise_TypeError("unsupported type for operator");
         #else
