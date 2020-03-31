@@ -566,7 +566,7 @@ float adc_read_core_temp_float(ADC_HandleTypeDef *adcHandle) {
     // constants assume 12-bit resolution so we scale the raw value to 12-bits
     raw_value <<= (12 - adc_get_resolution(adcHandle));
 
-    float core_temp_avg_slope = (*ADC_CAL2 - *ADC_CAL1) / 80.0;
+    float core_temp_avg_slope = (*ADC_CAL2 - *ADC_CAL1) / 80.0f;
     return (((float)raw_value * adc_refcor - *ADC_CAL1) / core_temp_avg_slope) + 30.0f;
 }
 

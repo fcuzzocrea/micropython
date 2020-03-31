@@ -325,11 +325,11 @@ class RawCode:
                         % (obj_name, neg, ndigs, ndigs, bits_per_dig, digs))
             elif type(obj) is float:
                 print('#if MICROPY_OBJ_REPR == MICROPY_OBJ_REPR_A || MICROPY_OBJ_REPR == MICROPY_OBJ_REPR_B')
-                print('STATIC const mp_obj_float_t %s = {{&mp_type_float}, %.16g};'
+                print('STATIC const mp_obj_float_t %s = {{&mp_type_float}, (mp_float_t)%.16g};'
                     % (obj_name, obj))
                 print('#endif')
             elif type(obj) is complex:
-                print('STATIC const mp_obj_complex_t %s = {{&mp_type_complex}, %.16g, %.16g};'
+                print('STATIC const mp_obj_complex_t %s = {{&mp_type_complex}, (mp_float_t)%.16g, (mp_float_t)%.16g};'
                     % (obj_name, obj.real, obj.imag))
             else:
                 raise FreezeError(self, 'freezing of object %r is not implemented' % (obj,))
