@@ -144,7 +144,7 @@ mp_obj_t mp_binary_get_val_array(char typecode, void *p, mp_uint_t index) {
         #endif
 #if MICROPY_PY_BUILTINS_FLOAT
         case 'f':
-            return mp_obj_new_float(((float*)p)[index]);
+            return mp_obj_new_float_from_f(((float *)p)[index]);
         case 'd':
             return mp_obj_new_float(((double*)p)[index]);
 #endif
@@ -210,7 +210,7 @@ mp_obj_t mp_binary_get_val(char struct_type, char val_type, byte *p_base, byte *
 #if MICROPY_PY_BUILTINS_FLOAT
     } else if (val_type == 'f') {
         union { uint32_t i; float f; } fpu = {val};
-        return mp_obj_new_float(fpu.f);
+        return mp_obj_new_float_from_f(fpu.f);
     } else if (val_type == 'd') {
         union { uint64_t i; double f; } fpu = {val};
         return mp_obj_new_float(fpu.f);
@@ -287,7 +287,7 @@ void mp_binary_set_val(char struct_type, char val_type, mp_obj_t val_in, byte *p
         }
         case 'd': {
             union { uint64_t i64; uint32_t i32[2]; double f; } fp_dp;
-            fp_dp.f = mp_obj_get_float(val_in);
+            fp_dp.f = mp_obj_get_float_to_d(val_in);
             if (BYTES_PER_WORD == 8) {
                 val = fp_dp.i64;
             } else {

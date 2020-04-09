@@ -75,7 +75,7 @@ STATIC mp_obj_t mp_cmath_log(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
     /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
-    return mp_obj_new_complex(0.5 * MICROPY_FLOAT_C_FUN(log)(real*real + imag*imag), MICROPY_FLOAT_C_FUN(atan2)(imag, real));
+    return mp_obj_new_complex(MICROPY_FLOAT_CONST(0.5) * MICROPY_FLOAT_C_FUN(log)(real * real + imag * imag), MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log_obj, mp_cmath_log);
 
@@ -84,7 +84,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log_obj, mp_cmath_log);
 STATIC mp_obj_t mp_cmath_log10(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
-    return mp_obj_new_complex(0.5 * MICROPY_FLOAT_C_FUN(log10)(real*real + imag*imag), 0.4342944819032518 * MICROPY_FLOAT_C_FUN(atan2)(imag, real));
+    return mp_obj_new_complex(MICROPY_FLOAT_CONST(0.5) * MICROPY_FLOAT_C_FUN(log10)(real * real + imag * imag), MICROPY_FLOAT_CONST(0.4342944819032518) * MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log10_obj, mp_cmath_log10);
 #endif
@@ -93,9 +93,9 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log10_obj, mp_cmath_log10);
 STATIC mp_obj_t mp_cmath_sqrt(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
-    mp_float_t sqrt_abs = MICROPY_FLOAT_C_FUN(pow)(real*real + imag*imag, 0.25);
+    mp_float_t sqrt_abs = MICROPY_FLOAT_C_FUN(pow)(real * real + imag * imag, MICROPY_FLOAT_CONST(0.25));
     /* polyspace<DEFECT:FLOAT_STD_LIB:Not a defect:No action planned> The C99 standard specifies that this is OK - polyspace is wrong to consider this "an invalid use" */
-    mp_float_t theta = 0.5 * MICROPY_FLOAT_C_FUN(atan2)(imag, real);
+    mp_float_t theta = MICROPY_FLOAT_CONST(0.5) * MICROPY_FLOAT_C_FUN(atan2)(imag, real);
     return mp_obj_new_complex(sqrt_abs * MICROPY_FLOAT_C_FUN(cos)(theta), sqrt_abs * MICROPY_FLOAT_C_FUN(sin)(theta));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_sqrt_obj, mp_cmath_sqrt);

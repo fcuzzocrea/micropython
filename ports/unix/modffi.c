@@ -151,7 +151,7 @@ STATIC mp_obj_t return_ffi_value(ffi_arg val, char type)
         #if MICROPY_PY_BUILTINS_FLOAT
         case 'f': {
             union { ffi_arg ffi; float flt; } val_union = { .ffi = val };
-            return mp_obj_new_float(val_union.flt);
+            return mp_obj_new_float_from_f(val_union.flt);
         }
         case 'd': {
             double *p = (double*)&val;
@@ -364,7 +364,7 @@ STATIC mp_obj_t ffifunc_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const
             *p = mp_obj_get_float(a);
         } else if (*argtype == 'd') {
             double *p = (double*)&values[i];
-            *p = mp_obj_get_float(a);
+            *p = mp_obj_get_float_to_d(a);
         #endif
         } else if (a == mp_const_none) {
             values[i] = 0;
