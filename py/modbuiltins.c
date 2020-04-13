@@ -479,7 +479,7 @@ STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
             mult0 = 1e30;
             num_dig -= 30;
         }
-        mp_float_t mult1 = MICROPY_FLOAT_C_FUN(pow)(10, num_dig);
+        mp_float_t mult1 = MICROPY_FLOAT_C_FUN(pow)(10, (mp_float_t)num_dig);
         mp_float_t val_mult = val * mult0 * mult1;
         if (!isfinite(val_mult) || mult1 == 0) {
             if (num_dig >= 0) {

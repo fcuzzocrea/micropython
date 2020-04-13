@@ -396,10 +396,10 @@ void mp_binary_set_val_array_from_int(char typecode, void *p, mp_uint_t index, m
         #endif
 #if MICROPY_PY_BUILTINS_FLOAT
         case 'f':
-            ((float*)p)[index] = val;
+            ((float *)p)[index] = (float)val;
             break;
         case 'd':
-            ((double*)p)[index] = val;
+            ((double *)p)[index] = (double)val;
             break;
 #endif
         // Extension to CPython: array of pointers

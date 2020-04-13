@@ -513,7 +513,7 @@ mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
             }
 #if MICROPY_PY_BUILTINS_FLOAT
         } else if (mp_obj_is_float(rhs)) {
-            mp_obj_t res = mp_obj_float_binary_op(op, lhs_val, rhs);
+            mp_obj_t res = mp_obj_float_binary_op(op, (mp_float_t)lhs_val, rhs);
             if (res == MP_OBJ_NULL) {
                 goto unsupported_op;
             } else {
@@ -521,7 +521,7 @@ mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
             }
 #if MICROPY_PY_BUILTINS_COMPLEX
         } else if (MP_OBJ_IS_TYPE(rhs, &mp_type_complex)) {
-            mp_obj_t res = mp_obj_complex_binary_op(op, lhs_val, 0, rhs);
+            mp_obj_t res = mp_obj_complex_binary_op(op, (mp_float_t)lhs_val, 0, rhs);
             if (res == MP_OBJ_NULL) {
                 goto unsupported_op;
             } else {
