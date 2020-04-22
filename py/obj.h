@@ -26,6 +26,8 @@
 #ifndef MICROPY_INCLUDED_PY_OBJ_H
 #define MICROPY_INCLUDED_PY_OBJ_H
 
+#include <assert.h>
+
 #include "py/mpconfig.h"
 #include "py/misc.h"
 #include "py/qstr.h"
@@ -368,7 +370,10 @@ typedef enum _mp_map_lookup_kind_t {
 
 extern const mp_map_t mp_const_empty_map;
 
-static inline bool MP_MAP_SLOT_IS_FILLED(const mp_map_t *map, size_t pos) { return ((map)->table[pos].key != MP_OBJ_NULL && (map)->table[pos].key != MP_OBJ_SENTINEL); }
+static inline bool MP_MAP_SLOT_IS_FILLED(const mp_map_t *map, size_t pos) {
+    assert(pos < map->alloc);
+    return (map)->table[pos].key != MP_OBJ_NULL && (map)->table[pos].key != MP_OBJ_SENTINEL;
+}
 
 void mp_map_init(mp_map_t *map, size_t n);
 void mp_map_init_fixed_table(mp_map_t *map, size_t n, const mp_obj_t *table);
