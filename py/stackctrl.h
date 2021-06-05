@@ -41,7 +41,7 @@ void mp_stack_check(void);
 
 #else
 
-#define mp_stack_set_limit(limit)
+#define mp_stack_set_limit(limit) (void)(limit)
 #define MP_STACK_CHECK()
 
 #endif
