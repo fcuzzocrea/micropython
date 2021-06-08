@@ -170,7 +170,7 @@ long long mp_binary_get_int(mp_uint_t size, bool is_signed, bool big_endian, con
         delta = 1;
     }
 
-    long long val = 0;
+    unsigned long long val = 0;
     if (is_signed && *src & 0x80) {
         val = -1;
     }
