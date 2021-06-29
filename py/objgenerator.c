@@ -98,8 +98,9 @@ mp_vm_return_kind_t mp_obj_gen_resume(mp_obj_t self_in, mp_obj_t send_value, mp_
     mp_check_self(MP_OBJ_IS_TYPE(self_in, &mp_type_gen_instance));
     mp_obj_gen_instance_t *self = MP_OBJ_TO_PTR(self_in);
     if (self->code_state.ip == 0) {
-        // Trying to resume already stopped generator
-        *ret_val = MP_OBJ_STOP_ITERATION;
+        // Trying to resume an already stopped generator.
+        // This is an optimised "raise StopIteration(None)".
+        *ret_val = mp_const_none;
         return MP_VM_RETURN_NORMAL;
     }
     if (self->code_state.sp == self->code_state.state - 1) {
@@ -147,6 +148,7 @@ mp_vm_return_kind_t mp_obj_gen_resume(mp_obj_t self_in, mp_obj_t send_value, mp_
             // subsequent next() may re-execute statements after last yield
             // again and again, leading to side effects.
             self->code_state.ip = 0;
+            // This is an optimised "raise StopIteration(*ret_val)".
             *ret_val = *self->code_state.sp;
             break;
 
