@@ -356,6 +356,11 @@ mp_obj_t mp_obj_new_exception_msg(const mp_obj_type_t *exc_type, const char *msg
     // If memory allocation failed and there is an emergency buffer then try to use
     // that buffer to store the string object, reserving room at the start for the
     // traceback and 1-tuple.
+    #define EMG_BUF_TRACEBACK_OFFSET    (0)
+    #define EMG_BUF_TRACEBACK_SIZE      (2 * TRACEBACK_ENTRY_LEN * sizeof(size_t))
+    #define EMG_BUF_TUPLE_OFFSET        (EMG_BUF_TRACEBACK_OFFSET + EMG_BUF_TRACEBACK_SIZE)
+    #define EMG_BUF_TUPLE_SIZE(n_args)  (sizeof(mp_obj_tuple_t) + n_args * sizeof(mp_obj_t))
+    #define EMG_BUF_STR_OFFSET          (EMG_BUF_TUPLE_OFFSET + EMG_BUF_TUPLE_SIZE(1))
     if (o_str == NULL
         && mp_emergency_exception_buf_size >= EMG_BUF_STR_OFFSET + sizeof(mp_obj_str_t)) {
         o_str = (mp_obj_str_t*)((uint8_t*)MP_STATE_VM(mp_emergency_exception_buf)
