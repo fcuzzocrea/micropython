@@ -227,7 +227,7 @@ STATIC mp_obj_t memoryview_make_new(const mp_obj_type_t *type_in, size_t n_args,
     // new memoryview to the start of the buffer so the GC can trace it.
     if (mp_obj_get_type(args[0]) == &mp_type_memoryview) {
         mp_obj_array_t *other = MP_OBJ_TO_PTR(args[0]);
-        self->memview_offset = other->memview_offset;
+        self->free = other->free; // memview_offset
         self->items = other->items;
     }
 
