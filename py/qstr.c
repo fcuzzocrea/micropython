@@ -81,9 +81,9 @@
 #endif
 
 // this must match the equivalent function in makeqstrdata.py
-mp_uint_t qstr_compute_hash(const byte *data, size_t len) {
+size_t qstr_compute_hash(const byte *data, size_t len) {
     // djb2 algorithm; see http://www.cse.yorku.ca/~oz/hash.html
-    mp_uint_t hash = 5381;
+    size_t hash = 5381;
     for (const byte *top = data + len; data < top; data++) {
         hash = ((hash << 5) + hash) ^ (*data); // hash * 33 ^ data
     }
@@ -163,7 +163,7 @@ STATIC qstr qstr_add(const byte *q_ptr) {
 
 qstr qstr_find_strn(const char *str, size_t str_len) {
     // work out hash of str
-    mp_uint_t str_hash = qstr_compute_hash((const byte*)str, str_len);
+    size_t str_hash = qstr_compute_hash((const byte*)str, str_len);
 
     // search pools for the data
     for (qstr_pool_t *pool = MP_STATE_VM(last_pool); pool != NULL; pool = pool->prev) {
@@ -230,7 +230,7 @@ qstr qstr_from_strn(const char *str, size_t len) {
         MP_STATE_VM(qstr_last_used) += n_bytes;
 
         // store the interned strings' data
-        mp_uint_t hash = qstr_compute_hash((const byte*)str, len);
+        size_t hash = qstr_compute_hash((const byte*)str, len);
         Q_SET_HASH(q_ptr, hash);
         Q_SET_LENGTH(q_ptr, len);
         memcpy(q_ptr + MICROPY_QSTR_BYTES_IN_HASH + MICROPY_QSTR_BYTES_IN_LEN, str, len);
