@@ -153,6 +153,7 @@ SRC_C = \
 
 LIB_SRC_C = $(addprefix lib/,\
 	$(LIB_SRC_C_EXTRA) \
+	embed/abort_.c \
 	timeutils/timeutils.c \
 	)
 
