@@ -43,14 +43,17 @@
 #define MICROPY_PY_BUILTINS_FROZENSET (1)
 #define MICROPY_PY_BUILTINS_POW3    (1)
 #define MICROPY_PY_BUILTINS_RANGE_BINOP (1)
+#define MICROPY_PY_ALL_SPECIAL_METHODS (1)
 #define MICROPY_PY_MICROPYTHON_MEM_INFO (1)
 #define MICROPY_PY_SYS              (1)
 #define MICROPY_PY_SYS_EXIT         (1)
 #define MICROPY_PY_SYS_MAXSIZE      (1)
 #define MICROPY_PY_SYS_MODULES      (0)
 #define MICROPY_PY_SYS_PLATFORM     "leon2"
+#define MICROPY_PY_SYS_STDFILES     (1)
 #define MICROPY_PY_COLLECTIONS_ORDEREDDICT (1)
 #define MICROPY_PY_GC               (1)
+#define MICROPY_PY_IO               (1)
 #define MICROPY_PY_ARRAY            (1)
 #define MICROPY_PY_ARRAY_SLICE_ASSIGN (1)
 #define MICROPY_PY_ATTRTUPLE        (1)
@@ -58,7 +61,8 @@
 #define MICROPY_PY_MATH             (1)
 #define MICROPY_PY_CMATH            (1)
 #define MICROPY_PY_UBINASCII        (1)
-#define MICROPY_PY_IO               (0)
+#define MICROPY_PY_URANDOM          (1)
+#define MICROPY_PY_URANDOM_EXTRA_FUNCS (1)
 #define MICROPY_PY_STRUCT           (1)
 #define MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF (1)
 #define MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE (256)
@@ -73,6 +77,10 @@ extern const struct _mp_obj_module_t mp_module_datapool;
     { MP_ROM_QSTR(MP_QSTR_rtems), MP_ROM_PTR(&mp_module_rtems) }, \
     { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
     { MP_ROM_QSTR(MP_QSTR_datapool), MP_ROM_PTR(&mp_module_datapool) }, \
+
+#define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
+    { MP_ROM_QSTR(MP_QSTR_io), MP_ROM_PTR(&mp_module_io) }, \
+    { MP_ROM_QSTR(MP_QSTR_random), MP_ROM_PTR(&mp_module_urandom) }, \
 
 // Root pointers
 #define MICROPY_PORT_ROOT_POINTERS \

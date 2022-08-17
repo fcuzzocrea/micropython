@@ -48,6 +48,7 @@ SRC_C = \
 	lib/libc/strcmp.c \
 	lib/libc/strlen.c \
 	lib/libc/strncmp.c \
+	lib/utils/sys_stdio_mphal.c \
 	$(LEON_COMMON)/sparcisr.c \
 	$(LEON_COMMON)/leonprintf.c \
 	$(LEON_COMMON)/nearbyint.c \
@@ -64,6 +65,9 @@ SRC_C = \
 SRC_S = \
 	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
+
+# List of extra sources for qstr extraction
+SRC_QSTR += lib/utils/sys_stdio_mphal.c
 
 OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
 
