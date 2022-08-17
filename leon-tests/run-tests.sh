@@ -27,7 +27,8 @@ ADDR_TASK10="0x40290000"
 ######## parse arguments
 
 num_tasks=1
-output_processing=0
+output_processing="diff"
+output_test_name="yes"
 tests=""
 
 while [[ $# > 0 ]]; do
@@ -38,10 +39,17 @@ while [[ $# > 0 ]]; do
         shift
         ;;
         -r|--raw-output)
-        output_processing=1
+        output_processing="raw"
         ;;
         -o|--show-output)
-        output_processing=2
+        output_processing="show"
+        ;;
+        --no-test-name)
+        output_test_name="no"
+        ;;
+        -*)
+        echo "unknown option: $arg"
+        exit 1
         ;;
         *)
         tests="$tests $arg"
@@ -101,20 +109,28 @@ do
         exit 1
     fi
 
-    if [ $output_processing = 1 ]; then
+    if [ $output_processing != "diff" -a $output_test_name = "yes" ]; then
+        # Print test name.
         echo "$infile_no_ext:"
+    fi
+
+    if [ $output_processing = "raw" ]; then
+        # Let test output go directly to stdout.
         cat cmd.txt | leon2-emu
-        continue
-    elif [ $output_processing = 2 ]; then
-        echo "$infile_no_ext:"
+    elif [ $output_processing = "show" ]; then
+        # Pipe output through unhexlify, then to stdout.
         cat cmd.txt | leon2-emu | $UNHEXLIFY
-        continue
     else
+        # Redirect output to a file for diff'ing.
         cat cmd.txt | leon2-emu | $UNHEXLIFY > $outfile
     fi
 
     # clean up temp script containing mpy file
     $RM script.srec
+
+    if [ $output_processing != "diff" ]; then
+        continue
+    fi
 
     numtestcases=$(expr $numtestcases + $(cat $expfile | wc -l))
 
@@ -134,7 +150,7 @@ do
     numtests=$(expr $numtests + 1)
 done
 
-if [ $output_processing != 0 ]; then
+if [ $output_processing != "diff" ]; then
     exit 0
 fi
 
