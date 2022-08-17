@@ -292,6 +292,14 @@ mp_import_stat_t mp_import_stat(const char *path) {
     return MP_IMPORT_STAT_NO_EXIST;
 }
 
+#if MICROPY_PY_IO
+// Hook for the runtime to open a file.
+mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) {
+    nlr_raise(mp_obj_new_exception_msg(&mp_type_NotImplementedError, "open not implemented"));
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
+#endif
+
 // Hook for the runtime to load raw code (.mpy) from a file.
 mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
     #if MICROPY_ENABLE_MPY_MODULES

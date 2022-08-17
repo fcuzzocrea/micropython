@@ -92,3 +92,10 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
 void mp_hal_stdout_tx_str(const char *str) {
     mp_hal_stdout_tx_strn(str, strlen(str));
 }
+
+#if MICROPY_PY_SYS_STDFILES
+// Not supported, but needed for stdio_read.
+int mp_hal_stdin_rx_chr(void) {
+    return -1;
+}
+#endif
