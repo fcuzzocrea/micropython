@@ -50,6 +50,9 @@ typedef long mp_off_t;
 #define INFINITY (__builtin_inff())
 #endif
 
+// LEON ports provide their own version of mp_raw_code_load_file
+#define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (1)
+
 // We define our own state accessor macros
 #include <rtems.h>
 #define MP_STATE_PTR ((mp_state_ctx_t*)_Thread_Executing->Start.numeric_argument)

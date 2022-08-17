@@ -1219,6 +1219,11 @@ typedef double mp_float_t;
 #define MICROPY_PORT_ROOT_POINTERS
 #endif
 
+// For a port to provide a custom mp_raw_code_load_file
+#ifndef MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE
+#define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (0)
+#endif
+
 /*****************************************************************************/
 /* Miscellaneous settings                                                    */
 
