@@ -11,6 +11,8 @@
 #include "leon-common/mpvmmanage.h"
 #include "leon-common/mpsem.h"
 
+#if MICROPY_RTEMS_ENABLE_VM_MANAGER
+
 #if 0 // print debugging info
 #define DEBUG_printf mp_printf
 #else // don't print debugging info
@@ -168,3 +170,5 @@ rtems_status_code mp_vm_manager_exit(mp_state_ctx_t *worker_ctx, uint32_t timeou
     // signal and wait for script to exit
     return mp_vm_manager_signal_and_wait(worker_ctx, SIGNAL_EXIT, timeout_ticks);
 }
+
+#endif // MICROPY_RTEMS_ENABLE_VM_MANAGER

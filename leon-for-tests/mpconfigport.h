@@ -8,6 +8,7 @@
 
 // include common options for LEON/SPARC
 #define MICROPY_USE_64BIT_NAN_BOXING (1)
+#define MICROPY_RTEMS_ENABLE_DATAPOOL (1)
 #include "leon-common/mpconfigport_common.h"
 
 // options to control how MicroPython is built

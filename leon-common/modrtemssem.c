@@ -14,6 +14,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 #include "modrtems.h"
+#include "rtems_config.h"
 
 typedef struct _rtems_sem_obj_t {
     mp_obj_base_t base;

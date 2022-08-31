@@ -58,12 +58,35 @@ while [[ $# > 0 ]]; do
     shift
 done
 
+if [ -z "$MICROPY_RTEMS_VER" ]; then
+    echo "MICROPY_RTEMS_VER not set"
+    exit 1
+fi
+
 if [ -z "$tests" ]; then
     echo "no tests specified"
     exit 1
 fi
 
 ######## run tests
+
+build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
+
+leon2_emu_cmd=$(cat <<-EOF
+    load /srec "$build_dir/firmware.srec"
+    load /symtab "$build_dir/firmware.tab"
+    load /srec "script.srec"
+    bre %code(leon_emu_terminate) /TAG=_emu_terminate /CMD={ bre /exit/stop }
+    set pc=0x40000000
+    set i6=0x41000000
+    set o6=0x40FFFE80
+    step 500000000
+EOF
+)
+
+function run_leon {
+    echo -e "$leon2_emu_cmd" | leon2-emu
+}
 
 numtests=0
 numtestcases=0
@@ -116,13 +139,13 @@ do
 
     if [ $output_processing = "raw" ]; then
         # Let test output go directly to stdout.
-        cat cmd.txt | leon2-emu
+        run_leon
     elif [ $output_processing = "show" ]; then
         # Pipe output through unhexlify, then to stdout.
-        cat cmd.txt | leon2-emu | $UNHEXLIFY
+        run_leon | $UNHEXLIFY
     else
         # Redirect output to a file for diff'ing.
-        cat cmd.txt | leon2-emu | $UNHEXLIFY > $outfile
+        run_leon | $UNHEXLIFY > $outfile
     fi
 
     # clean up temp script containing mpy file

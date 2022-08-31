@@ -15,6 +15,7 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "modrtems.h"
+#include "rtems_config.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // TIMER CLASS

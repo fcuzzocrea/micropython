@@ -6,87 +6,56 @@
 #
 # This Makefile builds an example of a LEON port with multiple tasks.
 
-# the location of the MicroPython LEON support code
+# The location of the MicroPython LEON support code.
 LEON_COMMON = leon-common
 LEON_COMMON_FROM_HERE = ../$(LEON_COMMON)
 
+# Make the build directory reflect the RTEMS/toolchain version.
+BUILD ?= build-$(MICROPY_RTEMS_VER)
+
+# Include core MicroPython make environment.
 include ../py/mkenv.mk
 
-# qstr definitions (must come before including py.mk)
+# Qstr definitions (must come before including py.mk).
 QSTR_DEFS = $(LEON_COMMON_FROM_HERE)/qstrdefsport.h
 
-# include py core make definitions
+# Include core MicroPython make rules.
 include ../py/py.mk
 
-# include LEON common makefile settings
+# Include LEON common make environment.
 include $(LEON_COMMON_FROM_HERE)/mkenv.mk
-
-INC =
-INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
-
-CFLAGS += $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT) -mcpu=v8
-
-# Use this to optimise the static hash tables
-#CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
-
-# Debugging/Optimization
-ifeq ($(DEBUG), 1)
-CFLAGS += -O0 -ggdb
-else
-CFLAGS += -Os -DNDEBUG
-endif
-
-LIBS += -lm
 
 SRC_C = \
 	main.c \
-	lib/libc/string0.c \
-	$(LEON_COMMON)/sparcisr.c \
-	$(LEON_COMMON)/leonprintf.c \
-	$(LEON_COMMON)/mputil.c \
-	$(LEON_COMMON)/mphalport.c \
-	$(LEON_COMMON)/modtime.c \
-	$(LEON_COMMON)/modrtems.c \
-	$(LEON_COMMON)/modrtemstask.c \
-	$(LEON_COMMON)/modrtemsqueue.c \
-	$(LEON_COMMON)/modrtemssem.c \
-	$(LEON_COMMON)/modmem.c \
 
-SRC_S = \
-	$(LEON_COMMON)/sparcjmp.s \
-	$(LEON_COMMON)/gchelper.s \
-
-# these are the example Python scripts to compile
-# they are executed in separate tasks
+# These are the example Python scripts to compile.
+# They are executed in separate tasks.
 SRC_PY = ex1.py ex2.py ex3.py ex4.py
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
+OBJ += $(PY_O)
+OBJ += $(addprefix $(BUILD)/,$(SRC_C:.c=.o))
+OBJ += $(addprefix $(BUILD)/,$(LEON_COMMON_OBJ))
 
-all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab $(BUILD)/scripts.srec
+LEON2_EMU_CMD_LOAD_EXTRA = 'load /srec "$(BUILD)/scripts.srec"\n'
 
-run: $(BUILD)/firmware.srec $(BUILD)/firmware.tab $(BUILD)/scripts.srec
-	$(Q)cat cmd.txt | leon2-emu
+# Include LEON convenience rules to build the MicroPython RTEMS application.
+include $(LEON_COMMON_FROM_HERE)/mkapp.mk
 
-$(BUILD)/firmware.elf: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
-	$(Q)$(SIZE) $@
+$(BUILD)/firmware.elf: $(BUILD)/scripts.srec $(BUILD)/scripts.bin
 
-$(BUILD)/firmware.srec: $(BUILD)/firmware.elf
-	$(ECHO) "SREC $@"
-	$(Q)$(OBJCOPY) -O srec $< $@
-
-$(BUILD)/firmware.tab: $(BUILD)/firmware.elf
-	$(ECHO) "TAB $@"
-	$(Q)$(OBJDUMP) --syms $< > $@   
-
-$(BUILD)/%.mpy: %.py
-	$(ECHO) "PY $<"
-	$(Q)../mpy-cross/mpy-cross -o $@ $<
-
+# Build scripts.srec from a set of specified .py files in $(SRC_PY).
 $(BUILD)/scripts.srec: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
-	$(ECHO) "MPY $@"
-	$(Q)../leon-common/mpy_package.py tosrec \
+	$(ECHO) "GEN $@"
+	$(Q)$(LEON_COMMON_FROM_HERE)/mpy_package.py tosrec \
+	    0x40100000 $(BUILD)/ex1.mpy \
+	    0x40110000 $(BUILD)/ex2.mpy \
+	    0x40120000 $(BUILD)/ex3.mpy \
+	    0x40130000 $(BUILD)/ex4.mpy > $@
+
+# Build scripts.bin from a set of specified .py files in $(SRC_PY).
+$(BUILD)/scripts.bin: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
+	$(ECHO) "GEN $@"
+	$(Q)$(LEON_COMMON_FROM_HERE)/mpy_package.py tobin \
 	    0x40100000 $(BUILD)/ex1.mpy \
 	    0x40110000 $(BUILD)/ex2.mpy \
 	    0x40120000 $(BUILD)/ex3.mpy \

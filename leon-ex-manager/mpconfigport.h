@@ -8,6 +8,7 @@
 
 // include common options for LEON/SPARC
 #define MICROPY_USE_64BIT_NAN_BOXING (1)
+#define MICROPY_RTEMS_ENABLE_VM_MANAGER (1)
 #include "leon-common/mpconfigport_common.h"
 
 // options to control how MicroPython is built
@@ -80,6 +81,8 @@ extern const struct _mp_obj_module_t mp_module_mem;
     if (--vm_hook_count == 0) { \
         vm_hook_count = MICROPY_VM_HOOK_COUNT; \
         MARK_EXC_IP_SELECTIVE(); \
-        extern void mp_vm_hook(const mp_code_state_t *code_state); \
         mp_vm_hook(code_state); \
     }
+
+struct _mp_code_state_t;
+void mp_vm_hook(const struct _mp_code_state_t *code_state);

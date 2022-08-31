@@ -10,6 +10,9 @@
 LEON_COMMON = leon-common
 LEON_COMMON_FROM_HERE = ../$(LEON_COMMON)
 
+# Make the build directory reflect the RTEMS/toolchain version.
+BUILD ?= build-$(MICROPY_RTEMS_VER)
+
 include ../py/mkenv.mk
 
 # qstr definitions (must come before including py.mk)
@@ -21,74 +24,18 @@ include ../py/py.mk
 # include LEON common makefile settings
 include $(LEON_COMMON_FROM_HERE)/mkenv.mk
 
-INC =
-INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
-
-CFLAGS += $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT) -mcpu=v8
-
-# Use this to optimise the static hash tables
-#CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
-
-# Debugging/Optimization
-ifeq ($(DEBUG), 1)
-CFLAGS += -O0 -ggdb
-else
-CFLAGS += -Os -DNDEBUG
-endif
-
-LIBS += -lm
-
-SRC_C = \
+SRC_C += \
 	main.c \
-	lib/libc/memcmp.c \
-	lib/libc/memcpy.c \
-	lib/libc/memmove.c \
-	lib/libc/memset.c \
-	lib/libc/strchr.c \
-	lib/libc/strcmp.c \
-	lib/libc/strlen.c \
-	lib/libc/strncmp.c \
 	lib/utils/sys_stdio_mphal.c \
-	$(LEON_COMMON)/sparcisr.c \
-	$(LEON_COMMON)/leonprintf.c \
-	$(LEON_COMMON)/nearbyint.c \
-	$(LEON_COMMON)/mputil.c \
-	$(LEON_COMMON)/mphalport.c \
-	$(LEON_COMMON)/modtime.c \
-	$(LEON_COMMON)/modrtems.c \
-	$(LEON_COMMON)/modrtemstask.c \
-	$(LEON_COMMON)/modrtemsqueue.c \
-	$(LEON_COMMON)/modrtemssem.c \
-	$(LEON_COMMON)/modmem.c \
-	$(LEON_COMMON)/moddatapool.c \
-
-SRC_S = \
-	$(LEON_COMMON)/sparcjmp.s \
-	$(LEON_COMMON)/gchelper.s \
 
 # List of extra sources for qstr extraction
 SRC_QSTR += lib/utils/sys_stdio_mphal.c
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
+OBJ += $(PY_O)
+OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
+OBJ += $(addprefix $(BUILD)/,$(LEON_COMMON_OBJ))
 
-all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab
-
-$(BUILD)/firmware.elf: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
-	$(Q)$(SIZE) $@
-
-$(BUILD)/firmware.srec: $(BUILD)/firmware.elf
-	$(ECHO) "SREC $@"
-	$(Q)$(OBJCOPY) -O srec $< $@
-
-$(BUILD)/firmware.tab: $(BUILD)/firmware.elf
-	$(ECHO) "TAB $@"
-	$(Q)$(OBJDUMP) --syms $< > $@   
-
-# Preprocess all the source files, producing .pp output in the $(BUILD) dir.
-# We first build all the object files so that qstrs etc are generated correctly.
-PREPROC_IGNORE = py/emitn%.pp leon-common/sparcjmp.pp leon-common/gchelper.pp
-preprocess: $(OBJ) $(filter-out $(addprefix $(BUILD)/,$(PREPROC_IGNORE)),$(OBJ:.o=.pp))
+# include LEON convenience rules to build the MicroPython RTEMS application
+include $(LEON_COMMON_FROM_HERE)/mkapp.mk
 
 include ../py/mkrules.mk

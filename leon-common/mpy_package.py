@@ -68,6 +68,27 @@ def main_tosrec(args):
             usage()
         convert_mpy_to_srec(addr, args[i + 1])
 
+def main_tobin(args):
+    if len(args) % 2 != 0:
+        usage()
+    last_addr = None
+    all_data = []
+    for i in range(0, len(args), 2):
+        addr = args[i]
+        filename = args[i + 1]
+        try:
+            addr = int(addr, 0)
+        except ValueError:
+            usage()
+        with open(filename, 'rb') as f:
+            data = f.read()
+        if last_addr is not None:
+            # pad
+            all_data.append(b'\x00' * (addr - last_addr))
+        all_data.append(struct.pack('>L', len(data)) + data)
+        last_addr = addr + len(all_data[-1])
+    sys.stdout.write(b''.join(all_data))
+
 def main():
     if len(sys.argv) < 2:
         usage()
@@ -75,6 +96,8 @@ def main():
         main_tohdr(sys.argv[2:])
     elif sys.argv[1] == 'tosrec':
         main_tosrec(sys.argv[2:])
+    elif sys.argv[1] == 'tobin':
+        main_tobin(sys.argv[2:])
     else:
         usage()
 

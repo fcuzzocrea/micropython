@@ -11,6 +11,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <rtems.h>
 #include "obcp.h"
 

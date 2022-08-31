@@ -12,6 +12,22 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "modrtems.h"
+#include "rtems_config.h"
+
+#if RTEMS_4_8
+static inline rtems_status_code rtems_clock_get_ticks(rtems_interval *ticks_per_second) {
+    return rtems_clock_get(RTEMS_CLOCK_GET_TICKS_PER_SECOND, ticks_per_second);
+}
+
+static inline rtems_status_code rtems_clock_get_tod(rtems_time_of_day *time_of_day) {
+    return rtems_clock_get(RTEMS_CLOCK_GET_TOD, time_of_day);
+}
+#else
+static inline rtems_status_code rtems_clock_get_ticks(rtems_interval *ticks_per_second) {
+    *ticks_per_second = rtems_clock_get_ticks_per_second();
+    return RTEMS_SUCCESSFUL;
+}
+#endif
 
 // localtime()
 // Return a 6-tuple containing: (year, month, mday, hour, minute, second)
@@ -22,7 +38,7 @@
 // second  is 0-59
 STATIC mp_obj_t time_localtime(void) {
     rtems_time_of_day tod;
-    rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TOD, &tod);
+    rtems_status_code status = rtems_clock_get_tod(&tod);
     mod_rtems_status_code_check(status);
     mp_obj_t tuple[6] = {
         mp_obj_new_int(tod.year),
@@ -50,7 +66,7 @@ STATIC mp_obj_t time_localtime_into(mp_obj_t lst) {
     mp_obj_t *items;
     mp_obj_get_array_fixed_n(lst, 6, &items);
     rtems_time_of_day tod;
-    rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TOD, &tod);
+    rtems_status_code status = rtems_clock_get_tod(&tod);
     mod_rtems_status_code_check(status);
     items[0] = mp_obj_new_int(tod.year);
     items[1] = mp_obj_new_int(tod.month);
@@ -72,8 +88,12 @@ STATIC mp_obj_t time_time(void) {
     return mp_obj_new_float(t.seconds + 1e-6 * t.microseconds);
     #else
     struct timeval tv;
+    #if RTEMS_4_10 || RTEMS_4_11 || RTEMS_5
     rtems_status_code status = rtems_clock_get_tod_timeval(&tv);
     mod_rtems_status_code_check(status);
+    #else
+    rtems_clock_get_realtime_timeval(&tv);
+    #endif
     return mp_obj_new_float(tv.tv_sec + (mp_float_t)tv.tv_usec / 1000000);
     #endif
 }
@@ -83,7 +103,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(time_time_obj, time_time);
 // Seconds can be a float to sleep for a fractional number of seconds.
 STATIC mp_obj_t time_sleep(mp_obj_t sec_in) {
     rtems_interval ticks_per_second;
-    rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TICKS_PER_SECOND, &ticks_per_second);
+    rtems_status_code status = rtems_clock_get_ticks(&ticks_per_second);
     mod_rtems_status_code_check(status);
     if (MP_OBJ_IS_INT(sec_in)) {
         status = rtems_task_wake_after(mp_obj_get_int(sec_in) * ticks_per_second);

@@ -10,8 +10,9 @@
 #include <rtems.h>
 
 #include "py/nlr.h"
-#include "py/obj.h"
+#include "py/runtime.h"
 #include "modrtems.h"
+#include "rtems_config.h"
 
 STATIC mp_obj_t mod_rtems_task_wake_when(mp_obj_t tod_in) {
     mp_obj_t *items;
@@ -37,19 +38,27 @@ STATIC mp_obj_t mod_rtems_task_wake_after(mp_obj_t ticks_in) {
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_rtems_task_wake_after_obj, mod_rtems_task_wake_after);
 
 STATIC mp_obj_t mod_rtems_task_get_note(mp_obj_t note_id) {
-    uint32_t note;
+    #if RTEMS_4
+    uint32_t note = 0;
     rtems_status_code status = rtems_task_get_note(RTEMS_SELF,
         RTEMS_NOTEPAD_FIRST + mp_obj_get_int(note_id), &note);
     mod_rtems_status_code_check(status);
     return mp_obj_new_int_from_uint(note);
+    #else
+    mp_raise_NotImplementedError("get_note not supported");
+    #endif
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_rtems_task_get_note_obj, mod_rtems_task_get_note);
 
 STATIC mp_obj_t mod_rtems_task_set_note(mp_obj_t note_id, mp_obj_t note_val) {
+    #if RTEMS_4
     rtems_status_code status = rtems_task_set_note(RTEMS_SELF,
         RTEMS_NOTEPAD_FIRST + mp_obj_get_int(note_id), mp_obj_get_int_truncated(note_val));
     mod_rtems_status_code_check(status);
     return mp_const_none;
+    #else
+    mp_raise_NotImplementedError("set_note not supported");
+    #endif
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_rtems_task_set_note_obj, mod_rtems_task_set_note);
 

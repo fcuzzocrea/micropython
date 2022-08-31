@@ -5,6 +5,16 @@
 
 #include <stdint.h>
 
+// Whether the VM manager helper functions are enabled
+#ifndef MICROPY_RTEMS_ENABLE_VM_MANAGER
+#define MICROPY_RTEMS_ENABLE_VM_MANAGER (0)
+#endif
+
+// Whether the datapool module is enabled
+#ifndef MICROPY_RTEMS_ENABLE_DATAPOOL
+#define MICROPY_RTEMS_ENABLE_DATAPOOL (0)
+#endif
+
 // definitions specific to SPARC
 #define MP_ENDIANNESS_BIG (1)
 #define MICROPY_MAKE_POINTER_CALLABLE(p) ((void*)p)
@@ -53,9 +63,23 @@ typedef long mp_off_t;
 // LEON ports provide their own version of mp_raw_code_load_file
 #define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (1)
 
-// We define our own state accessor macros
+#if RTEMS_4
+// For RTEMS 4.x these thread-local-state functions can be inline
 #include <rtems.h>
-#define MP_STATE_PTR ((mp_state_ctx_t*)_Thread_Executing->Start.numeric_argument)
+static inline void *mp_state_ptr(void) {
+    return ((void *)_Thread_Executing->Start.numeric_argument);
+}
+static inline void mp_state_ptr_set(void *value) {
+    _Thread_Executing->Start.numeric_argument = (uintptr_t)value;
+}
+#else
+// For RTEMS 5 and RTEMS 6 these thread-local-state functions are defined as real functions
+void *mp_state_ptr(void);
+void mp_state_ptr_set(void *value);
+#endif
+
+// We define our own state accessor macros, to use a thread-local-state pointer in the RTEMS task
+#define MP_STATE_PTR ((mp_state_ctx_t*)mp_state_ptr())
 #define MP_STATE_VM(x) (MP_STATE_PTR->vm.x)
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
 #define MP_STATE_THREAD(x) (MP_STATE_PTR->thread.x)

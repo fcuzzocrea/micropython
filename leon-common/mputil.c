@@ -319,13 +319,13 @@ mp_raw_code_t *mp_raw_code_load_file(const char *filename) {
 #if defined(MICROPY_SPARC_NUM_REG_WINDOWS)
 #include <rtems.h> // for sparc_disable_interrupts, sparc_enable_interrupts
 
+void gc_helper_get_regs(void *arr);
+
 // This is called by the memory manager when a garbage collection is needed.
 void gc_collect(void) {
     gc_collect_start();
 
     #if MICROPY_ENABLE_GC && !MICROPY_ENABLE_IMMORTAL_GC
-
-    extern void gc_helper_get_regs(void *arr);
 
     // Get all the SPARC registers:
     //   16 regs per window, 32 bit registers, with room to align to 8 bytes

@@ -5,11 +5,12 @@
 #ifndef INCLUDED_LEON_COMMON_RTEMSSEM_H
 #define INCLUDED_LEON_COMMON_RTEMSSEM_H
 
-#if RTEMS_4_8_EDISOFT
+#if RTEMS_4_8_EDISOFT || RTEMS_6
 
 // RTEMS 4.8 Edisoft doesn't provide POSIX semaphores so we provide a thin
 // abstraction layer on top of RTEMS semaphores.
 
+#include <rtems.h>
 #include <rtems/rtems/sem.h>
 
 // RTEMS 4.8 Edisoft doesn't have a working errno.h so we provide definitions
@@ -26,7 +27,7 @@ typedef rtems_id mp_sem_t;
 static inline void mp_sem_init(uint32_t max_sem) {
     #if RTEMS_4_8
     _Semaphore_Manager_initialization(max_sem);
-    #else
+    #elif RTEMS_4
     (void)max_sem;
     _Semaphore_Manager_initialization();
     #endif
@@ -52,7 +53,7 @@ static inline int mp_sem_post(mp_sem_t *sem) {
 }
 
 static inline int mp_sem_wait(mp_sem_t *sem) {
-    rtems_status_code ret = rtems_semaphore_obtain(*sem, RTEMS_WAIT, 0);
+    rtems_status_code ret = rtems_semaphore_obtain(*sem, RTEMS_WAIT, RTEMS_NO_TIMEOUT);
     if (ret == RTEMS_SUCCESSFUL) {
         return 0;
     } else {
@@ -61,7 +62,7 @@ static inline int mp_sem_wait(mp_sem_t *sem) {
 }
 
 static inline int mp_sem_trywait(mp_sem_t *sem) {
-    rtems_status_code ret = rtems_semaphore_obtain(*sem, RTEMS_NO_WAIT, 0);
+    rtems_status_code ret = rtems_semaphore_obtain(*sem, RTEMS_NO_WAIT, RTEMS_NO_TIMEOUT);
     if (ret == RTEMS_SUCCESSFUL) {
         return 0;
     } else {
@@ -87,7 +88,12 @@ static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
 #include <errno.h>
 #include <sched.h>
 #include <semaphore.h>
+#if RTEMS_4
 #include <rtems/posix/semaphore.h>
+#endif
+#if RTEMS_5
+#include <rtems/rtems/clock.h>
+#endif
 
 typedef sem_t mp_sem_t;
 
@@ -95,7 +101,7 @@ static inline void mp_sem_init(uint32_t max_sem) {
     (void)max_sem;
     #if RTEMS_4_8
     _POSIX_Semaphore_Manager_initialization(max_sem);
-    #else
+    #elif RTEMS_4
     (void)max_sem;
     _POSIX_Semaphore_Manager_initialization();
     #endif
@@ -139,7 +145,19 @@ static inline int mp_sem_trywait(mp_sem_t *sem) {
 }
 
 static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
-    // Note: sem_timedwait doesn't seem to work in RTEMS, it always times out,
+    #if RTEMS_5
+    uint64_t timeout_ns = 1000000000ULL * (uint64_t)timeout_ticks / (uint64_t)rtems_clock_get_ticks_per_second();
+    struct timespec timespec;
+    timespec.tv_sec = timeout_ns / 1000000000ULL;
+    timespec.tv_nsec = timeout_ns % 1000000000ULL;
+    int ret = sem_timedwait(sem, &timespec);
+    if (ret == 0) {
+        return 0;
+    } else {
+        return errno;
+    }
+    #else
+    // Note: sem_timedwait doesn't seem to work in RTEMS 4, it always times out,
     // so instead we use a loop which keeps trying to wait on the semaphore.
     rtems_interval ticks_start;
     rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TICKS_SINCE_BOOT, &ticks_start);
@@ -169,6 +187,8 @@ static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
             return EINVAL;
         }
     }
+    return EINVAL;
+    #endif
 }
 
 #endif

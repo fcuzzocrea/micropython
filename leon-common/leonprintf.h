@@ -7,5 +7,6 @@
 
 #include <stdarg.h>
 
+void leon_putc(char c);
 int leon_printf(const char *fmt, ...);
 int leon_vprintf(const char *fmt, va_list args);

@@ -13,6 +13,7 @@
 #include "py/obj.h"
 #include "py/objint.h"
 #include "modrtems.h"
+#include "rtems_config.h"
 
 STATIC const char *rtems_status_code_string[] = {
     [RTEMS_SUCCESSFUL              ] = "SUCCESSFUL",

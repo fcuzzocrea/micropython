@@ -32,7 +32,7 @@ rtems_task obcp_task_mp_worker(rtems_task_argument task_index) {
     printf("MicroPython worker task %d started\n", (int)task_index);
 
     // set the MicroPython context for this task
-    _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
+    mp_state_ptr_set(&mp_state_ctx[task_index]);
 
     // set value for rtems.script_id() function
     MP_STATE_PORT(rtems_script_id) = mp_obj_new_int(task_index);

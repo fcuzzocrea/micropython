@@ -26,6 +26,7 @@
 
 // include common options for LEON/SPARC
 #define MICROPY_USE_64BIT_NAN_BOXING (1)
+#define MICROPY_RTEMS_ENABLE_DATAPOOL (1)
 #include "leon-common/mpconfigport_common.h"
 
 #define MICROPY_ENABLE_PYSTACK (1)
@@ -213,16 +214,16 @@
 #define MICROPY_PY___FILE__ (1)
 #define MICROPY_USE_INTERNAL_ERRNO (1)
 
-#if 0
-// settings for Gaisler RTEMS
-#define MICROPY_NLR_SPARC (0)
-#define MICROPY_NLR_SETJMP (1)
-#define MICROPY_NO_ALLOCA (0)
-#else
-// settings for Edisoft RTEMS
+#if RTEMS_4_8_EDISOFT || RTEMS_6
+// settings for Edisoft RTEMS and RTEMS 6
 #define MICROPY_NLR_SPARC (1)
 #define MICROPY_NLR_SETJMP (0)
 #define MICROPY_NO_ALLOCA (1)
+#else
+// settings for Gaisler RTEMS and RTEMS 5
+#define MICROPY_NLR_SPARC (0)
+#define MICROPY_NLR_SETJMP (1)
+#define MICROPY_NO_ALLOCA (0)
 #endif
 
 // Root pointers

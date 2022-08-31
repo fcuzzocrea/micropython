@@ -6,47 +6,29 @@
 #
 # This Makefile builds the OBCP example
 
-# the location of the MicroPython LEON support code
+# The location of the MicroPython LEON support code.
 LEON_COMMON = leon-common
 LEON_COMMON_FROM_HERE = ../$(LEON_COMMON)
 
+# Make the build directory reflect the RTEMS/toolchain version.
+BUILD ?= build-$(MICROPY_RTEMS_VER)
+
+# Include core MicroPython make environment.
 include ../py/mkenv.mk
 
-# qstr definitions (must come before including py.mk)
+# Qstr definitions (must come before including py.mk).
 QSTR_DEFS = $(LEON_COMMON_FROM_HERE)/qstrdefsport.h qstrdefsport.h
 
-# include py core make definitions
+# Include core MicroPython make rules.
 include ../py/py.mk
 
-# include LEON common makefile settings
+# Include LEON common make environment.
 include $(LEON_COMMON_FROM_HERE)/mkenv.mk
 
-# the OBCP example needs printf which is not provided by the Edisoft toolchain
-ifeq ($(RTEMS_VER),4_8_EDI)
+# The OBCP example needs printf which is not provided by the Edisoft toolchain
+ifeq ($(MICROPY_RTEMS_VER),RTEMS_4_8_EDISOFT)
 $(error Cannot build OBCP example with RTEMS-4.8 Edisoft (printf is reqired))
 endif
-
-INC =
-INC += -I. -I.. -I$(BUILD) -I$(LEON_COMMON_FROM_HERE)
-
-CFLAGS += $(INC) -Wall -Werror -ansi -std=gnu99 $(COPT) -mcpu=v8
-
-# Use this to optimise the static hash tables
-#CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
-
-# Debugging/Optimization
-ifeq ($(DEBUG), 1)
-CFLAGS += -O0 -ggdb
-else
-CFLAGS += -Os -DNDEBUG
-endif
-
-LIBS += -lm
-
-# these are the Python scripts to compile into the binary
-SRC_PY = \
-	task_therm.py \
-	task_power.py \
 
 SRC_C = \
 	main.c \
@@ -56,50 +38,20 @@ SRC_C = \
 	task_temp.c \
 	task_ground.c \
 	modpowersys.c \
-	lib/libc/string0.c \
-	$(LEON_COMMON)/mputil.c \
-	$(LEON_COMMON)/mpvmmanage.c \
-	$(LEON_COMMON)/mphalport.c \
-	$(LEON_COMMON)/modtime.c \
-	$(LEON_COMMON)/modrtems.c \
-	$(LEON_COMMON)/modrtemstask.c \
-	$(LEON_COMMON)/modrtemsqueue.c \
-	$(LEON_COMMON)/modrtemssem.c \
-	$(LEON_COMMON)/modmem.c \
-	$(LEON_COMMON)/moddatapool.c \
 
-SRC_S = \
-	$(LEON_COMMON)/sparcjmp.s \
-	$(LEON_COMMON)/gchelper.s \
+# These are the example Python scripts to compile.
+SRC_PY = \
+	task_therm.py \
+	task_power.py \
 
-OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o) $(SRC_S:.s=.o) $(SRC_RTEMS:.c=.o))
+OBJ += $(PY_O)
+OBJ += $(addprefix $(BUILD)/,$(SRC_C:.c=.o))
+OBJ += $(addprefix $(BUILD)/,$(LEON_COMMON_OBJ))
 
-all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab
-
-run: $(BUILD)/firmware.srec $(BUILD)/firmware.tab
-	$(Q)cat cmd.txt | leon2-emu
-
-$(BUILD)/firmware.elf: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
-	$(Q)$(SIZE) $@
-
-$(BUILD)/firmware.srec: $(BUILD)/firmware.elf
-	$(ECHO) "SREC $@"
-	$(Q)$(OBJCOPY) -O srec $< $@
-
-$(BUILD)/firmware.tab: $(BUILD)/firmware.elf
-	$(ECHO) "TAB $@"
-	$(Q)$(OBJDUMP) --syms $< > $@   
-
+# Require scripts.h, containing the SRC_PY files compiled to bytecode.
 main.c: $(BUILD)/scripts.h
 
-$(BUILD)/%.mpy: %.py
-	$(ECHO) "PY $<"
-	$(Q)../mpy-cross/mpy-cross -o $@ $<
-
-$(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
-	$(ECHO) "MPY $@"
-	$(Q)../leon-common/mpy_package.py tohdr $^ > $@
+# Include LEON convenience rules to build the MicroPython RTEMS application.
+include $(LEON_COMMON_FROM_HERE)/mkapp.mk
 
 include ../py/mkrules.mk

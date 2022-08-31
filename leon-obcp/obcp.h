@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <rtems.h>
+
 // configuration for the datapool
 #define DATAPOOL_HEAP_SIZE (8 * 1024)
 

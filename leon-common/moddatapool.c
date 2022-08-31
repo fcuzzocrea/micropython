@@ -7,6 +7,8 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <rtems.h>
 
 #include "py/stackctrl.h"
 #include "py/runtime.h"
@@ -14,11 +16,13 @@
 #include "py/obj.h"
 #include "moddatapool.h"
 
+#if MICROPY_RTEMS_ENABLE_DATAPOOL
+
 #define DATAPOOL_OBJ_TO_ID(o) ((uint32_t)MP_OBJ_TO_PTR(o))
 #define DATAPOOL_OBJ_FROM_ID(id) (MP_OBJ_FROM_PTR((void*)(id)))
 
 STATIC rtems_id datapool_sem;
-STATIC uint32_t datapool_old_state;
+STATIC void *datapool_old_state;
 STATIC mp_state_ctx_t datapool_state_ctx;
 
 // these 2 function do a mini thread switch to the datapool state
@@ -27,10 +31,10 @@ STATIC void datapool_enter(void) {
     rtems_semaphore_obtain(datapool_sem, 0, 0);
 
     // save old thread state
-    datapool_old_state = _Thread_Executing->Start.numeric_argument;
+    datapool_old_state = mp_state_ptr();
 
     // set the MicroPython context for this task
-    _Thread_Executing->Start.numeric_argument = (uint32_t)&datapool_state_ctx;
+    mp_state_ptr_set(&datapool_state_ctx);
 
     // we are on a foreign stack so need to set the stack top and limit
     mp_stack_ctrl_init();
@@ -39,7 +43,7 @@ STATIC void datapool_enter(void) {
 
 STATIC void datapool_exit(void) {
     // restore old thread state
-    _Thread_Executing->Start.numeric_argument = datapool_old_state;
+    mp_state_ptr_set(datapool_old_state);
 
     // release semaphore
     rtems_semaphore_release(datapool_sem);
@@ -243,7 +247,7 @@ STATIC const datapool_error_t datapool_error_table[] = {
     [DATAPOOL_INTERNAL_ERROR    ] = {&mp_type_RuntimeError, "datapool internal error"},
 };
 
-void datapool_result_check(datapool_result_t res) {
+STATIC void datapool_result_check(datapool_result_t res) {
     if (res != DATAPOOL_OK) {
         nlr_raise(mp_obj_new_exception_msg(datapool_error_table[res].exc, datapool_error_table[res].msg));
     }
@@ -380,3 +384,5 @@ const mp_obj_module_t mp_module_datapool = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t*)&mp_module_datapool_globals,
 };
+
+#endif // MICROPY_RTEMS_ENABLE_DATAPOOL

@@ -8,30 +8,12 @@
 
 #include <stdio.h>
 #include <rtems.h>
+#include "leon-common/moddatapool.h"
+#include "leon-common/rtems_util.h"
+#include "leon-common/sparcisr.h"
 
-#define CONFIGURE_INIT
-#define CONFIGURE_INIT_TASK_ENTRY_POINT Init
-#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
-#define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-#define CONFIGURE_MAXIMUM_TASKS (13)
-#define CONFIGURE_MAXIMUM_SEMAPHORES (4)
-#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES (4)
-#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
-#define CONFIGURE_EXTRA_TASK_STACKS (20 * RTEMS_MINIMUM_STACK_SIZE)
-
-rtems_task Init(rtems_task_argument argument);
 rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
-
-#include <rtems/confdefs.h>
-#include "leon-common/sparcisr.h"
-#include "leon-common/moddatapool.h"
-
-#define MICROPY_RTEMS_TASK_ATTRIBUTES (RTEMS_APPLICATION_TASK | RTEMS_FLOATING_POINT)
-#define MICROPY_RTEMS_STACK_SIZE (RTEMS_MINIMUM_STACK_SIZE * 3)
-#define MICROPY_RTEMS_HEAP_SIZE (80 * 1024)
-#define MICROPY_RTEMS_NUM_TASKS (10)
-#define MICROPY_RTEMS_PYSTACK_WORD_SIZE (512)
 
 #define DATAPOOL_HEAP_SIZE (4 * 1024)
 static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
@@ -39,6 +21,12 @@ static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
 /******************************************************************************/
 // RTEMS initialisation task
 // this task runs at highest priority and is non-preemptive
+
+#if MICROPY_RTEMS_USE_TASK_CONSTRUCT
+RTEMS_ALIGNED(RTEMS_TASK_STORAGE_ALIGNMENT)
+static char mpma_task_storage[TASK_STORAGE_SIZE];
+static rtems_task_config mpma_task_config;
+#endif
 
 rtems_task Init(rtems_task_argument ignored) {
     sparc_install_ta_3_window_flush_isr();
@@ -57,16 +45,16 @@ rtems_task Init(rtems_task_argument ignored) {
     // initialise the message queue subsystem
     #if RTEMS_4_8
     _Message_queue_Manager_initialization(4);
-    #else
-    //_Message_queue_Manager_initialization();
-    //_Semaphore_Manager_initialization();
+    #elif RTEMS_4
+    _Message_queue_Manager_initialization();
+    _Semaphore_Manager_initialization();
     #endif
 
     // initialise the timer subsystem
     #if RTEMS_4_8
     _Timer_Manager_initialization(2);
-    #else
-    //_Timer_Manager_initialization();
+    #elif RTEMS_4
+    _Timer_Manager_initialization();
     #endif
 
     // bring up the datapool
@@ -76,10 +64,15 @@ rtems_task Init(rtems_task_argument ignored) {
     rtems_name task_name = rtems_build_name('M', 'P', 'M', 'A');
     rtems_id task_id;
     rtems_status_code status;
+    #if MICROPY_RTEMS_USE_TASK_CONSTRUCT
+    mp_rtems_task_config(&mpma_task_config, task_name, mpma_task_storage, sizeof(mpma_task_storage));
+    status = rtems_task_construct(&mpma_task_config, &task_id);
+    #else
     status = rtems_task_create(
         task_name, 1, RTEMS_MINIMUM_STACK_SIZE, RTEMS_DEFAULT_MODES,
         MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id
     );
+    #endif
     if (status != RTEMS_SUCCESSFUL) {
         return;
     }
@@ -93,17 +86,19 @@ rtems_task Init(rtems_task_argument ignored) {
 /******************************************************************************/
 // MicroPython manager task
 
-// these variables define the location of the externally-loaded .mpy files
-#define MPY_MEM_BASE   (0x40200000)
-#define MPY_MEM_STRIDE (0x00010000)
-
 #include "py/mphal.h"
 #include "leon-common/leonprintf.h"
+#include "leon-common/leonutil.h"
 
-// this function is used as a hook to set a breakpoint to terminate emu
-void emu_terminate(void) {
-    leon_printf("emu_terminate\n");
-}
+// these variables define the location of the externally-loaded .mpy files
+#define MPY_MEM_BASE   (MICROPY_RTEMS_MPY_MEM_BASE + 0x00100000)
+#define MPY_MEM_STRIDE (0x00010000)
+
+#if MICROPY_RTEMS_USE_TASK_CONSTRUCT
+RTEMS_ALIGNED(RTEMS_TASK_STORAGE_ALIGNMENT)
+static char mp_task_storage[MICROPY_RTEMS_NUM_TASKS][TASK_STORAGE_SIZE];
+static rtems_task_config mp_task_config[MICROPY_RTEMS_NUM_TASKS];
+#endif
 
 rtems_task mp_manager_task(rtems_task_argument ignored) {
     leon_printf("\nMicroPython manager task started\n");
@@ -125,25 +120,30 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
     // we must use hexlified output so it isn't modified by the UART
     mp_hal_stdout_enable_hexlify();
 
-    rtems_name task_name[MICROPY_RTEMS_NUM_TASKS];
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
 
     // spawn all worker tasks
     for (int i = 0; i < num_tasks; ++i) {
         rtems_status_code status;
-        task_name[i] = rtems_build_name('M', 'P', '0', '0' + i);
+        rtems_name task_name = rtems_build_name('M', 'P', '0', '0' + i);
+        #if MICROPY_RTEMS_USE_TASK_CONSTRUCT
+        rtems_task_config *config = &mp_task_config[i];
+        mp_rtems_task_config(config, task_name, mp_task_storage[i], sizeof(mp_task_storage[i]));
+        status = rtems_task_construct(config, &task_id[i]);
+        #else
         status = rtems_task_create(
-            task_name[i], 1, MICROPY_RTEMS_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            task_name, 1, MICROPY_RTEMS_STACK_SIZE, RTEMS_DEFAULT_MODES,
             MICROPY_RTEMS_TASK_ATTRIBUTES, &task_id[i]
         );
+        #endif
         if (status != RTEMS_SUCCESSFUL) {
             leon_printf("Error creating task #%u: %u\n", i, status);
-            emu_terminate();
+            leon_emu_terminate();
         }
         status = rtems_task_start(task_id[i], mp_worker_task, i);
         if (status != RTEMS_SUCCESSFUL) {
             leon_printf("Error starting task #%u: %u\n", i, status);
-            emu_terminate();
+            leon_emu_terminate();
         }
     }
 
@@ -152,15 +152,13 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         rtems_task_wake_after(200);
         int num_tasks_complete = 0;
         for (int i = 0; i < num_tasks; ++i) {
-            uint32_t note;
-            rtems_task_get_note(task_id[i], RTEMS_NOTEPAD_0, &note);
-            if (note != 0) {
+            if (rtems_task_is_suspended(task_id[i]) == RTEMS_ALREADY_SUSPENDED) {
                 num_tasks_complete += 1;
             }
         }
         if (num_tasks_complete == num_tasks) {
             mp_hal_stdout_disable_hexlify();
-            emu_terminate();
+            leon_emu_terminate();
         }
     }
 }
@@ -183,7 +181,7 @@ static mp_state_ctx_t mp_state_ctx[MICROPY_RTEMS_NUM_TASKS];
 static byte mp_heap[MICROPY_RTEMS_NUM_TASKS * HEAP_SIZE];
 static mp_obj_t mp_pystack[MICROPY_RTEMS_NUM_TASKS * MICROPY_RTEMS_PYSTACK_WORD_SIZE];
 
-void pattern_fill(void *p_in, size_t len) {
+static void pattern_fill(void *p_in, size_t len) {
     uint32_t *p = (uint32_t*)p_in;
     while (len >= 4) {
         *p++ = 0xdea110c8;
@@ -191,7 +189,7 @@ void pattern_fill(void *p_in, size_t len) {
     }
 }
 
-void *pattern_search(void *p_in, size_t len) {
+static void *pattern_search(void *p_in, size_t len) {
     uint32_t *p = (uint32_t*)p_in;
     while (len >= 4) {
         if (*p != 0xdea110c8) {
@@ -205,7 +203,7 @@ void *pattern_search(void *p_in, size_t len) {
 
 rtems_task mp_worker_task(rtems_task_argument task_index) {
     // set the MicroPython context for this task
-    _Thread_Executing->Start.numeric_argument = (uint32_t)&mp_state_ctx[task_index];
+    mp_state_ptr_set(&mp_state_ctx[task_index]);
 
     // set value for rtems.script_id() function
     MP_STATE_PORT(rtems_script_id) = mp_obj_new_int(task_index);
@@ -272,7 +270,7 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     }
 
     // indicate that the script has completed
-    rtems_task_set_note(RTEMS_SELF, RTEMS_NOTEPAD_0, 1);
+    rtems_task_suspend(RTEMS_SELF);
 
     // wait for termination
     for (;;) {

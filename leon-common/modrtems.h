@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <rtems.h>
+
 extern const mp_obj_module_t mp_module_rtems_task;
 extern const mp_obj_module_t mp_module_rtems_queue;
 extern const mp_obj_module_t mp_module_rtems_sem;

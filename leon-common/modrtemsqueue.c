@@ -13,6 +13,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 #include "modrtems.h"
+#include "rtems_config.h"
 
 typedef struct _rtems_queue_obj_t {
     mp_obj_base_t base;
@@ -179,7 +180,20 @@ STATIC mp_obj_t mod_rtems_queue_create(size_t n_args, const mp_obj_t *pos_args, 
     uint32_t attr = args[ARG_attr].u_int;
     rtems_queue_obj_t *self = m_new_obj(rtems_queue_obj_t);
     self->base.type = &rtems_queue_type;
+    #if MICROPY_RTEMS_USE_MESSAGE_QUEUE_CONSTRUCT
+    rtems_message_queue_config config = {
+        .name = name,
+        .maximum_pending_messages = count,
+        .maximum_message_size = max_size,
+        .storage_area = NULL, // TODO
+        .storage_size = 0, // TODO
+        .storage_free = NULL,
+        .attributes = attr,
+    };
+    rtems_status_code status = rtems_message_queue_construct(&config, &self->id);
+    #else
     rtems_status_code status = rtems_message_queue_create(name, count, max_size, attr, &self->id);
+    #endif
     mod_rtems_status_code_check(status);
     return MP_OBJ_FROM_PTR(self);
 }

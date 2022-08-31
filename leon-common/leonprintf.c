@@ -4,16 +4,26 @@
  */
 
 #include "leon-common/leonprintf.h"
+#include "rtems_config.h"
 
-static void leon_putc(char c) {
+#if RTEMS_4_8_EDISOFT
+// RTEMS 4.8 Edisoft has a custom output function provided by leon2serial.c.
+extern void output_a_character_to_leon2_port0(unsigned char c);
+#elif RTEMS_4
+// RTEMS 4.x versions (non-Edisoft) use this function for output.
+extern void console_outbyte_polled(int port, unsigned char ch);
+#else
+// RTEMS 5 and RTEMS 6 have an rtems_putc function defined in this header file.
+#include <rtems/bspIo.h>
+#endif
+
+void leon_putc(char c) {
     #if RTEMS_4_8_EDISOFT
-    // RTEMS 4.8 Edisoft has a custom output function provided by leon2serial.c
-    extern void output_a_character_to_leon2_port0(unsigned char c);
     output_a_character_to_leon2_port0(c);
-    #else
-    // All other RTEMS versions use this function for output
-    extern void console_outbyte_polled(int port, unsigned char ch);
+    #elif RTEMS_4
     console_outbyte_polled(0, c);
+    #else
+    rtems_putc(c);
     #endif
 }
 
