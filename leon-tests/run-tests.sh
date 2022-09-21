@@ -11,7 +11,7 @@
 RM="rm -f"
 MPC="../mpy-cross/mpy-cross"
 MPY_PACKAGE="../leon-common/mpy_package.py"
-UNHEXLIFY="../tools/unhexlify.py"
+UNHEXLIFY="./unhexlify.py"
 
 ADDR_TASK1="0x40200000"
 ADDR_TASK2="0x40210000"
