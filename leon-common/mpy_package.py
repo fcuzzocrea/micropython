@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 #
-# mpytool.py: tool to work with MicroPython .mpy files
+# mpy_package.py: tool to package MicroPython .mpy files for use on a LEON target
 
 from __future__ import print_function
 import sys
@@ -49,10 +49,10 @@ def convert_mpy_to_srec(addr, filename):
 
 def usage():
     print('''\
-usage: mpytool.py <command> <args ...>
+usage: mpy_package.py <command> <args ...>
 commands:
-    mpytool.py tohdr <mpy file> ...
-    mpytool.py tosrec <addr> <mpy file> ...''', file=sys.stderr)
+    mpy_package.py tohdr <mpy file> ...
+    mpy_package.py tosrec <addr> <mpy file> ...''', file=sys.stderr)
     sys.exit(1)
 
 def main_tohdr(args):

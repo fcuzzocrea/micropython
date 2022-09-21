@@ -10,7 +10,7 @@
 
 RM="rm -f"
 MPC="../mpy-cross/mpy-cross"
-MPYTOOL="../tools/mpytool.py"
+MPY_PACKAGE="../leon-common/mpy_package.py"
 UNHEXLIFY="../tools/unhexlify.py"
 
 ADDR_TASK1="0x40200000"
@@ -85,15 +85,15 @@ do
 
     if [ $num_tasks = 1 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        $MPYTOOL tosrec $ADDR_TASK1 ${infile_no_ext}.mpy > script.srec || exit $?
+        $MPY_PACKAGE tosrec $ADDR_TASK1 ${infile_no_ext}.mpy > script.srec || exit $?
     elif [ $num_tasks = 2 ]; then
         $MPC ${infile_no_ext}.1.py || exit $?
         $MPC ${infile_no_ext}.2.py || exit $?
-        $MPYTOOL tosrec $ADDR_TASK1 ${infile_no_ext}.1.mpy \
+        $MPY_PACKAGE tosrec $ADDR_TASK1 ${infile_no_ext}.1.mpy \
             $ADDR_TASK2 ${infile_no_ext}.2.mpy > script.srec || exit $?
     elif [ $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        $MPYTOOL tosrec \
+        $MPY_PACKAGE tosrec \
             $ADDR_TASK1 ${infile_no_ext}.mpy \
             $ADDR_TASK2 ${infile_no_ext}.mpy \
             $ADDR_TASK3 ${infile_no_ext}.mpy \

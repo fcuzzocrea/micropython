@@ -93,7 +93,7 @@ can be compiled into the binary.  To perform these steps by hand you can do:
 
     $ ../mpy-cross/mpy-cross ex1.py
     $ ../mpy-cross/mpy-cross ex2.py
-    $ ../tools/mpytool.py tohdr ex1.mpy ex2.mpy > build/scripts.h
+    $ ../leon-common/mpy_package.py tohdr ex1.mpy ex2.mpy > build/scripts.h
 
 The file scripts.h is included in main.c and the bytecode is accessed simply
 as an array of bytes.
@@ -114,7 +114,7 @@ automatically by the Makefile):
     $ ../mpy-cross/mpy-cross ex2.py
     $ ../mpy-cross/mpy-cross ex3.py
     $ ../mpy-cross/mpy-cross ex4.py
-    $ ../tools/mpytool.py tosrec 0x40200000 ex1.mpy 0x40210000 ex2.mpy \
+    $ ../leon-common/mpy_package.py tosrec 0x40200000 ex1.mpy 0x40210000 ex2.mpy \
         0x40220000 ex3.mpy 0x40230000 ex4.mpy > build/scripts.srec
 
 Another example is given using the VM manager.  To build and run do:

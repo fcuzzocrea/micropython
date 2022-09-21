@@ -87,6 +87,6 @@ $(BUILD)/%.mpy: %.py
 
 $(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "MPY $@"
-	$(Q)../tools/mpytool.py tohdr $^ > $@
+	$(Q)../leon-common/mpy_package.py tohdr $^ > $@
 
 include ../py/mkrules.mk

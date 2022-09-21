@@ -86,7 +86,7 @@ $(BUILD)/%.mpy: %.py
 
 $(BUILD)/scripts.srec: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "MPY $@"
-	$(Q)../tools/mpytool.py tosrec \
+	$(Q)../leon-common/mpy_package.py tosrec \
 	    0x40100000 $(BUILD)/ex1.mpy \
 	    0x40110000 $(BUILD)/ex2.mpy \
 	    0x40120000 $(BUILD)/ex3.mpy \
