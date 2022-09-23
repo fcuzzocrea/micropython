@@ -169,6 +169,7 @@ char *strcpy(char *dest, const char *src) {
     return dest;
 }
 
+#if _POSIX_C_SOURCE >= 200809L
 // needed because gcc optimises strcpy + strcat to this
 char *stpcpy(char *dest, const char *src) {
     while (*src) {
@@ -177,6 +178,7 @@ char *stpcpy(char *dest, const char *src) {
     *dest = '\0';
     return dest;
 }
+#endif
 
 char *strcat(char *dest, const char *src) {
     char *d = dest;
