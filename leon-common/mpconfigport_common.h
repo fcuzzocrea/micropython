@@ -64,6 +64,13 @@ typedef long mp_off_t;
 #define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (1)
 
 #if RTEMS_4
+
+// For RTEMS 4.x use a custom NLR handler (custom setjmp/longjmp).
+// This is strictly only needed for RTEMS_4_8_EDISOFT, but it also works on other RTEMS 4.x versions.
+#if !defined(MICROPY_NLR_SPARC) && !defined(MICROPY_NLR_SETJMP)
+#define MICROPY_NLR_SPARC (1)
+#endif
+
 // For RTEMS 4.x these thread-local-state functions can be inline
 #include <rtems.h>
 static inline void *mp_state_ptr(void) {
@@ -72,7 +79,15 @@ static inline void *mp_state_ptr(void) {
 static inline void mp_state_ptr_set(void *value) {
     _Thread_Executing->Start.numeric_argument = (uintptr_t)value;
 }
+
 #else
+
+// For RTEMS 5 and RTEMS 6 it's possible to use the built-in setjmp/longjmp functions
+// for MicroPython NLR handling.
+#if !defined(MICROPY_NLR_SPARC) && !defined(MICROPY_NLR_SETJMP)
+#define MICROPY_NLR_SETJMP (1)
+#endif
+
 // For RTEMS 5 and RTEMS 6 these thread-local-state functions are defined as real functions
 void *mp_state_ptr(void);
 void mp_state_ptr_set(void *value);

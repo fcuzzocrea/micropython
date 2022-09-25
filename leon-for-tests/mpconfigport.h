@@ -12,7 +12,6 @@
 #include "leon-common/mpconfigport_common.h"
 
 // options to control how MicroPython is built
-#define MICROPY_NLR_SPARC           (1)
 #define MICROPY_ALLOC_PATH_MAX      (128)
 #define MICROPY_STACKLESS           (1)
 #define MICROPY_STACKLESS_STRICT    (1)

@@ -24,9 +24,27 @@
  * THE SOFTWARE.
  */
 
-// include common options for LEON/SPARC
 #define MICROPY_USE_64BIT_NAN_BOXING (1)
 #define MICROPY_RTEMS_ENABLE_DATAPOOL (1)
+
+// definitions specific to SPARC
+#define MP_ENDIANNESS_BIG (1)
+#define MICROPY_MAKE_POINTER_CALLABLE(p) ((void*)p)
+#define MICROPY_SPARC_NUM_REG_WINDOWS (8)
+
+#if RTEMS_4_8_EDISOFT || RTEMS_6
+// settings for Edisoft RTEMS and RTEMS 6
+#define MICROPY_NLR_SPARC (1)
+#define MICROPY_NLR_SETJMP (0)
+#define MICROPY_NO_ALLOCA (1)
+#else
+// settings for Gaisler RTEMS and RTEMS 5
+#define MICROPY_NLR_SPARC (0)
+#define MICROPY_NLR_SETJMP (1)
+#define MICROPY_NO_ALLOCA (0)
+#endif
+
+// include common options for LEON/SPARC
 #include "leon-common/mpconfigport_common.h"
 
 #define MICROPY_ENABLE_PYSTACK (1)
@@ -196,11 +214,6 @@
 #define MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT (0)
 #define MICROPY_PY_BUILTINS_STR_UNICODE_CHECK (0)
 
-// definitions specific to SPARC
-#define MP_ENDIANNESS_BIG (1)
-#define MICROPY_MAKE_POINTER_CALLABLE(p) ((void*)p)
-#define MICROPY_SPARC_NUM_REG_WINDOWS (8)
-
 // definitions specific to VM (vs cross-compiler)
 #define MICROPY_ENABLE_COMPILER (0)
 #define MICROPY_ENABLE_EXTERNAL_IMPORT (0)
@@ -213,18 +226,6 @@
 #define MICROPY_PY_MICROPYTHON_STACK_USE (1)
 #define MICROPY_PY___FILE__ (1)
 #define MICROPY_USE_INTERNAL_ERRNO (1)
-
-#if RTEMS_4_8_EDISOFT || RTEMS_6
-// settings for Edisoft RTEMS and RTEMS 6
-#define MICROPY_NLR_SPARC (1)
-#define MICROPY_NLR_SETJMP (0)
-#define MICROPY_NO_ALLOCA (1)
-#else
-// settings for Gaisler RTEMS and RTEMS 5
-#define MICROPY_NLR_SPARC (0)
-#define MICROPY_NLR_SETJMP (1)
-#define MICROPY_NO_ALLOCA (0)
-#endif
 
 // Root pointers
 #define MICROPY_PORT_ROOT_POINTERS \

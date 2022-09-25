@@ -4,6 +4,10 @@
 # This file provides a custom setjmp/longjmp implementation for LEON2/SPARC with
 # 8 register windows.
 # The size of the jump buffer should be 72 bytes, to store 18 registers.
+#
+# Note: these functions are only tested and confirmed working on RTEMS 4.  For
+# RTEMS 6, sparc_longjmp will not work as-is because on RTEMS 6 %g6 is used as
+# the current thread pointer.
 
     .file "sparcjmp.s"
     .section ".text"

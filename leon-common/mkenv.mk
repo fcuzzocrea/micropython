@@ -101,6 +101,7 @@ RTEMS_CPU = sparc
 RTEMS_BSP = gr712rc-qual-only
 RTEMS_SIS_FLAGS = -leon3
 CFLAGS += -std=c99
+LDFLAGS += -lc # for setjmp/longjmp
 $(BUILD)/leon-common/sparcisr.o: CFLAGS += -std=gnu99
 endif
 
@@ -112,6 +113,7 @@ RTEMS_CPU = sparc
 RTEMS_BSP = gr740-qual-only
 RTEMS_SIS_FLAGS = -gr740
 CFLAGS += -std=c99
+LDFLAGS += -lc # for setjmp/longjmp
 endif
 
 ################################################################################
