@@ -113,7 +113,7 @@ fi
 build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
 
 function prepare_scripts {
-    basename=$1
+    local basename=$1
     shift
     if [ $TARGET = leon2 ]; then
         # leon2-emu requires an srec input file, so create one.
