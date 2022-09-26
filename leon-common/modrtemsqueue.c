@@ -18,6 +18,9 @@
 typedef struct _rtems_queue_obj_t {
     mp_obj_base_t base;
     Objects_Id id;
+    #if MICROPY_RTEMS_USE_MESSAGE_QUEUE_CONSTRUCT
+    void *buffer;
+    #endif
 } rtems_queue_obj_t;
 
 STATIC void rtems_queue_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
@@ -178,15 +181,17 @@ STATIC mp_obj_t mod_rtems_queue_create(size_t n_args, const mp_obj_t *pos_args, 
     mp_int_t count = args[ARG_count].u_int;
     mp_int_t max_size = args[ARG_max_size].u_int;
     uint32_t attr = args[ARG_attr].u_int;
+
     rtems_queue_obj_t *self = m_new_obj(rtems_queue_obj_t);
     self->base.type = &rtems_queue_type;
     #if MICROPY_RTEMS_USE_MESSAGE_QUEUE_CONSTRUCT
+    self->buffer = m_new(RTEMS_MESSAGE_QUEUE_BUFFER(max_size), count);
     rtems_message_queue_config config = {
         .name = name,
         .maximum_pending_messages = count,
         .maximum_message_size = max_size,
-        .storage_area = NULL, // TODO
-        .storage_size = 0, // TODO
+        .storage_area = self->buffer,
+        .storage_size = count * sizeof(RTEMS_MESSAGE_QUEUE_BUFFER(max_size)),
         .storage_free = NULL,
         .attributes = attr,
     };
@@ -195,6 +200,7 @@ STATIC mp_obj_t mod_rtems_queue_create(size_t n_args, const mp_obj_t *pos_args, 
     rtems_status_code status = rtems_message_queue_create(name, count, max_size, attr, &self->id);
     #endif
     mod_rtems_status_code_check(status);
+
     return MP_OBJ_FROM_PTR(self);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(mod_rtems_queue_create_obj, 0, mod_rtems_queue_create);
