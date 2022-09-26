@@ -153,6 +153,8 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         mp_vm_manager_exit(&mp_state_ctx[0], 10000, 42);
     }
 
+    leon_printf("MicroPython manager task ended\n");
+
     // terminate emulator
     leon_emu_terminate();
     rtems_task_delete(RTEMS_SELF);
