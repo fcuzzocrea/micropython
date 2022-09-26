@@ -13,17 +13,6 @@ MPC="../mpy-cross/mpy-cross"
 MPY_PACKAGE="../leon-common/mpy_package.py"
 UNHEXLIFY="./unhexlify.py"
 
-ADDR_TASK1="0x40200000"
-ADDR_TASK2="0x40210000"
-ADDR_TASK3="0x40220000"
-ADDR_TASK4="0x40230000"
-ADDR_TASK5="0x40240000"
-ADDR_TASK6="0x40250000"
-ADDR_TASK7="0x40260000"
-ADDR_TASK8="0x40270000"
-ADDR_TASK9="0x40280000"
-ADDR_TASK10="0x40290000"
-
 ######## parse arguments
 
 num_tasks=1
@@ -68,14 +57,81 @@ if [ -z "$tests" ]; then
     exit 1
 fi
 
+######## Set up toolchain based on MICROPY_RTEMS_VER
+
+# Default script load addresses.
+ADDR_TASK1="0x40200000"
+ADDR_TASK2="0x40210000"
+ADDR_TASK3="0x40220000"
+ADDR_TASK4="0x40230000"
+ADDR_TASK5="0x40240000"
+ADDR_TASK6="0x40250000"
+ADDR_TASK7="0x40260000"
+ADDR_TASK8="0x40270000"
+ADDR_TASK9="0x40280000"
+ADDR_TASK10="0x40290000"
+
+if [ $MICROPY_RTEMS_VER = RTEMS_4_8_EDISOFT ]; then
+    TARGET=leon2
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-4.8
+elif [ $MICROPY_RTEMS_VER = RTEMS_4_8 ]; then
+    TARGET=leon2
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-4.8
+elif [ $MICROPY_RTEMS_VER = RTEMS_4_10 ]; then
+    TARGET=leon2
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-4.10
+elif [ $MICROPY_RTEMS_VER = RTEMS_4_11 ]; then
+    TARGET=leon2
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-4.11
+elif [ $MICROPY_RTEMS_VER = RTEMS_5_1_GR712RC ]; then
+    TARGET=sis-leon3
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-5.1-2019.07.25
+    RTEMS_API=5
+elif [ $MICROPY_RTEMS_VER = RTEMS_6_GR712RC ]; then
+    TARGET=sis-leon3
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-6-sparc-gr712rc-smp-3
+    RTEMS_API=6
+elif [ $MICROPY_RTEMS_VER = RTEMS_6_GR740 ]; then
+    TARGET=sis-gr740
+    MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-6-sparc-gr740-smp-3
+    RTEMS_API=6
+    ADDR_TASK1="0x00200000"
+    ADDR_TASK2="0x00210000"
+    ADDR_TASK3="0x00220000"
+    ADDR_TASK4="0x00230000"
+    ADDR_TASK5="0x00240000"
+    ADDR_TASK6="0x00250000"
+    ADDR_TASK7="0x00260000"
+    ADDR_TASK8="0x00270000"
+    ADDR_TASK9="0x00280000"
+    ADDR_TASK10="0x00290000"
+else
+    echo "Unknown MICROPY_RTEMS_VER: $MICROPY_RTEMS_VER"
+    exit 1
+fi
+
+# Use default RTEMS root directory if nothing is specified in $MICROPY_RTEMS_ROOT.
+if [ -z "$MICROPY_RTEMS_ROOT" ]; then
+    MICROPY_RTEMS_ROOT=$MICROPY_RTEMS_ROOT_DEFAULT
+fi
+
+# Configure $SIS and $OBJCOPY executables if needed.
+if [ -n "$RTEMS_API" ]; then
+    SIS=$MICROPY_RTEMS_ROOT/bin/sparc-rtems${RTEMS_API}-sis
+    OBJCOPY=$MICROPY_RTEMS_ROOT/bin/sparc-rtems${RTEMS_API}-objcopy
+fi
+
 ######## run tests
 
 build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
+scripts_srec_temp=temp_scripts_$$.srec
+scripts_bin_temp=temp_scripts_$$.bin
+firmware_temp=temp_firmware_combined_$$.elf
 
 leon2_emu_cmd=$(cat <<-EOF
     load /srec "$build_dir/firmware.srec"
     load /symtab "$build_dir/firmware.tab"
-    load /srec "script.srec"
+    load /srec "$scripts_srec_temp"
     bre %code(leon_emu_terminate) /TAG=_emu_terminate /CMD={ bre /exit/stop }
     set pc=0x40000000
     set i6=0x41000000
@@ -84,8 +140,32 @@ leon2_emu_cmd=$(cat <<-EOF
 EOF
 )
 
+function prepare_scripts {
+    if [ $TARGET = leon2 ]; then
+        # leon2-emu requires an srec input file, so create one.
+        $MPY_PACKAGE tosrec $@ > $scripts_srec_temp || exit $?
+    else
+        # sis requires a single elf input file, so add compiled scripts to firmware.elf.
+        $MPY_PACKAGE tobin $@ > $scripts_bin_temp || exit $?
+        $OBJCOPY \
+            --add-section .scripts=$scripts_bin_temp \
+            --change-section-address .scripts=$ADDR_TASK1 \
+            --set-section-flags .scripts=contents,alloc,load,data \
+            $build_dir/firmware.elf $firmware_temp 2> /dev/null
+        $RM $scripts_bin_temp
+    fi
+}
+
 function run_leon {
-    echo -e "$leon2_emu_cmd" | leon2-emu
+    if [ $TARGET = leon2 ]; then
+        echo -e "$leon2_emu_cmd" | leon2-emu
+    elif [ $TARGET = sis-leon3 ]; then
+        $SIS -leon3 -dumbio -r $firmware_temp
+    elif [ $TARGET = sis-gr740 ]; then
+        $SIS -gr740 -dumbio -r $firmware_temp
+    else
+        echo "Unknown target: $TARGET"
+    fi
 }
 
 numtests=0
@@ -104,19 +184,21 @@ do
 
     infile_no_ext=$(dirname $testfile)/$basename
     expfile=${infile_no_ext}.exp
-    outfile=${basename}.out
+    outfile=${basename}_$$.out
 
     if [ $num_tasks = 1 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        $MPY_PACKAGE tosrec $ADDR_TASK1 ${infile_no_ext}.mpy > script.srec || exit $?
+        prepare_scripts \
+            $ADDR_TASK1 ${infile_no_ext}.mpy
     elif [ $num_tasks = 2 ]; then
         $MPC ${infile_no_ext}.1.py || exit $?
         $MPC ${infile_no_ext}.2.py || exit $?
-        $MPY_PACKAGE tosrec $ADDR_TASK1 ${infile_no_ext}.1.mpy \
-            $ADDR_TASK2 ${infile_no_ext}.2.mpy > script.srec || exit $?
+        prepare_scripts \
+            $ADDR_TASK1 ${infile_no_ext}.1.mpy \
+            $ADDR_TASK2 ${infile_no_ext}.2.mpy
     elif [ $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        $MPY_PACKAGE tosrec \
+        prepare_scripts  \
             $ADDR_TASK1 ${infile_no_ext}.mpy \
             $ADDR_TASK2 ${infile_no_ext}.mpy \
             $ADDR_TASK3 ${infile_no_ext}.mpy \
@@ -126,7 +208,7 @@ do
             $ADDR_TASK7 ${infile_no_ext}.mpy \
             $ADDR_TASK8 ${infile_no_ext}.mpy \
             $ADDR_TASK9 ${infile_no_ext}.mpy \
-            $ADDR_TASK10 ${infile_no_ext}.mpy > script.srec || exit $?
+            $ADDR_TASK10 ${infile_no_ext}.mpy
     else
         echo "bad num_tasks"
         exit 1
@@ -142,14 +224,14 @@ do
         run_leon
     elif [ $output_processing = "show" ]; then
         # Pipe output through unhexlify, then to stdout.
-        run_leon | $UNHEXLIFY
+        run_leon | $UNHEXLIFY $TARGET
     else
         # Redirect output to a file for diff'ing.
-        run_leon | $UNHEXLIFY > $outfile
+        run_leon | $UNHEXLIFY $TARGET > $outfile
     fi
 
     # clean up temp script containing mpy file
-    $RM script.srec
+    $RM $scripts_srec_temp $scripts_srec_temp $firmware_temp
 
     if [ $output_processing != "diff" ]; then
         continue
