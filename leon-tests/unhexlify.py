@@ -8,6 +8,7 @@ PREFIXES = {
     "leon2": "UART A sent : HEX ",
     "sis-leon3": "HEX ",
     "sis-gr740": "HEX ",
+    "laysim-gr740": "HEX ",
 }
 
 target = sys.argv[1]

@@ -104,6 +104,10 @@ if [ -n "$RTEMS_API" ]; then
     OBJCOPY=$MICROPY_RTEMS_ROOT/bin/sparc-rtems${RTEMS_API}-objcopy
 fi
 
+if [ -z "$MICROPY_LAYSIM" ]; then
+    MICROPY_LAYSIM=/opt/laysim-gr740/laysim-gr740-dbt-cli
+fi
+
 ######## run tests
 
 build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
@@ -144,6 +148,8 @@ EOF
         $SIS -leon3 -dumbio -r $1.elf
     elif [ $TARGET = sis-gr740 ]; then
         $SIS -gr740 -dumbio -r $1.elf
+    elif [ $TARGET = laysim-gr740 ]; then
+        $MICROPY_LAYSIM -r -core0 $1.elf
     else
         echo "Unknown target: $TARGET"
     fi
