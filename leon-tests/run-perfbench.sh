@@ -37,7 +37,8 @@ echo "N=$param_n M=$param_m n_average=1"
 # Run performance benchmark tests one at a time.
 for testfile in ${tests[@]}
 do
-    temp=$(mktemp --suffix=.py)
+    basename=$(basename $testfile .py)
+    temp=$(mktemp temp_perf_${basename}_XXXX.py)
     cat CORE_PERFBENCH/$testfile CORE_PERFBENCH/benchrun.py > $temp
     echo "bm_run($param_n, $param_m)" >> $temp
     echo -n "$testfile: "

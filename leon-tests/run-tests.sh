@@ -107,45 +107,43 @@ fi
 ######## run tests
 
 build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
-scripts_srec_temp=temp_scripts_$$.srec
-scripts_bin_temp=temp_scripts_$$.bin
-firmware_temp=temp_firmware_combined_$$.elf
-
-leon2_emu_cmd=$(cat <<-EOF
-    load /srec "$build_dir/firmware.srec"
-    load /symtab "$build_dir/firmware.tab"
-    load /srec "$scripts_srec_temp"
-    bre %code(leon_emu_terminate) /TAG=_emu_terminate /CMD={ bre /exit/stop }
-    set pc=0x40000000
-    set i6=0x41000000
-    set o6=0x40FFFE80
-    step 500000000
-EOF
-)
 
 function prepare_scripts {
+    basename=$1
+    shift
     if [ $TARGET = leon2 ]; then
         # leon2-emu requires an srec input file, so create one.
-        $MPY_PACKAGE tosrec $ADDR_TASK1 $ADDR_INCREMENT $@ > $scripts_srec_temp || exit $?
+        $MPY_PACKAGE tosrec $ADDR_TASK1 $ADDR_INCREMENT $@ > $basename.srec || exit $?
     else
         # sis requires a single elf input file, so add compiled scripts to firmware.elf.
-        $MPY_PACKAGE tobin $ADDR_TASK1 $ADDR_INCREMENT $@ > $scripts_bin_temp || exit $?
+        $MPY_PACKAGE tobin $ADDR_TASK1 $ADDR_INCREMENT $@ > $basename.bin || exit $?
         $OBJCOPY \
-            --add-section .scripts=$scripts_bin_temp \
+            --add-section .scripts=$basename.bin \
             --change-section-address .scripts=$ADDR_TASK1 \
             --set-section-flags .scripts=contents,alloc,load,data \
-            $build_dir/firmware.elf $firmware_temp 2> /dev/null
-        $RM $scripts_bin_temp
+            $build_dir/firmware.elf $basename.elf 2> /dev/null
+        $RM $basename.bin
     fi
 }
 
 function run_leon {
     if [ $TARGET = leon2 ]; then
+        leon2_emu_cmd=$(cat <<-EOF
+            load /srec "$build_dir/firmware.srec"
+            load /symtab "$build_dir/firmware.tab"
+            load /srec "$1.srec"
+            bre %code(leon_emu_terminate) /TAG=_emu_terminate /CMD={ bre /exit/stop }
+            set pc=0x40000000
+            set i6=0x41000000
+            set o6=0x40FFFE80
+            step 500000000
+EOF
+        )
         echo -e "$leon2_emu_cmd" | leon2-emu
     elif [ $TARGET = sis-leon3 ]; then
-        $SIS -leon3 -dumbio -r $firmware_temp
+        $SIS -leon3 -dumbio -r $1.elf
     elif [ $TARGET = sis-gr740 ]; then
-        $SIS -gr740 -dumbio -r $firmware_temp
+        $SIS -gr740 -dumbio -r $1.elf
     else
         echo "Unknown target: $TARGET"
     fi
@@ -168,20 +166,21 @@ do
     infile_no_ext=$(dirname $testfile)/$basename
     expfile=${infile_no_ext}.exp
     outfile=${basename}_$$.out
+    tempfile=temp_$$_${basename}
 
     if [ $num_tasks = 1 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        prepare_scripts \
+        prepare_scripts ${tempfile} \
             ${infile_no_ext}.mpy
     elif [ $num_tasks = 2 ]; then
         $MPC ${infile_no_ext}.1.py || exit $?
         $MPC ${infile_no_ext}.2.py || exit $?
-        prepare_scripts \
+        prepare_scripts ${tempfile} \
             ${infile_no_ext}.1.mpy \
             ${infile_no_ext}.2.mpy
     elif [ $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        prepare_scripts  \
+        prepare_scripts ${tempfile} \
             ${infile_no_ext}.mpy \
             ${infile_no_ext}.mpy \
             ${infile_no_ext}.mpy \
@@ -204,17 +203,17 @@ do
 
     if [ $output_processing = "raw" ]; then
         # Let test output go directly to stdout.
-        run_leon
+        run_leon ${tempfile}
     elif [ $output_processing = "show" ]; then
         # Pipe output through unhexlify, then to stdout.
-        run_leon | $UNHEXLIFY $TARGET
+        run_leon ${tempfile} | $UNHEXLIFY $TARGET
     else
         # Redirect output to a file for diff'ing.
-        run_leon | $UNHEXLIFY $TARGET > $outfile
+        run_leon ${tempfile} | $UNHEXLIFY $TARGET > $outfile
     fi
 
     # clean up temp script containing mpy file
-    $RM $scripts_srec_temp $scripts_srec_temp $firmware_temp
+    $RM $infile_no_ext.mpy $tempfile.srec $tempfile.elf
 
     if [ $output_processing != "diff" ]; then
         continue
