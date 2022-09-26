@@ -119,11 +119,11 @@ endif
 ################################################################################
 # General settings
 
-# Configure the RAM address for loading .mpy files leave 1MiB for firmware)
+# Configure the RAM address for loading .mpy files leave 2MiB for firmware)
 ifeq ($(findstring GR740,$(MICROPY_RTEMS_VER)),GR740)
-MICROPY_RTEMS_MPY_MEM_BASE = 0x00100000
+MICROPY_RTEMS_MPY_MEM_BASE = 0x00200000
 else
-MICROPY_RTEMS_MPY_MEM_BASE = 0x40100000
+MICROPY_RTEMS_MPY_MEM_BASE = 0x40200000
 endif
 CFLAGS += -DMICROPY_RTEMS_MPY_MEM_BASE=$(MICROPY_RTEMS_MPY_MEM_BASE)
 

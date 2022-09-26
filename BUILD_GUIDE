@@ -114,8 +114,8 @@ automatically by the Makefile):
     $ ../mpy-cross/mpy-cross ex2.py
     $ ../mpy-cross/mpy-cross ex3.py
     $ ../mpy-cross/mpy-cross ex4.py
-    $ ../leon-common/mpy_package.py tosrec 0x40200000 ex1.mpy 0x40210000 ex2.mpy \
-        0x40220000 ex3.mpy 0x40230000 ex4.mpy > build/scripts.srec
+    $ ../leon-common/mpy_package.py tosrec 0x40200000 0x10000 \
+        ex1.mpy ex2.mpy ex3.mpy ex4.mpy > build/scripts.srec
 
 Another example is given using the VM manager.  To build and run do:
 

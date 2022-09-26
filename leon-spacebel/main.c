@@ -91,7 +91,7 @@ rtems_task Init(rtems_task_argument ignored) {
 #include "leon-common/leonutil.h"
 
 // these variables define the location of the externally-loaded .mpy files
-#define MPY_MEM_BASE   (MICROPY_RTEMS_MPY_MEM_BASE + 0x00100000)
+#define MPY_MEM_BASE   (MICROPY_RTEMS_MPY_MEM_BASE)
 #define MPY_MEM_STRIDE (0x00010000)
 
 #if MICROPY_RTEMS_USE_TASK_CONSTRUCT

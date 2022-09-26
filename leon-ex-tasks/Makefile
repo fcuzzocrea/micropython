@@ -47,18 +47,20 @@ $(BUILD)/firmware.elf: $(BUILD)/scripts.srec $(BUILD)/scripts.bin
 $(BUILD)/scripts.srec: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "GEN $@"
 	$(Q)$(LEON_COMMON_FROM_HERE)/mpy_package.py tosrec \
-	    0x40100000 $(BUILD)/ex1.mpy \
-	    0x40110000 $(BUILD)/ex2.mpy \
-	    0x40120000 $(BUILD)/ex3.mpy \
-	    0x40130000 $(BUILD)/ex4.mpy > $@
+		$(MICROPY_RTEMS_MPY_MEM_BASE) 0x10000 \
+		$(BUILD)/ex1.mpy \
+		$(BUILD)/ex2.mpy \
+		$(BUILD)/ex3.mpy \
+		$(BUILD)/ex4.mpy > $@
 
 # Build scripts.bin from a set of specified .py files in $(SRC_PY).
 $(BUILD)/scripts.bin: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
 	$(ECHO) "GEN $@"
 	$(Q)$(LEON_COMMON_FROM_HERE)/mpy_package.py tobin \
-	    0x40100000 $(BUILD)/ex1.mpy \
-	    0x40110000 $(BUILD)/ex2.mpy \
-	    0x40120000 $(BUILD)/ex3.mpy \
-	    0x40130000 $(BUILD)/ex4.mpy > $@
+		$(MICROPY_RTEMS_MPY_MEM_BASE) 0x10000 \
+		$(BUILD)/ex1.mpy \
+		$(BUILD)/ex2.mpy \
+		$(BUILD)/ex3.mpy \
+		$(BUILD)/ex4.mpy > $@
 
 include ../py/mkrules.mk

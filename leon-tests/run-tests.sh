@@ -61,15 +61,7 @@ fi
 
 # Default script load addresses.
 ADDR_TASK1="0x40200000"
-ADDR_TASK2="0x40210000"
-ADDR_TASK3="0x40220000"
-ADDR_TASK4="0x40230000"
-ADDR_TASK5="0x40240000"
-ADDR_TASK6="0x40250000"
-ADDR_TASK7="0x40260000"
-ADDR_TASK8="0x40270000"
-ADDR_TASK9="0x40280000"
-ADDR_TASK10="0x40290000"
+ADDR_INCREMENT="0x10000"
 
 if [ $MICROPY_RTEMS_VER = RTEMS_4_8_EDISOFT ]; then
     TARGET=leon2
@@ -96,15 +88,6 @@ elif [ $MICROPY_RTEMS_VER = RTEMS_6_GR740 ]; then
     MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-6-sparc-gr740-smp-3
     RTEMS_API=6
     ADDR_TASK1="0x00200000"
-    ADDR_TASK2="0x00210000"
-    ADDR_TASK3="0x00220000"
-    ADDR_TASK4="0x00230000"
-    ADDR_TASK5="0x00240000"
-    ADDR_TASK6="0x00250000"
-    ADDR_TASK7="0x00260000"
-    ADDR_TASK8="0x00270000"
-    ADDR_TASK9="0x00280000"
-    ADDR_TASK10="0x00290000"
 else
     echo "Unknown MICROPY_RTEMS_VER: $MICROPY_RTEMS_VER"
     exit 1
@@ -143,10 +126,10 @@ EOF
 function prepare_scripts {
     if [ $TARGET = leon2 ]; then
         # leon2-emu requires an srec input file, so create one.
-        $MPY_PACKAGE tosrec $@ > $scripts_srec_temp || exit $?
+        $MPY_PACKAGE tosrec $ADDR_TASK1 $ADDR_INCREMENT $@ > $scripts_srec_temp || exit $?
     else
         # sis requires a single elf input file, so add compiled scripts to firmware.elf.
-        $MPY_PACKAGE tobin $@ > $scripts_bin_temp || exit $?
+        $MPY_PACKAGE tobin $ADDR_TASK1 $ADDR_INCREMENT $@ > $scripts_bin_temp || exit $?
         $OBJCOPY \
             --add-section .scripts=$scripts_bin_temp \
             --change-section-address .scripts=$ADDR_TASK1 \
@@ -189,26 +172,26 @@ do
     if [ $num_tasks = 1 ]; then
         $MPC ${infile_no_ext}.py || exit $?
         prepare_scripts \
-            $ADDR_TASK1 ${infile_no_ext}.mpy
+            ${infile_no_ext}.mpy
     elif [ $num_tasks = 2 ]; then
         $MPC ${infile_no_ext}.1.py || exit $?
         $MPC ${infile_no_ext}.2.py || exit $?
         prepare_scripts \
-            $ADDR_TASK1 ${infile_no_ext}.1.mpy \
-            $ADDR_TASK2 ${infile_no_ext}.2.mpy
+            ${infile_no_ext}.1.mpy \
+            ${infile_no_ext}.2.mpy
     elif [ $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
         prepare_scripts  \
-            $ADDR_TASK1 ${infile_no_ext}.mpy \
-            $ADDR_TASK2 ${infile_no_ext}.mpy \
-            $ADDR_TASK3 ${infile_no_ext}.mpy \
-            $ADDR_TASK4 ${infile_no_ext}.mpy \
-            $ADDR_TASK5 ${infile_no_ext}.mpy \
-            $ADDR_TASK6 ${infile_no_ext}.mpy \
-            $ADDR_TASK7 ${infile_no_ext}.mpy \
-            $ADDR_TASK8 ${infile_no_ext}.mpy \
-            $ADDR_TASK9 ${infile_no_ext}.mpy \
-            $ADDR_TASK10 ${infile_no_ext}.mpy
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy \
+            ${infile_no_ext}.mpy
     else
         echo "bad num_tasks"
         exit 1

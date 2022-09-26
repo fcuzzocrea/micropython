@@ -163,7 +163,6 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     const void *mpy_base = (const void*)(MPY_MEM_BASE + MPY_MEM_STRIDE * task_index);
     size_t mpy_len = *(const uint32_t*)mpy_base;
     const byte *mpy_data = (const byte*)(mpy_base + 4);
-    leon_printf("len=%u base[0]=%u\n", mpy_len, mpy_data[0]);
 
     // execute the bytecode
     uint32_t retval = mp_exec_mpy(mpy_data, mpy_len);
