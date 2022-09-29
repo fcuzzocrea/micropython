@@ -105,7 +105,7 @@ $(BUILD)/firmware.srec: $(BUILD)/firmware.elf
 
 $(BUILD)/firmware.tab: $(BUILD)/firmware.elf
 	$(ECHO) "TAB $@"
-	$(Q)$(OBJDUMP) --syms $< > $@   
+	$(Q)$(OBJDUMP) --syms $< > $@
 
 $(BUILD)/firmware_combined.elf: $(BUILD)/firmware.elf
 	$(Q)touch $(BUILD)/scripts.bin
