@@ -6,7 +6,7 @@
 #
 # This file contains convenience make rules to build a MicroPython-based RTEMS application
 
-LEON_COMMON_SRC_C = \
+LEON_COMMON_SRC_C += \
 	lib/libc/memcmp.c \
 	lib/libc/memcpy.c \
 	lib/libc/memmove.c \
@@ -32,7 +32,7 @@ LEON_COMMON_SRC_C = \
 	$(LEON_COMMON)/rtems_config_common.c \
 	$(LEON_COMMON)/rtems_util.c \
 
-LEON_COMMON_SRC_S = \
+LEON_COMMON_SRC_S += \
 	$(LEON_COMMON)/sparcjmp.s \
 	$(LEON_COMMON)/gchelper.s \
 
