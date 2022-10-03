@@ -1,3 +1,6 @@
+#ifndef INCLUDED_LEON_COMMON_LIBC_INCLUDE_MATH_H
+#define INCLUDED_LEON_COMMON_LIBC_INCLUDE_MATH_H
+
 // Basic floating point support
 
 #define FP_NAN         0
@@ -49,3 +52,17 @@ static inline double isfinite(double x) {
 
 extern double cosh(double);
 extern double sinh(double);
+
+// Functions needed for micropython-ulab
+
+extern double acosh(double);
+extern double asinh(double);
+extern double atanh(double);
+extern double erf(double);
+extern double erfc(double);
+extern double expm1(double);
+extern double log10(double);
+extern double tanh(double);
+extern double tgamma(double);
+
+#endif // INCLUDED_LEON_COMMON_LIBC_INCLUDE_MATH_H
