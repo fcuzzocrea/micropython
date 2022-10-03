@@ -35,6 +35,9 @@ OBJ += $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/,$(LEON_COMMON_OBJ))
 
+# Include LEON convenience rules to build the micropython-ulab component.
+include $(LEON_COMMON_FROM_HERE)/mkapp_ulab.mk
+
 # include LEON convenience rules to build the MicroPython RTEMS application
 include $(LEON_COMMON_FROM_HERE)/mkapp.mk
 

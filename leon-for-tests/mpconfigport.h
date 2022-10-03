@@ -47,6 +47,7 @@
 #define MICROPY_PY_BUILTINS_RANGE_BINOP (1)
 #define MICROPY_PY_ALL_SPECIAL_METHODS (1)
 #define MICROPY_PY_MICROPYTHON_MEM_INFO (1)
+#define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
 #define MICROPY_PY_SYS              (1)
 #define MICROPY_PY_SYS_EXIT         (1)
 #define MICROPY_PY_SYS_MAXSIZE      (1)
@@ -61,6 +62,7 @@
 #define MICROPY_PY_ATTRTUPLE        (1)
 #define MICROPY_PY_COLLECTIONS      (1)
 #define MICROPY_PY_MATH             (1)
+#define MICROPY_PY_MATH_ISCLOSE     (1)
 #define MICROPY_PY_CMATH            (1)
 #define MICROPY_PY_UBINASCII        (1)
 #define MICROPY_PY_URANDOM          (1)
@@ -74,11 +76,13 @@ extern const struct _mp_obj_module_t mp_module_time;
 extern const struct _mp_obj_module_t mp_module_rtems;
 extern const struct _mp_obj_module_t mp_module_mem;
 extern const struct _mp_obj_module_t mp_module_datapool;
+extern const struct _mp_obj_module_t ulab_user_cmodule;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_time) }, \
     { MP_ROM_QSTR(MP_QSTR_rtems), MP_ROM_PTR(&mp_module_rtems) }, \
     { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
     { MP_ROM_QSTR(MP_QSTR_datapool), MP_ROM_PTR(&mp_module_datapool) }, \
+    { MP_ROM_QSTR(MP_QSTR_ulab), MP_ROM_PTR(&ulab_user_cmodule) }, \
 
 #define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
     { MP_ROM_QSTR(MP_QSTR_io), MP_ROM_PTR(&mp_module_io) }, \
