@@ -8,7 +8,28 @@
 # modified by Damien George to run under LEON
 
 import micropython
+import time
 import rtems
+
+# Simple lock with context manager, based on RTEMS semaphore.
+class Lock:
+    def __init__(self):
+        if rtems.script_id() == 0:
+            self.sem = rtems.sem.create("LOCK")
+        else:
+            while True:
+                try:
+                    self.sem = rtems.sem.ident("LOCK")
+                    break
+                except OSError:
+                    pass
+                time.sleep(0.1)
+
+    def __enter__(self):
+        self.sem.obtain()
+
+    def __exit__(self, a, b, c):
+        self.sem.release()
 
 def combinations(l):
     result = []
@@ -104,11 +125,14 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[2] = pz / m
 
 def main(n, ref='sun'):
+    lock = Lock()
     micropython.heap_lock()
     offset_momentum(BODIES[ref])
-    print('task', rtems.script_id(), 'start energy', round(report_energy(), 8))
+    with lock:
+        print('task', rtems.script_id(), 'start energy', round(report_energy(), 8))
     advance(0.02, n)
-    print('task', rtems.script_id(), 'end energy', round(report_energy(), 8))
+    with lock:
+        print('task', rtems.script_id(), 'end energy', round(report_energy(), 8))
 
 if __name__ == '__main__':
     main(200)
