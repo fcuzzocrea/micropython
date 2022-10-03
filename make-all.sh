@@ -10,20 +10,7 @@ make -C leon-ex-pystone || exit $?
 make -C leon-spacebel || exit $?
 make -C leon-for-tests || exit $?
 
-(cd leon-tests && ./run-tests.sh CORE_BASICS/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_UNICODE/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_FLOAT/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_EXTMOD/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_MISC/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_MICROPYTHON/*.exp)
-(cd leon-tests && ./run-tests.sh CORE_STRESS/*.exp)
-(cd leon-tests && ./run-tests.sh spacebel_tickets/*.exp)
-(cd leon-tests && ./run-tests.sh cpydiff/*.exp)
-(cd leon-tests && ./run-tests.sh leon_t1/*.exp)
-(cd leon-tests && ./run-tests.sh -t 2 leon_t2/*.exp)
-(cd leon-tests && ./run-tests.sh -t 10 leon_t10/*.exp)
-(cd leon-tests && ./run-tests.sh -o leon_perf/*.exp)
-(cd leon-tests && ./run-tests-mpy-cross.sh mpy_cross/*.py)
+(cd leon-tests && ./all-tests.sh)
 (cd leon-ex-manager && ./run-test.sh)
 
 # The OBCP example is not supported with Edisoft RTEMS 4.8, or RTEMS 6
