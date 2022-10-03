@@ -39,6 +39,7 @@ fp2int_test(-1.9999999999999981*2.**1023., 'large neg', False)
 fp2int_test(1.9999999999999981*2.**1023., 'large pos', False)
 
 fp2int_test(float('inf'), 'inf test', True)
+fp2int_test(float("-inf"), "inf test", True)
 fp2int_test(float('nan'), 'NaN test', True)
 
 # test numbers < 1 (this used to fail; see issue #1044)

@@ -17,9 +17,12 @@ inf
 inf
 nan
 nan
+nan
 ValueError
 ValueError
 ValueError
+1.2
+3.4
 False
 True
 1.2
@@ -32,6 +35,8 @@ True
 False
 False
 True
+False
+False
 ZeroDivisionError
 ZeroDivisionError
 ZeroDivisionError

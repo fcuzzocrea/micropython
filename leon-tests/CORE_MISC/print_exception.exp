@@ -1,0 +1,17 @@
+caught
+Traceback (most recent call last):
+  File  , line 34, in <module>
+ZeroDivisionError: division by zero
+
+caught
+Traceback (most recent call last):
+  File  , line 45, in <module>
+  File  , line 41, in f
+  File  , line 43, in g
+ZeroDivisionError: division by zero
+
+Traceback (most recent call last):
+  File  , line 56, in <module>
+  File  , line 53, in f
+NameError: name 'X' is not defined
+

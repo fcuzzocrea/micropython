@@ -158,6 +158,10 @@ supercalifragilistc in supercalifragilistc :: True
 supercalifragilistc not in supercalifragilistc :: False
 supercalifragilistc in supercalifragilistc :: True
 supercalifragilistc not in supercalifragilistc :: False
+True
+False True
+False True
+TypeError
 1 in []: False
 1 not in []: True
 1 in [1]: True

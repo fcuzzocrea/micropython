@@ -5,5 +5,6 @@ B foo
 123
 A foo
 1
+TypeError
 AttributeError
 AttributeError

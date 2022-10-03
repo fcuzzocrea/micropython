@@ -27,11 +27,16 @@ True
 0.019703 0
 False
 True
+False
+False
 1.0
 2.2361
 1
 <class 'int'>
 (1.2+3j)
+0.58779 0.80902
+-0.16625 0.51167
+(nan+nanj)
 (nan+nanj)
 (inf+infj)
 (-inf-infj)

@@ -36,12 +36,6 @@ try:
 except TypeError:
     print('TypeError')
 
-# function with keyword args not given a specific keyword arg
-try:
-    enumerate()
-except TypeError:
-    print('TypeError')
-
 # kw given for positional, but a different positional is missing
 try:
     def f(x, y): pass

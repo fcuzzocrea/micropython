@@ -18,12 +18,14 @@ b'\x80\x00\x00\x01\x00'
 b"foo\x00\x00\x00\x10'"
 True
 b'\x00\x00\x00{'
+struct.error
 TypeError
 Unknown type
 (102, 111, 111, 13330, -1)
 b'\x01\x02\x03'
 bytearray(b'>>>ABC<<<')
 bytearray(b'>>>DEF<<<')
+struct.error
 struct.error
 struct.error
 (52,)
