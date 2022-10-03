@@ -39,15 +39,20 @@
 // concrete object in a struct, with the first entry pointing to &mp_type_float.
 // Constant float objects are a struct in ROM and are referenced via their pointer.
 
-// Use ULAB_DEFINE_FLOAT_CONST to define a constant float object.
+// Define a constant float object like this:
+//
+// ULAB_DEFINE_FLOAT_CONST_AB(id, num)
+// #define ULAB_FLOAT_CONST_id ULAB_DEFINE_FLOAT_CONST_CD(hex32, hex64)
+//
 // id is the name of the constant, num is it's floating point value.
 // hex32 is computed as: hex(int.from_bytes(array.array('f', [num]), 'little'))
 // hex64 is computed as: hex(int.from_bytes(array.array('d', [num]), 'little'))
 
 // Use ULAB_REFERENCE_FLOAT_CONST to reference a constant float object in code.
 
-#define ULAB_DEFINE_FLOAT_CONST(id, num, hex32, hex64) \
+#define ULAB_DEFINE_FLOAT_CONST_AB(id, num) \
     const mp_obj_float_t id##_obj = {{&mp_type_float}, (num)}
+#define ULAB_DEFINE_FLOAT_CONST_CD(hex32, hex64) 0
 
 #define ULAB_REFERENCE_FLOAT_CONST(id) MP_ROM_PTR(&id##_obj)
 
@@ -64,10 +69,11 @@ typedef struct _mp_obj_float_t {
 
 // See above for how to use ULAB_DEFINE_FLOAT_CONST and ULAB_REFERENCE_FLOAT_CONST.
 
-#define ULAB_DEFINE_FLOAT_CONST(id, num, hex32, hex64) \
-    const uint32_t id = (((((uint32_t)hex32) & ~3) | 2) + 0x80800000)
+#define ULAB_DEFINE_FLOAT_CONST_AB(id, num)
+#define ULAB_DEFINE_FLOAT_CONST_CD(hex32, hex64) \
+    (((((uint32_t)hex32) & ~3) | 2) + 0x80800000)
 
-#define ULAB_REFERENCE_FLOAT_CONST(id) ((mp_obj_t)(id))
+#define ULAB_REFERENCE_FLOAT_CONST(id) ((mp_obj_t)(ULAB_FLOAT_CONST_ ## id))
 
 #elif MICROPY_OBJ_REPR == MICROPY_OBJ_REPR_D
 
@@ -76,10 +82,11 @@ typedef struct _mp_obj_float_t {
 
 // See above for how to use ULAB_DEFINE_FLOAT_CONST and ULAB_REFERENCE_FLOAT_CONST.
 
-#define ULAB_DEFINE_FLOAT_CONST(id, num, hex32, hex64) \
-    const uint64_t id = (((uint64_t)hex64) + 0x8004000000000000ULL)
+#define ULAB_DEFINE_FLOAT_CONST_AB(id, num)
+#define ULAB_DEFINE_FLOAT_CONST_CD(hex32, hex64) \
+    (((uint64_t)hex64) + 0x8004000000000000ULL)
 
-#define ULAB_REFERENCE_FLOAT_CONST(id) {id}
+#define ULAB_REFERENCE_FLOAT_CONST(id) {ULAB_FLOAT_CONST_ ## id}
 
 #endif
 

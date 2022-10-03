@@ -22,8 +22,11 @@
 #include "../../ulab_tools.h"
 #include "optimize.h"
 
-ULAB_DEFINE_FLOAT_CONST(xtolerance, MICROPY_FLOAT_CONST(2.4e-7), 0x3480d959UL, 0x3e901b2b29a4692bULL);
-ULAB_DEFINE_FLOAT_CONST(rtolerance, MICROPY_FLOAT_CONST(0.0), 0UL, 0ULL);
+ULAB_DEFINE_FLOAT_CONST_AB(xtolerance, MICROPY_FLOAT_CONST(2.4e-7));
+#define ULAB_FLOAT_CONST_xtolerance ULAB_DEFINE_FLOAT_CONST_CD(0x3480d959UL, 0x3e901b2b29a4692bULL)
+
+ULAB_DEFINE_FLOAT_CONST_AB(rtolerance, MICROPY_FLOAT_CONST(0.0));
+#define ULAB_FLOAT_CONST_rtolerance ULAB_DEFINE_FLOAT_CONST_CD(0UL, 0ULL)
 
 static mp_float_t optimize_python_call(const mp_obj_type_t *type, mp_obj_t fun, mp_float_t x, mp_obj_t *fargs, uint8_t nparams) {
     // Helper function for calculating the value of f(x, a, b, c, ...),
