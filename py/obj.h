@@ -880,6 +880,8 @@ typedef struct {
     mp_int_t step;
 } mp_bound_slice_t;
 
+void mp_obj_slice_indices(mp_obj_t self_in, mp_int_t length, mp_bound_slice_t *result);
+
 void mp_seq_multiply(const void *items, size_t item_sz, size_t len, size_t times, void *dest);
 #if MICROPY_PY_BUILTINS_SLICE
 bool mp_seq_get_fast_slice_indexes(mp_uint_t len, mp_obj_t slice, mp_bound_slice_t *indexes);

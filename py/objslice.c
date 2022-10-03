@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "py/obj.h"
+#include "py/runtime.h"
 
 /******************************************************************************/
 /* slice object                                                               */
@@ -94,6 +94,74 @@ void mp_obj_slice_get(mp_obj_t self_in, mp_obj_t *start, mp_obj_t *stop, mp_obj_
     *start = self->start;
     *stop = self->stop;
     *step = self->step;
+}
+
+// This is a copy of the mp_obj_slice_indices() function taken from
+// MicroPython v1.19.1 (backported, without any changes).
+//
+// Return the real index and step values for a slice when applied to a sequence of
+// the given length, resolving missing components, negative values and values off
+// the end of the sequence.
+void mp_obj_slice_indices(mp_obj_t self_in, mp_int_t length, mp_bound_slice_t *result) {
+    mp_obj_slice_t *self = MP_OBJ_TO_PTR(self_in);
+    mp_int_t start, stop, step;
+
+    if (self->step == mp_const_none) {
+        step = 1;
+    } else {
+        step = mp_obj_get_int(self->step);
+        if (step == 0) {
+            mp_raise_ValueError("slice step can't be zero");
+        }
+    }
+
+    if (step > 0) {
+        // Positive step
+        if (self->start == mp_const_none) {
+            start = 0;
+        } else {
+            start = mp_obj_get_int(self->start);
+            if (start < 0) {
+                start += length;
+            }
+            start = MIN(length, MAX(start, 0));
+        }
+
+        if (self->stop == mp_const_none) {
+            stop = length;
+        } else {
+            stop = mp_obj_get_int(self->stop);
+            if (stop < 0) {
+                stop += length;
+            }
+            stop = MIN(length, MAX(stop, 0));
+        }
+    } else {
+        // Negative step
+        if (self->start == mp_const_none) {
+            start = length - 1;
+        } else {
+            start = mp_obj_get_int(self->start);
+            if (start < 0) {
+                start += length;
+            }
+            start = MIN(length - 1, MAX(start, -1));
+        }
+
+        if (self->stop == mp_const_none) {
+            stop = -1;
+        } else {
+            stop = mp_obj_get_int(self->stop);
+            if (stop < 0) {
+                stop += length;
+            }
+            stop = MIN(length - 1, MAX(stop, -1));
+        }
+    }
+
+    result->start = start;
+    result->stop = stop;
+    result->step = step;
 }
 
 #endif
