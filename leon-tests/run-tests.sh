@@ -170,7 +170,6 @@ do
     basename=$(basename $basename .py)
 
     infile_no_ext=$(dirname $testfile)/$basename
-    expfile=${infile_no_ext}.exp
     outfile=${basename}_$$.out
     tempfile=temp_$$_${basename}
 
@@ -223,6 +222,16 @@ do
 
     if [ $output_processing != "diff" ]; then
         continue
+    fi
+
+    # Find the file with the expected test output.
+    if [ -r ${infile_no_ext}.exp ]; then
+        expfile=${infile_no_ext}.exp
+    elif [ -r ${infile_no_ext}.py.exp ]; then
+        expfile=${infile_no_ext}.py.exp
+    else
+        echo "Missing .exp file for test ${infile_no_ext}"
+        exit 1
     fi
 
     numtestcases=$(expr $numtestcases + $(cat $expfile | wc -l))
