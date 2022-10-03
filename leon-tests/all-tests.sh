@@ -13,6 +13,9 @@
 # micropython-ulab tests.
 ./run-tests.sh `find ../lib/micropython-ulab/tests -name \*.py | sort`
 
+# MicroPython performance tests (they have no expected output).
+./run-perfbench.sh
+
 # LEON and RTEMS specific tests.
 ./run-tests.sh spacebel_tickets/*.py
 ./run-tests.sh leon_t1/*.exp
