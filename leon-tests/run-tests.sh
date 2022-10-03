@@ -140,7 +140,7 @@ function run_leon {
             set pc=0x40000000
             set i6=0x41000000
             set o6=0x40FFFE80
-            step 500000000
+            step 800000000
 EOF
         )
         echo -e "$leon2_emu_cmd" | leon2-emu
