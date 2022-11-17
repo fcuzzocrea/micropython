@@ -14,6 +14,7 @@
 #include <string.h>
 #include <rtems.h>
 #include "obcp.h"
+#include "leon-common/leonutil.h"
 
 typedef struct {
     uint8_t cmd, channel;
@@ -30,7 +31,7 @@ rtems_task obcp_task_tm(rtems_task_argument task_arg) {
     rtems_name name = rtems_build_name('T', 'L', 'M', 'Q');
     rtems_message_queue_ident(name, 0, &tlmq_id);
 
-    for (;;) {
+    for (unsigned int message_count = 0; message_count < 100; ++message_count) {
         xyz_t buf;
         size_t sz = 0;
         rtems_status_code status = rtems_message_queue_receive(tlmq_id, &buf, &sz, RTEMS_WAIT, 0);
@@ -61,4 +62,8 @@ rtems_task obcp_task_tm(rtems_task_argument task_arg) {
             }
         }
     }
+
+    printf("TM task ended\n");
+
+    leon_emu_terminate();
 }
