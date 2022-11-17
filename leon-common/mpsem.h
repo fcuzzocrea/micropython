@@ -145,25 +145,18 @@ static inline int mp_sem_trywait(mp_sem_t *sem) {
 }
 
 static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
-    #if RTEMS_5
-    uint64_t timeout_ns = 1000000000ULL * (uint64_t)timeout_ticks / (uint64_t)rtems_clock_get_ticks_per_second();
-    struct timespec timespec;
-    timespec.tv_sec = timeout_ns / 1000000000ULL;
-    timespec.tv_nsec = timeout_ns % 1000000000ULL;
-    int ret = sem_timedwait(sem, &timespec);
-    if (ret == 0) {
-        return 0;
-    } else {
-        return errno;
-    }
-    #else
-    // Note: sem_timedwait doesn't seem to work in RTEMS 4, it always times out,
+    // Note: sem_timedwait doesn't seem to work in RTEMS 4 and 5, it always times out,
     // so instead we use a loop which keeps trying to wait on the semaphore.
+    rtems_status_code status;
     rtems_interval ticks_start;
-    rtems_status_code status = rtems_clock_get(RTEMS_CLOCK_GET_TICKS_SINCE_BOOT, &ticks_start);
+    #if RTEMS_5
+    ticks_start = rtems_clock_get_ticks_since_boot();
+    #else
+    status = rtems_clock_get(RTEMS_CLOCK_GET_TICKS_SINCE_BOOT, &ticks_start);
     if (status != RTEMS_SUCCESSFUL) {
         return EINVAL;
     }
+    #endif
     for (;;) {
         int ret = sem_trywait(sem);
         if (ret == 0) {
@@ -174,10 +167,14 @@ static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
             return errno;
         }
         rtems_interval ticks;
+        #if RTEMS_5
+        ticks = rtems_clock_get_ticks_since_boot();
+        #else
         status = rtems_clock_get(RTEMS_CLOCK_GET_TICKS_SINCE_BOOT, &ticks);
         if (status != RTEMS_SUCCESSFUL) {
             return EINVAL;
         }
+        #endif
         if (ticks - ticks_start >= timeout_ticks) {
             // timeout waiting
             return ETIMEDOUT;
@@ -188,7 +185,6 @@ static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
         }
     }
     return EINVAL;
-    #endif
 }
 
 #endif
