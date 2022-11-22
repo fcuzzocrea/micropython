@@ -290,6 +290,12 @@ mp_obj_t mp_obj_float_binary_op(mp_binary_op_t op, mp_float_t lhs_val, mp_obj_t 
                 mp_raise_ValueError("complex values not supported");
                 #endif
             }
+            #if MICROPY_PY_BUILTINS_FLOAT_POW_CHECK_DOMAIN
+            if (lhs_val < 0 && isnan(rhs_val)) {
+                // pow(<negative>, nan) = nan
+                return mp_obj_new_float(rhs_val);
+            }
+            #endif
             lhs_val = MICROPY_FLOAT_C_FUN(pow)(lhs_val, rhs_val);
             break;
         case MP_BINARY_OP_DIVMOD: {
