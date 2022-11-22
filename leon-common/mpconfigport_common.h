@@ -103,3 +103,30 @@ void mp_state_ptr_set(void *value);
 // The static analyser doesn't understand __builtin_expect so don't use it
 #define MP_LIKELY(x) (x)
 #define MP_UNLIKELY(x) (x)
+
+// Enable math function workarounds for cases that do not conform to IEEE floating point behaviour.
+
+#if RTEMS_4_8
+#define MICROPY_PY_MATH_MODF_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_ASIN_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_ACOS_CHECK_DOMAIN (1)
+#endif
+
+#if RTEMS_4_10 || RTEMS_4_11
+#define MICROPY_PY_BUILTINS_FLOAT_POW_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_MODF_CHECK_DOMAIN (1)
+#endif
+
+#if RTEMS_5
+#define MICROPY_PY_BUILTINS_FLOAT_POW_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_MODF_CHECK_DOMAIN (1)
+#endif
+
+#if RTEMS_6
+#define MICROPY_PY_BUILTINS_ROUND_POW_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_SQRT_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_POW_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_FMOD_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_ASIN_CHECK_DOMAIN (1)
+#define MICROPY_PY_MATH_ACOS_CHECK_DOMAIN (1)
+#endif
