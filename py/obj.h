@@ -775,7 +775,7 @@ static inline mp_obj_t mp_obj_new_float_from_d(double o) {
 #if MICROPY_FLOAT_HIGH_QUALITY_HASH
 mp_int_t mp_float_hash(mp_float_t val);
 #else
-static inline mp_int_t mp_float_hash(mp_float_t val) { return (mp_int_t)val; }
+#define mp_float_hash(val) (isfinite(val) ? (mp_int_t)(val) : 0)
 #endif
 mp_obj_t mp_obj_float_binary_op(mp_binary_op_t op, mp_float_t lhs_val, mp_obj_t rhs); // can return MP_OBJ_NULL if op not supported
 

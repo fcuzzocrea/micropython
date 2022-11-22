@@ -219,7 +219,7 @@ STATIC mp_obj_t mp_math_isclose(size_t n_args, const mp_obj_t *pos_args, mp_map_
         return mp_const_true;
     }
     const mp_float_t difference = MICROPY_FLOAT_C_FUN(fabs)(a - b);
-    if (isinf(difference)) { // Either a or b is inf
+    if (!isfinite(difference)) { // Either a or b is inf or nan
         return mp_const_false;
     }
     if ((difference <= abs_tol) ||
@@ -237,7 +237,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_math_isclose_obj, 2, mp_math_isclose);
 // log(x[, base])
 STATIC mp_obj_t mp_math_log(size_t n_args, const mp_obj_t *args) {
     mp_float_t x = mp_obj_get_float(args[0]);
-    if (x <= (mp_float_t)0.0) {
+    if (isfinite(x) && x <= (mp_float_t)0.0) {
         math_error();
     }
     mp_float_t l = MICROPY_FLOAT_C_FUN(log)(x);
