@@ -479,6 +479,16 @@ STATIC mp_obj_t mp_builtin_round(size_t n_args, const mp_obj_t *args) {
             mult0 = 1e30;
             num_dig -= 30;
         }
+        #if MICROPY_PY_BUILTINS_ROUND_POW_CHECK_DOMAIN && MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_DOUBLE
+        if (num_dig >= 309) {
+            // pow(10, 309) = inf
+            return o_in;
+        }
+        if (num_dig <= -324) {
+            // pow(10, -324) = 0
+            return mp_obj_new_float(0 * val);
+        }
+        #endif
         mp_float_t mult1 = MICROPY_FLOAT_C_FUN(pow)(10, (mp_float_t)num_dig);
         mp_float_t val_mult = val * mult0 * mult1;
         if (!isfinite(val_mult) || mult1 == 0) {
