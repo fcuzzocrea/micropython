@@ -18,7 +18,7 @@ UNHEXLIFY="./unhexlify.py"
 num_tasks=1
 output_processing="diff"
 output_test_name="yes"
-tests=""
+test_list=""
 
 while [[ $# > 0 ]]; do
     arg="$1"
@@ -41,7 +41,7 @@ while [[ $# > 0 ]]; do
         exit 1
         ;;
         *)
-        tests="$tests $arg"
+        test_list="$test_list $arg"
         ;;
     esac
     shift
@@ -52,7 +52,7 @@ if [ -z "$MICROPY_RTEMS_VER" ]; then
     exit 1
 fi
 
-if [ -z "$tests" ]; then
+if [ -z "$test_list" ]; then
     echo "no tests specified"
     exit 1
 fi
@@ -163,7 +163,10 @@ numfailed=0
 nameskipped=
 namefailed=
 
-for testfile in $tests
+# sort tests so they run in a deterministic order
+test_list=`echo $test_list | tr ' ' '\n' | LC_ALL=C sort`
+
+for testfile in $test_list
 do
     # strip of .exp or .py to allow either to be passed in
     basename=$(basename $testfile .exp)
