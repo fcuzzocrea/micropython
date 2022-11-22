@@ -3,7 +3,9 @@
 nan = float('nan')
 
 # negative number to nan
+print((-0.5) ** nan)
 print((-1.0) ** nan)
+print((-20.0) ** nan)
 
 # nan containment
 print(nan in (nan, 1))
