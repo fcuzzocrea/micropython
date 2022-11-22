@@ -172,6 +172,11 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 #include "py/pystack.h"
 #include "mputil.h"
 
+// these settings are used to check the C stack for overflow
+#define STACK_CHECK_SIZE (MICROPY_RTEMS_STACK_SIZE - 384)
+#define STACK_CHECK_BUFFER (32)
+#define STACK_CHECK_THRESHOLD (128)
+
 // these settings are used to check the heap for overflow
 #define HEAP_PRE (128)
 #define HEAP_POST (128)
@@ -214,8 +219,8 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
 
     // write a pattern to the stack to check for overflow
     uint32_t dummy;
-    byte *stack_start = (byte*)&dummy - (MICROPY_RTEMS_STACK_SIZE - 256);
-    const size_t stack_len = MICROPY_RTEMS_STACK_SIZE - 256 - 32;
+    byte *stack_start = (byte*)&dummy - STACK_CHECK_SIZE;
+    const size_t stack_len = STACK_CHECK_SIZE - STACK_CHECK_BUFFER;
     pattern_fill(stack_start, stack_len);
 
     // initialise the heap, with a special pattern to check for overflow
@@ -251,7 +256,7 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
         void *p = pattern_search(stack_start, stack_len);
         size_t usage = (byte*)&dummy - (byte*)p;
         size_t avail = (byte*)&dummy - stack_start;
-        if (usage + 128 > avail) {
+        if (usage + STACK_CHECK_THRESHOLD > avail) {
             mp_printf(&mp_plat_print, "stack got too low at %u / %u\n", (uint)usage, (uint)avail);
         }
         //mp_printf(&mp_plat_print, "stack usage: %u / %u\n", (uint)usage, (uint)avail);
