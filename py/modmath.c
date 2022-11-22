@@ -39,19 +39,79 @@ STATIC NORETURN void math_error(void) {
     mp_raise_ValueError("math domain error");
 }
 
-// asin() provided by LEON toolchain doesn't check domain, so we do it ourselves
-STATIC mp_float_t MICROPY_FLOAT_C_FUN(asin_with_domain_check)(mp_float_t x) {
-    if (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0)) {
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(sqrt_with_domain_check)(mp_float_t x) {
+    #if MICROPY_PY_MATH_SQRT_CHECK_DOMAIN
+    if (isnan(x)) {
+        return x;
+    }
+    if (x < MICROPY_FLOAT_CONST(0.0)) {
         math_error();
     }
+    #endif
+    return MICROPY_FLOAT_C_FUN(sqrt)(x);
+}
+
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(pow_with_domain_check)(mp_float_t x, mp_float_t y) {
+    #if MICROPY_PY_MATH_POW_CHECK_DOMAIN
+    if (x == MICROPY_FLOAT_CONST(1.0) || y == MICROPY_FLOAT_CONST(0.0)) {
+        return MICROPY_FLOAT_CONST(1.0);
+    }
+    if (isnan(x)) {
+        return x;
+    }
+    if (isnan(y)) {
+        return y;
+    }
+    if (x == MICROPY_FLOAT_CONST(0.0) && y < MICROPY_FLOAT_CONST(0.0)) {
+        math_error();
+    }
+    if (x < 0 && y != MICROPY_FLOAT_C_FUN(floor)(y)) {
+        math_error();
+    }
+    #endif
+    return MICROPY_FLOAT_C_FUN(pow)(x, y);
+}
+
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(fmod_with_domain_check)(mp_float_t x, mp_float_t y) {
+    #if MICROPY_PY_MATH_FMOD_CHECK_DOMAIN
+    if (isnan(x)) {
+        return x;
+    }
+    if (isnan(y)) {
+        return y;
+    }
+    if (isinf(x) || y == MICROPY_FLOAT_CONST(0.0)) {
+        math_error();
+    }
+    #endif
+    return MICROPY_FLOAT_C_FUN(fmod)(x, y);
+}
+
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(modf_with_domain_check)(mp_float_t x, mp_float_t *iptr) {
+    #if MICROPY_PY_MATH_MODF_CHECK_DOMAIN
+    if (isnan(x)) {
+        *iptr = x;
+        return x;
+    }
+    #endif
+    return MICROPY_FLOAT_C_FUN(modf)(x, iptr);
+}
+
+STATIC mp_float_t MICROPY_FLOAT_C_FUN(asin_with_domain_check)(mp_float_t x) {
+    #if MICROPY_PY_MATH_ASIN_CHECK_DOMAIN
+    if (!isnan(x) && (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0))) {
+        math_error();
+    }
+    #endif
     return MICROPY_FLOAT_C_FUN(asin)(x);
 }
 
-// acos() provided by LEON toolchain doesn't check domain, so we do it ourselves
 STATIC mp_float_t MICROPY_FLOAT_C_FUN(acos_with_domain_check)(mp_float_t x) {
-    if (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0)) {
+    #if MICROPY_PY_MATH_ACOS_CHECK_DOMAIN
+    if (!isnan(x) && (x < MICROPY_FLOAT_CONST(-1.0) || x > MICROPY_FLOAT_CONST(1.0))) {
         math_error();
     }
+    #endif
     return MICROPY_FLOAT_C_FUN(acos)(x);
 }
 
@@ -110,12 +170,12 @@ mp_float_t MICROPY_FLOAT_C_FUN(log2)(mp_float_t x) {
 #endif
 
 // sqrt(x): returns the square root of x
-MATH_FUN_1(sqrt, sqrt)
+MATH_FUN_1(sqrt, sqrt_with_domain_check)
 // pow(x, y): returns x to the power of y
 STATIC mp_obj_t mp_math_pow(mp_obj_t x_obj, mp_obj_t y_obj) {
     mp_float_t x = mp_obj_get_float(x_obj);
     mp_float_t y = mp_obj_get_float(y_obj);
-    mp_float_t ans = pow(x, y);
+    mp_float_t ans = pow_with_domain_check(x, y);
     if ((isnan(ans) && !isnan(x) && !isnan(y)) || (isinf(ans) && !isinf(x) && !isinf(y))) {
         math_error();
     }
@@ -173,7 +233,7 @@ MATH_FUN_1(fabs, fabs_func)
 // floor(x)
 MATH_FUN_1_TO_INT(floor, floor) //TODO: delegate to x.__floor__() if x is not a float
 // fmod(x, y)
-MATH_FUN_2(fmod, fmod)
+MATH_FUN_2(fmod, fmod_with_domain_check)
 // isfinite(x)
 MATH_FUN_1_TO_BOOL(isfinite, isfinite)
 // isinf(x)
@@ -271,7 +331,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_frexp_obj, mp_math_frexp);
 // modf(x)
 STATIC mp_obj_t mp_math_modf(mp_obj_t x_obj) {
     mp_float_t int_part = 0.0;
-    mp_float_t fractional_part = MICROPY_FLOAT_C_FUN(modf)(mp_obj_get_float(x_obj), &int_part);
+    mp_float_t fractional_part = MICROPY_FLOAT_C_FUN(modf_with_domain_check)(mp_obj_get_float(x_obj), &int_part);
     mp_obj_t tuple[2];
     tuple[0] = mp_obj_new_float(fractional_part);
     tuple[1] = mp_obj_new_float(int_part);
