@@ -46,7 +46,6 @@
 #define MICROPY_PY_SYS_MODULES      (0)
 #define MICROPY_PY_SYS_STDFILES     (0)
 #define MICROPY_PY_SYS_STDIO_BUFFER (1)
-#define MICROPY_PY_SYS_PLATFORM     "leon2"
 #define MICROPY_PY_COLLECTIONS_ORDEREDDICT (1)
 #define MICROPY_PY_GC               (1)
 #define MICROPY_PY_ARRAY            (1)

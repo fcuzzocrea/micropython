@@ -31,6 +31,7 @@ ifeq ($(MICROPY_RTEMS_VER),RTEMS_4_8_EDISOFT)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-4.8
 CROSS_COMPILE = $(MICROPY_RTEMS_ROOT)/bin/sparc-rtems4.8-
 RTEMS_BASE = $(MICROPY_RTEMS_ROOT)/sparc-rtems4.8/leon2/lib
+LEON_TARGET_PLATFORM = LEON2
 CFLAGS += -B$(RTEMS_BASE)
 CFLAGS += -DRTEMS_4 -DRTEMS_4_8 -DRTEMS_4_8_EDISOFT
 CFLAGS += -I$(LEON_COMMON_FROM_HERE)/libc-include
@@ -47,6 +48,7 @@ ifeq ($(MICROPY_RTEMS_VER),RTEMS_4_8)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-4.8
 CROSS_COMPILE = $(MICROPY_RTEMS_ROOT)/bin/sparc-rtems-
 RTEMS_BASE = $(MICROPY_RTEMS_ROOT)/sparc-rtems/leon2/lib
+LEON_TARGET_PLATFORM = LEON2
 CFLAGS += -B$(RTEMS_BASE)
 CFLAGS += -DRTEMS_4 -DRTEMS_4_8
 CFLAGS += -std=gnu99 -mcpu=v8
@@ -57,6 +59,7 @@ ifeq ($(MICROPY_RTEMS_VER),RTEMS_4_10)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-4.10
 CROSS_COMPILE = $(MICROPY_RTEMS_ROOT)/bin/sparc-rtems4.10-
 RTEMS_BASE = $(MICROPY_RTEMS_ROOT)/sparc-rtems4.10/leon2/lib
+LEON_TARGET_PLATFORM = LEON2
 CFLAGS += -DRTEMS_4 -DRTEMS_4_10
 CFLAGS += -fno-strict-aliasing # suppress warnings from RTEMS 4.10
 CFLAGS += -std=c99 -mcpu=v8
@@ -67,6 +70,7 @@ ifeq ($(MICROPY_RTEMS_VER),RTEMS_4_11)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-4.11
 CROSS_COMPILE = $(MICROPY_RTEMS_ROOT)/bin/sparc-rtems4.11-
 RTEMS_BASE = $(MICROPY_RTEMS_ROOT)/sparc-rtems4.11/leon2/lib
+LEON_TARGET_PLATFORM = LEON2
 CFLAGS += -DRTEMS_4 -DRTEMS_4_11
 CFLAGS += -std=c99 -mcpu=v8
 endif
@@ -74,6 +78,7 @@ endif
 # Settings for RTEMS 5.1, GR712RC
 ifeq ($(MICROPY_RTEMS_VER),RTEMS_5_1_GR712RC)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-5.1-2019.07.25
+LEON_TARGET_PLATFORM = LEON3
 RTEMS_API = 5
 RTEMS_CPU = sparc
 RTEMS_BSP = gr712rc
@@ -85,6 +90,7 @@ endif
 # Settings for RTEMS 5.1, GR740
 ifeq ($(MICROPY_RTEMS_VER),RTEMS_5_1_GR740)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-5.1-2019.07.25
+LEON_TARGET_PLATFORM = LEON4
 RTEMS_API = 5
 RTEMS_CPU = sparc
 RTEMS_BSP = gr740
@@ -96,6 +102,7 @@ endif
 # Settings for RTEMS 6, GR712RC
 ifeq ($(MICROPY_RTEMS_VER),RTEMS_6_GR712RC)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-6-sparc-gr712rc-smp-3
+LEON_TARGET_PLATFORM = LEON3
 RTEMS_API = 6
 RTEMS_CPU = sparc
 RTEMS_BSP = gr712rc-qual-only
@@ -108,6 +115,7 @@ endif
 # Settings for RTEMS 6, GR740
 ifeq ($(MICROPY_RTEMS_VER),RTEMS_6_GR740)
 MICROPY_RTEMS_ROOT ?= /opt/rtems-6-sparc-gr740-smp-3
+LEON_TARGET_PLATFORM = LEON4
 RTEMS_API = 6
 RTEMS_CPU = sparc
 RTEMS_BSP = gr740-qual-only
@@ -118,6 +126,9 @@ endif
 
 ################################################################################
 # General settings
+
+# Set the LEON target
+CFLAGS += -DLEON_TARGET_PLATFORM_$(LEON_TARGET_PLATFORM)
 
 # Configure the RAM address for loading .mpy files leave 2MiB for firmware)
 ifeq ($(findstring GR740,$(MICROPY_RTEMS_VER)),GR740)

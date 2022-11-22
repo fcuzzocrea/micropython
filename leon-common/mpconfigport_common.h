@@ -130,3 +130,14 @@ void mp_state_ptr_set(void *value);
 #define MICROPY_PY_MATH_ASIN_CHECK_DOMAIN (1)
 #define MICROPY_PY_MATH_ACOS_CHECK_DOMAIN (1)
 #endif
+
+// Set the sys.platform value based on the LEON target.
+#if LEON_TARGET_PLATFORM_LEON2
+#define MICROPY_PY_SYS_PLATFORM "leon2"
+#elif LEON_TARGET_PLATFORM_LEON3
+#define MICROPY_PY_SYS_PLATFORM "leon3"
+#elif LEON_TARGET_PLATFORM_LEON4
+#define MICROPY_PY_SYS_PLATFORM "leon4"
+#else
+#error "Unable to determine LEON target platform"
+#endif
