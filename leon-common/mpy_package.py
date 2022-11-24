@@ -6,6 +6,9 @@ from __future__ import print_function
 import sys
 import struct
 
+MPY_MEM_PACKED_HEADER = 0x5041434b  # PACK in ASCII
+
+
 def convert_mpy_to_c_header(filenames):
     scripts = []
     for filename in filenames:
@@ -39,14 +42,37 @@ def make_srec_line(type, addr, data):
     return str
 
 
-def convert_mpy_to_srec(addr, filename):
-    with open(filename, 'rb') as f:
-        data = f.read()
-    data = struct.pack('>L', len(data)) + data
+def make_srec(addr, data):
     for i in range(0, len(data), 16):
         print(make_srec_line(3, addr + i, data[i : i + 16]))
     # emit S7 with 0 as "execution addr" to indicate end of S3 records
     #print(make_srec_line(7, 0, ''))
+
+
+def convert_mpy_to_srec(addr, filename):
+    with open(filename, 'rb') as f:
+        data = f.read()
+    data = struct.pack('>L', len(data)) + data
+    make_srec(addr, data)
+
+
+def convert_mpy_to_packed(num_tasks, args):
+    prefix_data = []
+    mpy_bytes = b''
+
+    # header to indicate packed
+    prefix_data.append(struct.pack('>LLL', MPY_MEM_PACKED_HEADER, num_tasks, len(args)))
+
+    # create index table (pair of offset,len for each file)
+    word_size = 4
+    mpy_data_start = (3 + len(args) * 2) * word_size
+    for filename in args:
+        with open(filename, 'rb') as f:
+            data = f.read()
+        prefix_data.append(struct.pack('>LL', mpy_data_start + len(mpy_bytes), len(data)))
+        mpy_bytes += data
+
+    return b''.join(prefix_data) + mpy_bytes
 
 
 def usage():
@@ -55,7 +81,9 @@ usage: mpy_package.py <command> <args ...>
 commands:
     mpy_package.py tohdr <mpy file> ...
     mpy_package.py tosrec <start_addr> <addr_increment> <mpy file> ...
-    mpy_package.py tobin <start_addr> <addr_increment> <mpy file> ...''', file=sys.stderr)
+    mpy_package.py tobin <start_addr> <addr_increment> <mpy file> ...
+    mpy_package.py tosrecpacked <start_addr> <num_tasks> <mpy file> ...
+    mpy_package.py tobinpacked <start_addr> <num_tasks> <mpy file> ...''', file=sys.stderr)
     sys.exit(1)
 
 
@@ -84,6 +112,16 @@ def main_tobin(addr, addr_increment, args):
     sys.stdout.write(b''.join(all_data))
 
 
+def main_tosrecpacked(addr, num_tasks, args):
+    data = convert_mpy_to_packed(num_tasks, args)
+    make_srec(addr, data)
+
+
+def main_tobinpacked(addr, num_tasks, args):
+    # addr is not needed
+    sys.stdout.write(convert_mpy_to_packed(num_tasks, args))
+
+
 def main():
     if len(sys.argv) < 2:
         usage()
@@ -99,6 +137,16 @@ def main():
             main_tosrec(addr, addr_increment, sys.argv[4:])
         else:
             main_tobin(addr, addr_increment, sys.argv[4:])
+    elif sys.argv[1] in ('tosrecpacked', 'tobinpacked'):
+        try:
+            addr = int(sys.argv[2], 0)
+            num_tasks = int(sys.argv[3], 0)
+        except ValueError:
+            usage()
+        if sys.argv[1] == 'tosrecpacked':
+            main_tosrecpacked(addr, num_tasks, sys.argv[4:])
+        else:
+            main_tobinpacked(addr, num_tasks, sys.argv[4:])
     else:
         usage()
 
