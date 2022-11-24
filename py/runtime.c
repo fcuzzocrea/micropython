@@ -41,6 +41,11 @@
 #include "py/stackctrl.h"
 #include "py/gc.h"
 
+#ifdef ULAB_CONFIG_FILE
+// Needed to support rich MP_BINARY_OP_EQUAL/MP_BINARY_OP_NOT_EQUAL operations on ulab's ndarray.
+#include "lib/micropython-ulab/code/ndarray.h"
+#endif
+
 #if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
 #define DEBUG_printf DEBUG_printf
@@ -309,6 +314,15 @@ mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
 
     // deal with == and != for all types
     if (op == MP_BINARY_OP_EQUAL || op == MP_BINARY_OP_NOT_EQUAL) {
+        #if NDARRAY_HAS_BINARY_OPS
+        // Support rich MP_BINARY_OP_EQUAL/MP_BINARY_OP_NOT_EQUAL operations on ulab's ndarray.
+        if (mp_obj_get_type(lhs) == &ulab_ndarray_type) {
+            mp_obj_t r = ndarray_binary_op(op, lhs, rhs);
+            if (r != MP_OBJ_NULL) {
+                return r;
+            }
+        }
+        #endif
         if (mp_obj_equal(lhs, rhs)) {
             if (op == MP_BINARY_OP_EQUAL) {
                 return mp_const_true;
