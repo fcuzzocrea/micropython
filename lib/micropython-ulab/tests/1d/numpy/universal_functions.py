@@ -133,9 +133,3 @@ cmp_result.append(math.isinf(result[0]))
 for i in range(len(ref_result)):
 	cmp_result.append(math.isclose(result[i+1], ref_result[i], rel_tol=1E-9, abs_tol=1E-9))
 print(cmp_result)
-
-result = (spy.special.gammaln([0, -1, -2, -3, -4]))
-cmp_result = []
-for i in range(len(ref_result)):
-	cmp_result.append(math.isinf(result[i]))
-print(cmp_result)
