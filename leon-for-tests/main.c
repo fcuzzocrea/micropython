@@ -90,9 +90,11 @@ rtems_task Init(rtems_task_argument ignored) {
 #include "leon-common/leonprintf.h"
 #include "leon-common/leonutil.h"
 
-// these variables define the location of the externally-loaded .mpy files
-#define MPY_MEM_BASE   (MICROPY_RTEMS_MPY_MEM_BASE)
-#define MPY_MEM_STRIDE (0x00010000)
+// this variable defines the location of the externally-loaded .mpy files
+#define MPY_MEM_BASE (MICROPY_RTEMS_MPY_MEM_BASE)
+
+// this magic number is used to indicate there are packed .mpy files
+#define MPY_MEM_PACKED_HEADER (0x5041434b)
 
 #if MICROPY_RTEMS_USE_TASK_CONSTRUCT
 RTEMS_ALIGNED(RTEMS_TASK_STORAGE_ALIGNMENT)
@@ -100,26 +102,7 @@ static char mp_task_storage[MICROPY_RTEMS_NUM_TASKS][TASK_STORAGE_SIZE];
 static rtems_task_config mp_task_config[MICROPY_RTEMS_NUM_TASKS];
 #endif
 
-rtems_task mp_manager_task(rtems_task_argument ignored) {
-    leon_printf("\nMicroPython manager task started\n");
-
-    // detect the number of tasks needed by looking for valid scripts
-    int num_tasks = 0;
-    for (int i = 0; i < MICROPY_RTEMS_NUM_TASKS; ++i) {
-        const void *mpy_base = (const void*)(MPY_MEM_BASE + MPY_MEM_STRIDE * i);
-        size_t mpy_len = *(const uint32_t*)mpy_base;
-        const uint8_t *mpy_data = (const uint8_t*)(mpy_base + 4);
-        if (mpy_len > 0 && mpy_data[0] == 'M') {
-            num_tasks += 1;
-        } else {
-            break;
-        }
-    }
-    leon_printf("Detected %u scripts\n", num_tasks);
-
-    // we must use hexlified output so it isn't modified by the UART
-    mp_hal_stdout_enable_hexlify();
-
+static int run_scripts(int num_tasks, unsigned int script_offset, unsigned int max_script_index) {
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
 
     // spawn all worker tasks
@@ -138,12 +121,16 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         #endif
         if (status != RTEMS_SUCCESSFUL) {
             leon_printf("Error creating task #%u: %u\n", i, status);
-            leon_emu_terminate();
+            return -1;
         }
-        status = rtems_task_start(task_id[i], mp_worker_task, i);
+        unsigned int script_index = script_offset + i;
+        if (script_index >= max_script_index) {
+            script_index = max_script_index - 1;
+        }
+        status = rtems_task_start(task_id[i], mp_worker_task, i | script_index << 8);
         if (status != RTEMS_SUCCESSFUL) {
             leon_printf("Error starting task #%u: %u\n", i, status);
-            leon_emu_terminate();
+            return -1;
         }
     }
 
@@ -153,14 +140,50 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         int num_tasks_complete = 0;
         for (int i = 0; i < num_tasks; ++i) {
             if (rtems_task_is_suspended(task_id[i]) == RTEMS_ALREADY_SUSPENDED) {
+                rtems_task_delete(task_id[i]);
                 num_tasks_complete += 1;
             }
         }
         if (num_tasks_complete == num_tasks) {
-            mp_hal_stdout_disable_hexlify();
-            leon_emu_terminate();
+            return 0;
         }
     }
+}
+
+rtems_task mp_manager_task(rtems_task_argument ignored) {
+    leon_printf("\nMicroPython manager task started\n");
+
+    unsigned int num_tasks = 0;
+    unsigned int num_scripts = 0;
+
+    const uint32_t *mpy_mem = (const uint32_t*)MPY_MEM_BASE;
+    if (mpy_mem[0] == MPY_MEM_PACKED_HEADER) {
+        num_tasks = mpy_mem[1];
+        num_scripts = mpy_mem[2];
+    }
+
+    leon_printf("Detected %u tasks and %u scripts\n", num_tasks, num_scripts);
+
+    for (unsigned int i = 0; i < num_scripts; i += num_tasks) {
+        if (num_tasks == 1) {
+            leon_printf("======== Running script %u ========\n", i);
+        } else {
+            unsigned int max_script = i + num_tasks - 1;
+            if (max_script >= num_scripts) {
+                max_script = num_scripts - 1;
+            }
+            leon_printf("======== Running %u tasks with scripts %u-%u ========\n", num_tasks, i, max_script);
+        }
+        // we must use hexlified output so it isn't modified by the UART
+        mp_hal_stdout_enable_hexlify();
+        int ret = run_scripts(num_tasks, i, num_scripts);
+        mp_hal_stdout_disable_hexlify();
+        if (ret < 0) {
+            break;
+        }
+    }
+
+    leon_emu_terminate();
 }
 
 /******************************************************************************/
@@ -206,7 +229,11 @@ static void *pattern_search(void *p_in, size_t len) {
     return NULL;
 }
 
-rtems_task mp_worker_task(rtems_task_argument task_index) {
+rtems_task mp_worker_task(rtems_task_argument rtems_task_arg) {
+    // extract the task and script indices from the incoming argument
+    unsigned int task_index = rtems_task_arg & 0xff;
+    unsigned int script_index = rtems_task_arg >> 8;
+
     // set the MicroPython context for this task
     mp_state_ptr_set(&mp_state_ctx[task_index]);
 
@@ -236,9 +263,9 @@ rtems_task mp_worker_task(rtems_task_argument task_index) {
     mp_init();
 
     // get the precompiled bytecode from the fixed address in RAM
-    const void *mpy_base = (const void*)(MPY_MEM_BASE + MPY_MEM_STRIDE * task_index);
-    size_t mpy_len = *(const uint32_t*)mpy_base;
-    const byte *mpy_data = (const byte*)(mpy_base + 4);
+    const uint32_t *mpy_mem = (const uint32_t*)MPY_MEM_BASE;
+    const byte *mpy_data = (const byte*)MPY_MEM_BASE + mpy_mem[3 + script_index * 2];
+    size_t mpy_len = mpy_mem[3 + script_index * 2 + 1];
 
     // execute the bytecode
     uint32_t retval = mp_exec_mpy(mpy_data, mpy_len);

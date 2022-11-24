@@ -114,13 +114,14 @@ build_dir=../leon-for-tests/build-$MICROPY_RTEMS_VER
 
 function prepare_scripts {
     local basename=$1
-    shift
+    local num_tasks=$2
+    shift 2
     if [ $TARGET = leon2 ]; then
         # leon2-emu requires an srec input file, so create one.
-        $MPY_PACKAGE tosrec $ADDR_TASK1 $ADDR_INCREMENT $@ > $basename.srec || exit $?
+        $MPY_PACKAGE tosrecpacked $ADDR_TASK1 $num_tasks $@ > $basename.srec || exit $?
     else
         # sis requires a single elf input file, so add compiled scripts to firmware.elf.
-        $MPY_PACKAGE tobin $ADDR_TASK1 $ADDR_INCREMENT $@ > $basename.bin || exit $?
+        $MPY_PACKAGE tobinpacked $ADDR_TASK1 $num_tasks $@ > $basename.bin || exit $?
         $OBJCOPY \
             --add-section .scripts=$basename.bin \
             --change-section-address .scripts=$ADDR_TASK1 \
@@ -178,26 +179,17 @@ do
 
     if [ $num_tasks = 1 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        prepare_scripts ${tempfile} \
+        prepare_scripts ${tempfile} $num_tasks \
             ${infile_no_ext}.mpy
     elif [ $num_tasks = 2 ]; then
         $MPC ${infile_no_ext}.1.py || exit $?
         $MPC ${infile_no_ext}.2.py || exit $?
-        prepare_scripts ${tempfile} \
+        prepare_scripts ${tempfile} $num_tasks \
             ${infile_no_ext}.1.mpy \
             ${infile_no_ext}.2.mpy
     elif [ $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
-        prepare_scripts ${tempfile} \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
-            ${infile_no_ext}.mpy \
+        prepare_scripts ${tempfile} $num_tasks \
             ${infile_no_ext}.mpy
     else
         echo "bad num_tasks"
