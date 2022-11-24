@@ -499,7 +499,15 @@ MP_DEFINE_CONST_FUN_OBJ_1(vector_floor_obj, vector_floor);
 //|    ...
 //|
 
-MATH_FUN_1(gamma, tgamma);
+double tgamma_with_domain_check(double x) {
+    #if ULAB_TGAMMA_CHECK_DOMAIN
+    if (x == 0) {
+        return INFINITY;
+    }
+    #endif
+    return tgamma(x);
+}
+MATH_FUN_1(gamma, tgamma_with_domain_check);
 MP_DEFINE_CONST_FUN_OBJ_1(vector_gamma_obj, vector_gamma);
 #endif
 
