@@ -40,7 +40,8 @@ int leon_vprintf(const char *fmt, va_list args) {
     while (*fmt != '\0') {
         if (*fmt == '%') {
             ++fmt;
-            if (*fmt == 'u') {
+            if (*fmt == 'u' || *fmt == 'x') {
+                unsigned int base = *fmt == 'u' ? 10 : 16;
                 ++fmt;
                 unsigned int i = va_arg(args, unsigned int);
                 char buf[32];
@@ -49,8 +50,13 @@ int leon_vprintf(const char *fmt, va_list args) {
                     *b++ = '0';
                 } else {
                     while (i && b < &buf[sizeof(buf)]) {
-                        *b++ = '0' + i % 10;
-                        i /= 10;
+                        unsigned int digit = i % base;
+                        if (digit <= 9) {
+                            *b++ = '0' + digit;
+                        } else {
+                            *b++ = 'a' + digit - 10;
+                        }
+                        i /= base;
                     }
                 }
                 while (b > &buf[0]) {
