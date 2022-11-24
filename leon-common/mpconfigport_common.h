@@ -60,6 +60,11 @@ typedef long mp_off_t;
 #define INFINITY (__builtin_inff())
 #endif
 
+// RTEMS 4.8 does not provide log2
+#if RTEMS_4_8
+#define MP_NEED_LOG2 (1)
+#endif
+
 // LEON ports provide their own version of mp_raw_code_load_file
 #define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (1)
 
