@@ -742,4 +742,6 @@
 #define ULAB_HAS_USER_MODULE                (0)
 #endif
 
+void ulab_init(void);
+
 #endif

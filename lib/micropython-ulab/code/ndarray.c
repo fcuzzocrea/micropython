@@ -31,6 +31,11 @@
 mp_uint_t ndarray_print_threshold = NDARRAY_PRINT_THRESHOLD;
 mp_uint_t ndarray_print_edgeitems = NDARRAY_PRINT_EDGEITEMS;
 
+void ulab_init(void) {
+    ndarray_print_threshold = NDARRAY_PRINT_THRESHOLD;
+    ndarray_print_edgeitems = NDARRAY_PRINT_EDGEITEMS;
+}
+
 //| """Manipulate numeric data similar to numpy
 //|
 //| `ulab` is a numpy-like module for micropython, meant to simplify and
