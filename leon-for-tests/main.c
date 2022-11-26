@@ -172,7 +172,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             if (max_script >= num_scripts) {
                 max_script = num_scripts - 1;
             }
-            leon_printf("======== Running %u tasks with scripts %u-%u ========\n", num_tasks, i, max_script);
+            leon_printf("======== Running scripts %u-%u with %u tasks ========\n", i, max_script, num_tasks);
         }
 
         // Initialise the datapool.

@@ -16,9 +16,11 @@ import binascii
 import re
 
 re_expected_header = re.compile(
-    rb"======== Expected output for script ([0-9]+) : ([A-Za-z0-9_/.-]+) : ([0-9]+) lines"
+    rb"======== Expected output for (script [0-9]+|scripts \d+-\d+) : ([^ ]+) : (\d+) lines"
 )
-re_actual_header = re.compile(rb"======== Running script ([0-9]+) ========")
+re_actual_header = re.compile(
+    rb"======== Running (script \d+|scripts \d+-\d+)( with \d+ tasks)? ========"
+)
 hex_prefix = b"HEX "
 
 
@@ -39,7 +41,7 @@ def parse_expected_file(filename):
                 break
             m = re_expected_header.match(line)
             assert m, line
-            test_id = int(m.group(1))
+            test_id = str(m.group(1), "ascii")
             test_name = str(m.group(2), "ascii")
             test_num_lines = int(m.group(3))
             test_output = list(f.readline() for _ in range(test_num_lines))
@@ -57,13 +59,35 @@ def parse_actual_file(filename):
             if m:
                 if test_id is not None:
                     tests.append(TestOutput(test_id, None, None, test_output))
-                test_id = int(m.group(1))
+                test_id = str(m.group(1), "ascii")
                 test_output = []
             elif line.startswith(hex_prefix):
-                test_output.append(binascii.unhexlify(line[len(hex_prefix) :].rstrip()))
+                hex_data = line[len(hex_prefix) :].rstrip()
+                try:
+                    data = binascii.unhexlify(hex_data)
+                except ValueError:
+                    # hex_data had non-hex characters in in, most likely due to a
+                    # crash of the target.  Try to extract as many valid hex
+                    # characters as possible.
+                    for i in range(0, len(hex_data), 2):
+                        try:
+                            data = binascii.unhexlify(hex_data[:i])
+                        except ValueError:
+                            break
+                test_output.append(data)
         if test_id is not None:
             tests.append(TestOutput(test_id, None, None, test_output))
     return tests
+
+
+def print_diff(lines_a, lines_b):
+    for i, a in enumerate(lines_a):
+        b = lines_b[i] if i < len(lines_b) else b""
+        if a != b:
+            if a:
+                print("<", str(a, "ascii"))
+            if b:
+                print(">", str(b, "ascii"))
 
 
 def check(expected_filename, actual_filename):
@@ -78,17 +102,14 @@ def check(expected_filename, actual_filename):
             test_actual = tests_actual[i]
             if test.output == test_actual.output:
                 test_passed = True
-            else:
-                for j, line in enumerate(test.output):
-                    if line != test_actual.output[j]:
-                        print("<", line)
-                        print(">", test_actual.output[j])
         if test_passed:
             print("pass ", test.name)
             num_passed += 1
         else:
             print("FAIL ", test.name)
             name_failed.append(test.name)
+            if i < len(tests_actual):
+                print_diff(test.output, tests_actual[i].output)
         num_test_cases += test.output_num_lines
 
     print(

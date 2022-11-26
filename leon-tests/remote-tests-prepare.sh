@@ -22,6 +22,7 @@ verbose=1
 num_tasks=1
 output_basename="leon_test_firmware"
 test_list=""
+process_exp=1
 
 while [[ $# > 0 ]]; do
     arg="$1"
@@ -36,6 +37,9 @@ while [[ $# > 0 ]]; do
         -o)
         output_basename="$2"
         shift
+        ;;
+        --no-exp)
+        process_exp=0
         ;;
         -*)
         echo "unknown option: $arg"
@@ -109,14 +113,8 @@ do
     basename=$(basename $basename .py)
     infile_no_ext=$(dirname $testfile)/$basename
 
-    # Find the file with the expected test output.
-    if [ -r $infile_no_ext.exp ]; then
-        expfile=$infile_no_ext.exp
-    elif [ -r $infile_no_ext.py.exp ]; then
-        expfile=$infile_no_ext.py.exp
-    else
-        echo "Missing .exp file for test $infile_no_ext"
-        exit 1
+    if [ $verbose = 1 ]; then
+        echo "Preparing $infile_no_ext"
     fi
 
     # Compile .py to .mpy, and add .mpy to list of .mpy files.
@@ -141,11 +139,34 @@ do
         exit 1
     fi
 
-    # Add .exp file to combined .exp file.
-    echo "======== Expected output for script $test_index : $infile_no_ext : `cat $expfile | wc -l` lines" >> $output_exp
-    cat $expfile >> $output_exp
+    # Print test index and name.
+    echo -n "======== Expected output for " >> $output_exp
+    if [ $num_tasks == 1 ]; then
+        echo -n "script $test_index" >> $output_exp
+    else
+        echo -n "scripts $test_index-`expr $test_index + $num_tasks - 1`" >> $output_exp
+    fi
+    echo -n " : $infile_no_ext : " >> $output_exp
 
-    ((test_index+=1))
+    if [ $process_exp = 1 ]; then
+        # Find the file with the expected test output.
+        if [ -r $infile_no_ext.exp ]; then
+            expfile=$infile_no_ext.exp
+        elif [ -r $infile_no_ext.py.exp ]; then
+            expfile=$infile_no_ext.py.exp
+        else
+            echo "Missing .exp file for test $infile_no_ext"
+            exit 1
+        fi
+
+        # Add .exp file to combined .exp file.
+        echo "`cat $expfile | wc -l` lines" >> $output_exp
+        cat $expfile >> $output_exp
+    else
+        echo "0 lines" >> $output_exp
+    fi
+
+    ((test_index+=$num_tasks))
 done
 
 ######## Combine all .mpy files with input firmware to produce output firmware.
@@ -162,6 +183,7 @@ $OBJCOPY \
 $RM -r $temp_dir
 
 if [ $verbose = 1 ]; then
+    echo ""
     echo "Application and tests have been bundled and put in: $output_elf"
     echo "Expected output of this executable is in:           $output_exp"
     echo ""
