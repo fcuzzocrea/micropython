@@ -2,6 +2,7 @@
 # by dpgeorge
 
 import math
+import rtems
 
 class RungeKutta(object):
     def __init__(self, functions, initConditions, t0, dh, save=True):
@@ -95,6 +96,12 @@ def phaseDiagram(system, trajStart, trajPlot, h=0.1, tend=1.0, range=1.0):
                 print()
 
 def singleTraj(system, trajStart, h=0.02, tend=1.0):
+    # Semaphore used to synchronise the output.
+    # Both tasks should run together, but first one should print out first.
+    if rtems.script_id() == 0:
+        sem = rtems.sem.create("LOCK")
+        sem.obtain()
+
     tstart = 0.0
 
     # compute the trajectory
@@ -104,9 +111,17 @@ def singleTraj(system, trajStart, h=0.02, tend=1.0):
 
     # print out trajectory
 
+    if rtems.script_id() != 0:
+        sem = rtems.sem.ident("LOCK")
+        sem.obtain()
+
     for i in range(len(rk.Trajectory)):
         tr = rk.Trajectory[i]
         print(' '.join(["{:.4f}".format(t) for t in tr]))
+
+    sem.release()
+    if rtems.script_id() != 0:
+        sem.delete()
 
 #phaseDiagram(sysSM, (lambda i, j: [0.354, 0.654, 1.278, 0.8 + 0.2 * i, 0.1 + 0.1 * j]), (lambda a: (a[4], a[5])), h=0.1, tend=math.log(10**17))
 
