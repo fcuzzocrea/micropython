@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # This file is part of the MicroPython port to LEON platforms
 # Copyright (c) 2015-2022 George Robotics Limited
@@ -16,8 +16,32 @@
 param_n=100
 param_m=100
 
+######## Parse arguments.
+
+verbose=1
+run_mode="local"
+
+while [[ $# > 0 ]]; do
+    arg="$1"
+    case $arg in
+        -q)
+        verbose=0
+        ;;
+        -r|--remote)
+        run_mode="remote"
+        ;;
+        *)
+        echo "unknown option: $arg"
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+######## Run or prepare tests.
+
 # Performance tests to run.
-tests=(
+tests="
     bm_chaos.py
     bm_fannkuch.py
     bm_fft.py
@@ -29,19 +53,38 @@ tests=(
     misc_mandel.py
     misc_pystone.py
     misc_raytrace.py
-)
+    "
 
-# Header needed to make output machine readable.
-echo "N=$param_n M=$param_m n_average=1"
+all_py_files=""
 
-# Run performance benchmark tests one at a time.
-for testfile in ${tests[@]}
-do
-    basename=$(basename $testfile .py)
-    temp=$(mktemp temp_perf_${basename}_XXXX.py)
+if [ $run_mode = local ]; then
+    # Header needed to make output machine readable.
+    echo "N=$param_n M=$param_m n_average=1"
+fi
+
+# Go through each test and either run it or prepare it for remote execution.
+for testfile in $tests; do
+    basename=`basename $testfile .py`
+    temp=`mktemp temp_perf_${basename}_XXXX.py`
     cat CORE_PERFBENCH/$testfile CORE_PERFBENCH/benchrun.py > $temp
     echo "bm_run($param_n, $param_m)" >> $temp
-    echo -n "$testfile: "
-    ./run-tests.sh --no-test-name --show-output $temp
-    /bin/rm $temp
+    if [ $run_mode = local ]; then
+        # Run performance benchmark test locally, one at a time.
+        echo -n "$testfile: "
+        ./run-tests.sh --no-test-name --show-output $temp
+        /bin/rm $temp
+    else
+        # Combine .py files to execute remotely all together.
+        all_py_files="$all_py_files $temp"
+    fi
 done
+
+if [ $run_mode = remote ]; then
+    # Prepare performance benchmark tests for remote execution.
+    q=""
+    if [ $verbose = 0 ]; then
+        q="-q"
+    fi
+    ./remote-tests-prepare.sh $q --no-exp -o leon_tests_perfbench $all_py_files
+    /bin/rm $all_py_files
+fi
