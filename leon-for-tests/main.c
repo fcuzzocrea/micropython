@@ -194,6 +194,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 #include "py/stackctrl.h"
 #include "py/pystack.h"
 #include "mputil.h"
+#include "lib/micropython-ulab/code/ulab.h"
 
 // these settings are used to check the C stack for overflow
 #define STACK_CHECK_SIZE (MICROPY_RTEMS_STACK_SIZE - 384)
@@ -261,6 +262,7 @@ rtems_task mp_worker_task(rtems_task_argument rtems_task_arg) {
 
     // initialise the MicroPython runtime
     mp_init();
+    ulab_init();
 
     // get the precompiled bytecode from the fixed address in RAM
     const uint32_t *mpy_mem = (const uint32_t*)MPY_MEM_BASE;
