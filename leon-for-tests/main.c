@@ -135,9 +135,9 @@ static int run_scripts(int num_tasks, unsigned int script_offset, unsigned int m
     }
 
     // wait for all scripts to finish
+    unsigned int num_tasks_complete = 0;
     for (;;) {
         rtems_task_wake_after(200);
-        int num_tasks_complete = 0;
         for (int i = 0; i < num_tasks; ++i) {
             if (rtems_task_is_suspended(task_id[i]) == RTEMS_ALREADY_SUSPENDED) {
                 rtems_task_delete(task_id[i]);
