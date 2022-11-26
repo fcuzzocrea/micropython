@@ -8,15 +8,11 @@
 
 #include <stdio.h>
 #include <rtems.h>
-#include "leon-common/moddatapool.h"
 #include "leon-common/rtems_util.h"
 #include "leon-common/sparcisr.h"
 
 rtems_task mp_manager_task(rtems_task_argument unused);
 rtems_task mp_worker_task(rtems_task_argument unused);
-
-#define DATAPOOL_HEAP_SIZE (4 * 1024)
-static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
 
 /******************************************************************************/
 // RTEMS initialisation task
@@ -58,7 +54,6 @@ rtems_task Init(rtems_task_argument ignored) {
     #endif
 
     // bring up the datapool
-    datapool_init(datapool_heap, DATAPOOL_HEAP_SIZE);
 
     // start the manager task to do the rest of the work
     rtems_name task_name = rtems_build_name('M', 'P', 'M', 'A');
@@ -89,12 +84,16 @@ rtems_task Init(rtems_task_argument ignored) {
 #include "py/mphal.h"
 #include "leon-common/leonprintf.h"
 #include "leon-common/leonutil.h"
+#include "leon-common/moddatapool.h"
 
 // this variable defines the location of the externally-loaded .mpy files
 #define MPY_MEM_BASE (MICROPY_RTEMS_MPY_MEM_BASE)
 
 // this magic number is used to indicate there are packed .mpy files
 #define MPY_MEM_PACKED_HEADER (0x5041434b)
+
+#define DATAPOOL_HEAP_SIZE (4 * 1024)
+static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
 
 #if MICROPY_RTEMS_USE_TASK_CONSTRUCT
 RTEMS_ALIGNED(RTEMS_TASK_STORAGE_ALIGNMENT)
@@ -165,6 +164,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
     leon_printf("Detected %u tasks and %u scripts\n", num_tasks, num_scripts);
 
     for (unsigned int i = 0; i < num_scripts; i += num_tasks) {
+        // Print a message indicating what script(s) are going to be run.
         if (num_tasks == 1) {
             leon_printf("======== Running script %u ========\n", i);
         } else {
@@ -174,10 +174,19 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
             }
             leon_printf("======== Running %u tasks with scripts %u-%u ========\n", num_tasks, i, max_script);
         }
+
+        // Initialise the datapool.
+        datapool_init(datapool_heap, DATAPOOL_HEAP_SIZE);
+
         // we must use hexlified output so it isn't modified by the UART
         mp_hal_stdout_enable_hexlify();
         int ret = run_scripts(num_tasks, i, num_scripts);
         mp_hal_stdout_disable_hexlify();
+
+        // Deinitialise the datapool.
+        datapool_deinit();
+
+        // Stop if there was an error.
         if (ret < 0) {
             break;
         }
