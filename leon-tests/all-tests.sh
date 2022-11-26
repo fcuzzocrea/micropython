@@ -1,4 +1,92 @@
 #!/bin/sh
+#
+# This file is part of the MicroPython port to LEON platforms
+# Copyright (c) 2015-2022 George Robotics Limited
+#
+# Provided to the European Space Agency as part of the project "Evolutions
+# of MicroPython for LEON", contract number 4000137198/22/NL/MGu/kk.
+#
+# This script runs all tests, either locally on a simulator, or prepares them
+# for remote execution.
+
+######## Parse arguments.
+
+run_mode="local"
+
+while [[ $# > 0 ]]; do
+    arg="$1"
+    case $arg in
+        -r|--remote)
+        run_mode="remote"
+        ;;
+        *)
+        echo "unknown option: $arg"
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+######## Run tests.
+
+# Define the spacebel tests to run.
+spacebel_tests="
+    spacebel_tickets/SPB_1000.py
+    spacebel_tickets/SPB_1001.py
+    spacebel_tickets/SPB_1002.py
+    spacebel_tickets/SPB_1458.py
+    spacebel_tickets/SPB_1550.py
+    spacebel_tickets/SPB_1593.py
+    spacebel_tickets/SPB_1603.py
+    spacebel_tickets/SPB_1604.py
+    spacebel_tickets/SPB_1651.py
+    spacebel_tickets/SPB_1689.py
+    spacebel_tickets/SPB_1852.py
+    spacebel_tickets/SPB_2000.py
+    spacebel_tickets/SPB_542.py
+    spacebel_tickets/SPB_543.py
+    spacebel_tickets/SPB_544.py
+    spacebel_tickets/SPB_553.py
+    spacebel_tickets/SPB_561.py
+    spacebel_tickets/SPB_562.py
+    spacebel_tickets/SPB_563.py
+    spacebel_tickets/SPB_566.py
+    spacebel_tickets/SPB_567.py
+    spacebel_tickets/SPB_572.py
+    spacebel_tickets/SPB_702.py
+    spacebel_tickets/SPB_709.py
+    spacebel_tickets/SPB_711.py
+    spacebel_tickets/SPB_713.py
+    spacebel_tickets/SPB_714.py
+    spacebel_tickets/SPB_716.py
+    spacebel_tickets/SPB_717.py
+    spacebel_tickets/SPB_721.py
+    spacebel_tickets/SPB_851.py
+    spacebel_tickets/SPB_852.py
+    spacebel_tickets/SPB_854.py
+    spacebel_tickets/SPB_861.py
+    spacebel_tickets/SPB_862.py
+    spacebel_tickets/SPB_868.py
+    spacebel_tickets/SPB_869.py
+    spacebel_tickets/SPB_871.py
+    spacebel_tickets/SPB_872.py
+    spacebel_tickets/SPB_877.py
+    spacebel_tickets/SPB_883.py
+    spacebel_tickets/SPB_942.py
+    spacebel_tickets/SPB_946.py
+    spacebel_tickets/SPB_963.py
+    spacebel_tickets/SPB_996.py
+    spacebel_tickets/SPB_997.py
+    spacebel_tickets/SPB_998.py
+    spacebel_tickets/SPB_999.py
+    spacebel_tickets/SPB_extra.py
+    "
+
+# Add spacebel tests that pass only locally.
+if [ $run_mode = local ]; then
+    spacebel_tests="$spacebel_tests spacebel_tickets/SPB_1781.py"
+    spacebel_tests="$spacebel_tests spacebel_tickets/SPB_712.py"
+fi
 
 # Define the ulab tests to run.  They should all pass.
 ulab_test_dir=../lib/micropython-ulab/tests
@@ -66,30 +154,60 @@ ulab_tests="
     $ulab_test_dir/4d/numpy/create.py
     "
 
+function run_tests {
+    if [ $run_mode = local ]; then
+        # Run locally with helper script.
+        ./run-tests.sh $@
+    else
+        # Trick to get the last argument and store it in "output".
+        for output; do true; done
+        # Work out a nice name for the test suite.
+        if echo $output | grep -q micropython-ulab; then
+            output=ulab
+        else
+            output=`dirname $output`
+        fi
+        # Prepare the tests for remote execution.
+        remote_output=`./remote-tests-prepare.sh -q -o leon_tests_$output $@`
+        echo "$remote_output is ready for remote execution"
+    fi
+}
+
 # Core MicroPython tests.
-./run-tests.sh CORE_BASICS/*.py
-./run-tests.sh CORE_UNICODE/*.py
-./run-tests.sh CORE_FLOAT/*.py
-./run-tests.sh CORE_EXTMOD/*.py
-./run-tests.sh CORE_MISC/*.py
-./run-tests.sh CORE_MICROPYTHON/*.py
-./run-tests.sh CORE_STRESS/*.py
-./run-tests.sh cpydiff/*.py
-
-# micropython-ulab tests.
-./run-tests.sh $ulab_tests
-
-# MicroPython performance tests (they have no expected output).
-./run-perfbench.sh
+run_tests CORE_BASICS/*.py
+run_tests CORE_UNICODE/*.py
+run_tests CORE_FLOAT/*.py
+run_tests CORE_EXTMOD/*.py
+run_tests CORE_MISC/*.py
+run_tests CORE_MICROPYTHON/*.py
+run_tests CORE_STRESS/*.py
+run_tests cpydiff/*.py
 
 # LEON and RTEMS specific tests.
-./run-tests.sh spacebel_tickets/*.py
-./run-tests.sh leon_t1/*.exp
-./run-tests.sh -t 2 leon_t2/*.exp
-./run-tests.sh -t 10 leon_t10/*.exp
+run_tests $spacebel_tests
+run_tests leon_t1/*.exp
+run_tests -t 2 leon_t2/*.exp
+run_tests -t 10 leon_t10/*.exp
+
+# micropython-ulab tests.
+run_tests $ulab_tests
 
 # LEON performance tests (they have no expected output).
-./run-tests.sh -o leon_perf/*.py
+if [ $run_mode = local ]; then
+    ./run-tests.sh -o leon_perf/*.py
+else
+    run_tests leon_perf/*.py
+fi
+
+# MicroPython performance tests (they have no expected output).
+if [ $run_mode = local ]; then
+    ./run-perfbench.sh
+else
+    remote_output=`./run-perfbench.sh --remote -q`
+    echo "$remote_output is ready for remote execution"
+fi
 
 # mpy-cross tests.
-./run-tests-mpy-cross.sh mpy_cross/*.py
+if [ $run_mode = local ]; then
+    ./run-tests-mpy-cross.sh mpy_cross/*.py
+fi
