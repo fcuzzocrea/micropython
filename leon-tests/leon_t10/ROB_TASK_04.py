@@ -241,6 +241,11 @@ class Lock:
                     pass
                 time.sleep(0.1)
 
+    def delete(self):
+        if rtems.script_id() == 9:
+            time.sleep(5)
+            self.sem.delete()
+
     def __enter__(self):
         self.sem.obtain()
 
@@ -278,6 +283,7 @@ def test(n_loop):
 
     with lock:
         print("end")
+    lock.delete()
 
 
 # Run the test with a certain number of iterations.

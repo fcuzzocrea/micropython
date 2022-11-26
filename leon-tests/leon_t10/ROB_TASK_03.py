@@ -14,7 +14,7 @@ import rtems
 # Simple lock with context manager, based on RTEMS semaphore.
 class Lock:
     def __init__(self):
-        if rtems.script_id() == 1:
+        if rtems.script_id() == 0:
             self.sem = rtems.sem.create("LOCK")
         else:
             while True:
@@ -24,6 +24,11 @@ class Lock:
                 except OSError:
                     pass
                 time.sleep(0.1)
+
+    def delete(self):
+        if rtems.script_id() == 9:
+            time.sleep(5)
+            self.sem.delete()
 
     def __enter__(self):
         self.sem.obtain()
@@ -52,8 +57,10 @@ def test(n):
         assert i == b
 
     # Print the result of the loop and indicate we are finished.
-    with Lock():
+    lock = Lock()
+    with lock:
         print(sum, lst[-1])
+    lock.delete()
 
 
 test(10000)

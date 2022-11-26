@@ -25,6 +25,11 @@ class Lock:
                     pass
                 time.sleep(0.1)
 
+    def delete(self):
+        if rtems.script_id() == 9:
+            time.sleep(5)
+            self.sem.delete()
+
     def __enter__(self):
         self.sem.obtain()
 
@@ -133,6 +138,7 @@ def main(n, ref='sun'):
     advance(0.02, n)
     with lock:
         print('task', rtems.script_id(), 'end energy', round(report_energy(), 8))
+    lock.delete()
 
 if __name__ == '__main__':
     main(200)
