@@ -16,3 +16,6 @@ micropython.heap_lock()
 
 print(script_id, 'queue receive:', mq.receive(buf))
 print(script_id, 'queue buf:', buf)
+
+# clean up now that queue is no longer needed
+mq.delete()

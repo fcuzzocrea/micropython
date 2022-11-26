@@ -20,3 +20,5 @@ for i in range(4):
     time.sleep(0.5)
     print(script_id, 'releasing sem')
     s.release()
+
+s.delete()

@@ -19,3 +19,7 @@ print(script_id, 'queue receive:', mq_miso.receive(buf))
 print(script_id, 'queue buf:', buf)
 print(script_id, 'queue receive:', mq_miso.receive(buf))
 print(script_id, 'queue buf:', buf)
+
+# clean up now that queue is no longer needed
+mq_mosi.delete()
+mq_miso.delete()
