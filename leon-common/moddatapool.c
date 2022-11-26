@@ -22,7 +22,7 @@
 #define DATAPOOL_OBJ_TO_ID(o) ((uint32_t)MP_OBJ_TO_PTR(o))
 #define DATAPOOL_OBJ_FROM_ID(id) (MP_OBJ_FROM_PTR((void*)(id)))
 
-STATIC rtems_id datapool_sem;
+STATIC rtems_id datapool_sem = 0;
 STATIC void *datapool_old_state;
 STATIC mp_state_ctx_t datapool_state_ctx;
 
@@ -51,11 +51,13 @@ STATIC void datapool_exit(void) {
 }
 
 void datapool_init(void *datapool_heap, size_t datapool_heap_size) {
-    rtems_name name = rtems_build_name('M', 'P', 'D', 'P');
-    rtems_status_code status = rtems_semaphore_create(name, 1, 0, 0, &datapool_sem);
-    if (status != RTEMS_SUCCESSFUL) {
-        leon_printf("datapool_init: error creating semaphore; %u\n", status);
-        return;
+    if (datapool_sem == 0) {
+        rtems_name name = rtems_build_name('M', 'P', 'D', 'P');
+        rtems_status_code status = rtems_semaphore_create(name, 1, 0, 0, &datapool_sem);
+        if (status != RTEMS_SUCCESSFUL) {
+            leon_printf("datapool_init: error creating semaphore; %u\n", status);
+            return;
+        }
     }
 
     datapool_enter();
