@@ -87,7 +87,10 @@ def print_diff(lines_a, lines_b):
             if a:
                 print("<", str(a, "ascii"))
             if b:
-                print(">", str(b, "ascii"))
+                try:
+                    print(">", str(b, "ascii"))
+                except UnicodeDecodeError:
+                    print(">", b)
 
 
 def check(expected_filename, actual_filename):
