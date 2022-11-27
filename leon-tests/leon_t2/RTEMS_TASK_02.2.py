@@ -8,7 +8,7 @@ import rtems
 micropython.heap_lock()
 
 # wait for task 1 to run
-rtems.task.wake_after(50)
+rtems.task.wake_after(200)
 
 print('MicroPython script')
 print('task 2, script id', rtems.script_id())

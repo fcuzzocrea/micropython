@@ -10,4 +10,4 @@ micropython.heap_lock()
 
 for i in range(10):
     print('script', rtems.script_id(), 'iter', i)
-    rtems.task.wake_after(50)
+    rtems.task.wake_after(1000)
