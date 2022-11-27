@@ -19,6 +19,8 @@ Q(wake_after)
 Q(wake_when)
 Q(get_note)
 Q(set_note)
+Q(get_affinity)
+Q(set_affinity)
 
 Q(queue)
 Q(create)
