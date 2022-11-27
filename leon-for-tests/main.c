@@ -101,6 +101,16 @@ static char mp_task_storage[MICROPY_RTEMS_NUM_TASKS][TASK_STORAGE_SIZE];
 static rtems_task_config mp_task_config[MICROPY_RTEMS_NUM_TASKS];
 #endif
 
+static double get_time(void) {
+    #if RTEMS_6
+    struct timeval tv;
+    rtems_clock_get_realtime_timeval(&tv);
+    return tv.tv_sec + (mp_float_t)tv.tv_usec / 1000000;
+    #else
+    return 0; // not implemented for this RTEMS version
+    #endif
+}
+
 static int run_scripts(int num_tasks, unsigned int script_offset, unsigned int max_script_index) {
     rtems_id task_id[MICROPY_RTEMS_NUM_TASKS];
 
@@ -180,7 +190,9 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 
         // we must use hexlified output so it isn't modified by the UART
         mp_hal_stdout_enable_hexlify();
+        double t0 = get_time();
         int ret = run_scripts(num_tasks, i, num_scripts);
+        double t1 = get_time();
         mp_hal_stdout_disable_hexlify();
 
         // Deinitialise the datapool.
@@ -190,6 +202,8 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         if (ret < 0) {
             break;
         }
+
+        leon_printf("Total time taken: %u milliseconds\n", (unsigned int)((t1 - t0) * 1000));
     }
 
     leon_emu_terminate();
