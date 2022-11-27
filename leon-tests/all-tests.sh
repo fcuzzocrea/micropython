@@ -168,7 +168,7 @@ function run_tests {
             output=`dirname $output`
         fi
         # Prepare the tests for remote execution.
-        remote_output=`./remote-tests-prepare.sh -q -o leon_tests_$output $@`
+        remote_output=`./remote-tests-prepare.sh -q -o leon_tests_${MICROPY_RTEMS_VER}_$output $@`
         echo "$remote_output is ready for remote execution"
     fi
 }

@@ -85,6 +85,6 @@ if [ $run_mode = remote ]; then
     if [ $verbose = 0 ]; then
         q="-q"
     fi
-    ./remote-tests-prepare.sh $q --no-exp -o leon_tests_perfbench $all_py_files
+    ./remote-tests-prepare.sh $q --no-exp -o leon_tests_${MICROPY_RTEMS_VER}_perfbench $all_py_files
     /bin/rm $all_py_files
 fi
