@@ -85,6 +85,7 @@ elif [ $MICROPY_RTEMS_VER = RTEMS_6_GR712RC ]; then
     RTEMS_API=6
 elif [ $MICROPY_RTEMS_VER = RTEMS_6_GR740 ]; then
     TARGET=sis-gr740
+    #TARGET=laysim-gr740
     MICROPY_RTEMS_ROOT_DEFAULT=/opt/rtems-6-sparc-gr740-smp-3
     RTEMS_API=6
     ADDR_TASK1="0x00200000"
