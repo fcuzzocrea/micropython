@@ -137,7 +137,7 @@ def main(n, ref='sun'):
         print('task', rtems.script_id(), 'start energy', round(report_energy(), 8))
     advance(0.02, n)
     with lock:
-        print('task', rtems.script_id(), 'end energy', round(report_energy(), 8))
+        print('task end energy', round(report_energy(), 8))
     lock.delete()
 
 if __name__ == '__main__':
