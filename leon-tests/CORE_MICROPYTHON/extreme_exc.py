@@ -1,6 +1,7 @@
 # test some extreme cases of allocating exceptions and tracebacks
 
 import micropython
+import gc
 
 # some ports need to allocate heap for the emergency exception
 try:
@@ -36,6 +37,7 @@ def main():
             lst = [lst]
         except MemoryError:
             break
+    gc.collect()
     try:
         f(abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz=1)
     except Exception as er:
