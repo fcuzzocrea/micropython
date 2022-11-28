@@ -187,6 +187,7 @@ run_tests cpydiff/*.py
 run_tests $spacebel_tests
 run_tests leon_t1/*.exp
 run_tests -t 2 leon_t2/*.exp
+run_tests -t 8 leon_t8/*.exp
 run_tests -t 10 leon_t10/*.exp
 
 # micropython-ulab tests.
