@@ -128,10 +128,10 @@ do
         $MPY_CROSS -o $outfile.1.mpy $infile_no_ext.1.py || exit $?
         $MPY_CROSS -o $outfile.2.mpy $infile_no_ext.2.py || exit $?
         all_mpy_files="$all_mpy_files $outfile.1.mpy $outfile.2.mpy"
-    elif [ $num_tasks = 10 ]; then
-        # The case t=10 has a single .py file, while is run on all 10 tasks.
+    elif [ $num_tasks = 8 -o $num_tasks = 10 ]; then
+        # The case t=8 and t=10 has a single .py file, which is run on all 8 or 10 tasks.
         $MPY_CROSS -o $outfile.mpy $infile_no_ext.py || exit $?
-        for i in {1..10}; do
+        for i in `seq 1 $num_tasks`; do
             all_mpy_files="$all_mpy_files $outfile.mpy"
         done
     else

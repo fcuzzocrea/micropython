@@ -187,7 +187,7 @@ do
         prepare_scripts ${tempfile} $num_tasks \
             ${infile_no_ext}.1.mpy \
             ${infile_no_ext}.2.mpy
-    elif [ $num_tasks = 10 ]; then
+    elif [ $num_tasks = 8 -o $num_tasks = 10 ]; then
         $MPC ${infile_no_ext}.py || exit $?
         prepare_scripts ${tempfile} $num_tasks \
             ${infile_no_ext}.mpy
