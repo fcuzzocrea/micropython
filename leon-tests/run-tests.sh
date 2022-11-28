@@ -147,9 +147,9 @@ EOF
         )
         echo -e "$leon2_emu_cmd" | leon2-emu
     elif [ $TARGET = sis-leon3 ]; then
-        $SIS -leon3 -dumbio -r $1.elf
+        $SIS -leon3 -m 2 -dumbio -r $1.elf
     elif [ $TARGET = sis-gr740 ]; then
-        $SIS -gr740 -dumbio -r $1.elf
+        $SIS -gr740 -m 4 -dumbio -r $1.elf
     elif [ $TARGET = laysim-gr740 ]; then
         $MICROPY_LAYSIM -r -core0 $1.elf
     else
