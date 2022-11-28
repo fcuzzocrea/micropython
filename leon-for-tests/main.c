@@ -102,12 +102,18 @@ static rtems_task_config mp_task_config[MICROPY_RTEMS_NUM_TASKS];
 #endif
 
 static double get_time(void) {
-    #if RTEMS_6
-    struct timeval tv;
-    rtems_clock_get_realtime_timeval(&tv);
-    return tv.tv_sec + (mp_float_t)tv.tv_usec / 1000000;
+    #if RTEMS_4_8
+    rtems_clock_time_value t;
+    rtems_clock_get(RTEMS_CLOCK_GET_TIME_VALUE, &t);
+    return t.seconds + 1e-6 * t.microseconds;
     #else
-    return 0; // not implemented for this RTEMS version
+    struct timeval tv;
+    #if RTEMS_4_10 || RTEMS_4_11 || RTEMS_5
+    rtems_clock_get_tod_timeval(&tv);
+    #else
+    rtems_clock_get_realtime_timeval(&tv);
+    #endif
+    return tv.tv_sec + (double)tv.tv_usec / 1000000;
     #endif
 }
 
