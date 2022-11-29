@@ -134,7 +134,7 @@ def main(n, ref='sun'):
     micropython.heap_lock()
     offset_momentum(BODIES[ref])
     with lock:
-        print('task', rtems.script_id(), 'start energy', round(report_energy(), 8))
+        print('task start energy', round(report_energy(), 8))
     advance(0.02, n)
     with lock:
         print('task end energy', round(report_energy(), 8))
