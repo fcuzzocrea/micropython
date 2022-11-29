@@ -8,7 +8,7 @@ i = None
 # below tests should not need the heap
 micropython.heap_lock()
 
-rtems.task.wake_after(500)
+rtems.task.wake_after(1000)
 for i in range(10):
     print('script', rtems.script_id(), 'iter', i)
-    rtems.task.wake_after(1000)
+    rtems.task.wake_after(2000)

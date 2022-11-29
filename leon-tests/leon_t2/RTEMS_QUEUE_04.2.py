@@ -7,7 +7,7 @@ import rtems
 
 script_id = '[T%u]' % rtems.script_id()
 
-time.sleep(1)
+time.sleep(2)
 mq = rtems.queue.ident('tstq', 0)
 buf = bytearray(10)
 
