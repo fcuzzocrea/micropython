@@ -11,7 +11,11 @@ PREFIXES = {
     "laysim-gr740": "HEX ",
 }
 
-target = sys.argv[1]
+target = "laysim-gr740"
+
+if len(sys.argv) > 1:
+    target = sys.argv[1]
+
 prefix = PREFIXES[target]
 
 lines = []
