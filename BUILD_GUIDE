@@ -1,7 +1,11 @@
 GRL-MPLEON-SW2-BUILD-GUIDE
+
 For ESA Contract No. 4000114080/15/NL/FE/as
 Porting of MicroPython to LEON platforms
 Task 2: Implementation and Testing of the MicroPython VM for LEON
+
+For ESA Contract No. 4000137198/22/NL/MGu/kk
+Evolutions of MicroPython for LEON
 
 ================================================================================
 Overview
@@ -16,14 +20,17 @@ example code.
 Directory structure
 ================================================================================
 
-There are 2 main components in this package, the existing MicroPython code
-with patches to make improvements for LEON, and the LEON specific directories.
+There are three main components in this package:
+- the existing MicroPython code with patches to make improvements for LEON;
+- a copy of micropython-ulab (numpy-compatible library) with patches to make
+  it build and run correctly on LEON;
+- and, the LEON specific directories.
 
-Existing MicroPython code with patches includes:
+Existing MicroPython code, and micropython-ulab, with patches includes:
 
     py/         core MicroPython source
     extmod/     extension modules
-    lib/        generic C libraries
+    lib/        generic C libraries, including micropython-ulab
     tools/      miscellaneous helper scripts
     docs/       includes conf.py to get version number
     mpy-cross/  MicroPython cross compiler to produce .mpy files
@@ -38,6 +45,7 @@ LEON specific directories:
     leon-for-tests/     a version of MicroPython for running LEON tests
     leon-tests/         the LEON tests
     leon-obcp/          OBCP example system
+    leon-spacebel/      a LEON port with configuration close to Spacebel's
 
 ================================================================================
 Prerequisites
@@ -48,23 +56,50 @@ To build and run the code you will need:
     - make, bash, and Python (2.6+ or 3.3+)
     - a local/host C compiler and linker (usually gcc et al)
     - a cross compiler for SPARC V8 (eg sparc-rtems-gcc)
-    - the RTEMS library; 4.8 (Edisoft and normal) and 4.10, 4.11 are supported
-    - a SPARC emulator (for running the code, eg leon2-emu)
+    - the RTEMS library; 4.8 (Edisoft and normal), 4.10, 4.11, 5.1 and 6 are
+      supported (both GR712RC and GR740 targets are supported on 5.1 and 5)
+    - a SPARC emulator (for running the code, eg leon2-emu, sis, laysim-gr740)
 
 It is assumed that the host C compiler is in your path.
 
-The location of the SPARC compiler and the RTEMS library are configured in the
-leon-common/mkenv.mk file.  In this file you can select which RTEMS version you
-are using.
+The default locations of the SPARC compiler and the RTEMS library are configured
+in the leon-common/mkenv.mk file.  You must select which RTEMS version you are
+using by exporting the following environment variables:
 
-To optimise the built-in hash tables you also need to configure the location of
-the SPARC cc1 executable in the tools/cc1 file, with the variable "cc1_path".
-Alternatively, you can disable hash-table optimisation by commenting out the
-line in Makefile that reads: CFLAGS += -no-integrated-cpp -B$(shell pwd)/../tools
+    export MICROPY_RTEMS_VER=...
+    export MICROPY_RTEMS_ROOT=...  (optional)
+
+The options for MICROPY_RTEMS_VER are:
+
+    export MICROPY_RTEMS_VER=RTEMS_4_8_EDISOFT
+    export MICROPY_RTEMS_VER=RTEMS_4_8
+    export MICROPY_RTEMS_VER=RTEMS_4_10
+    export MICROPY_RTEMS_VER=RTEMS_4_11
+    export MICROPY_RTEMS_VER=RTEMS_5_1_GR712RC
+    export MICROPY_RTEMS_VER=RTEMS_5_1_GR740
+    export MICROPY_RTEMS_VER=RTEMS_6_GR712RC
+    export MICROPY_RTEMS_VER=RTEMS_6_GR740
+
+For example, to use RTEMS 4.8 (Edisoft) you can do:
+
+    export MICROPY_RTEMS_VER=RTEMS_4_8_EDISOFT
+    export MICROPY_RTEMS_ROOT=/opt/rtems-4.8-edisoft
+
+For RTEMS 4.11 (setting LD_LIBRARY_PATH may or may not be needed):
+
+    export MICROPY_RTEMS_VER=RTEMS_4_11
+    export LD_LIBRARY_PATH=/opt/rtems-4.11/lib
+
+And for RTEMS 6 targetting GR740 (again, an example):
+
+    export MICROPY_RTEMS_VER=RTEMS_6_GR740
+
+See leon-common/mkenv.mk for more details.
 
 To run the compiled code (eg for the tests) it is assumed that the "leon2-emu"
-executable is in your path.  This executable is referenced in some Makefile's
-under the "run" target, as well as in the leon-tests/run-tests.sh script.
+executable is in your path for RTEMS 4.x, and "sparc-rtemsX-sis" for RTEMS 5.1
+and 6.  These executables are referenced in leon-common/mkapp.mk under the "run"
+target, as well as in the leon-tests/run-tests.sh script.
 
 ================================================================================
 Building
@@ -160,6 +195,141 @@ In main.c there are also some configuration variables of note:
 
 These can be used to adjust the stack and heap size (per task) as well as the
 number of tasks.
+
+To optimise the built-in hash tables, define the following in the project
+Makefile:
+
+    LEON_OPTIMISE_HASH_TABLES = 1
+
+================================================================================
+micropython-ulab
+================================================================================
+
+The micropython-ulab component must be explicitly included in a project by that
+project's configuration file.  To do that follow the steps below.
+
+1. In the project Makefile, add the following line, which will include all
+   necessary build rules for micropython-ulab:
+
+    include $(LEON_COMMON_FROM_HERE)/mkapp_ulab.mk
+
+2. In the project mpconfigpart.h file, add the symbol ulab_user_cmodule to the
+   MICROPY_PORT_BUILTIN_MODULES list.  For example:
+
+    extern const struct _mp_obj_module_t ulab_user_cmodule;
+
+    #define MICROPY_PORT_BUILTIN_MODULES \
+        { MP_ROM_QSTR(MP_QSTR_ulab), MP_ROM_PTR(&ulab_user_cmodule) }, \
+        ...
+
+Then rebuild the project.  The new module can be imported as "import ulab"
+or "from ulab import numpy as np" for numpy compatibility.
+
+The micropython-ulab configuration is provided by the common
+leon-common/leon_ulab_config.h file.  The leon-for-tests project includes
+micropython-ulab by default, so it can be tested as part of the test suite.
+
+================================================================================
+Running the test suite on remote hardware
+================================================================================
+
+The test suite can be run locally via:
+
+    $ cd leon-tests
+    $ ./all-tests.sh
+
+That uses the available LEON simulator (configured via MICROPY_RTEMS_VER).
+
+To run the tests on remote hardware they must be bundled together in a stand-
+alone elf executable.  This can be achieved by passing the "-r"/"--remote"
+argument to the all-tests.sh script:
+
+    $ cd leon-tests
+    $ ./all-tests.sh --remote
+
+Behind the scenes the remote-tests-prepare.sh script is used to create the
+stand-alone executable.  The output of running this is a set of 16 elf files,
+named after the target.  For example, if RTEMS_6_GR740 is selected then the
+output files are:
+
+    leon_tests_RTEMS_6_GR740_CORE_BASICS.elf
+    leon_tests_RTEMS_6_GR740_CORE_UNICODE.elf
+    leon_tests_RTEMS_6_GR740_CORE_FLOAT.elf
+    leon_tests_RTEMS_6_GR740_CORE_EXTMOD.elf
+    leon_tests_RTEMS_6_GR740_CORE_MISC.elf
+    leon_tests_RTEMS_6_GR740_CORE_MICROPYTHON.elf
+    leon_tests_RTEMS_6_GR740_CORE_STRESS.elf
+    leon_tests_RTEMS_6_GR740_cpydiff.elf
+    leon_tests_RTEMS_6_GR740_spacebel_tickets.elf
+    leon_tests_RTEMS_6_GR740_leon_t1.elf
+    leon_tests_RTEMS_6_GR740_leon_t2.elf
+    leon_tests_RTEMS_6_GR740_leon_t8.elf
+    leon_tests_RTEMS_6_GR740_leon_t10.elf
+    leon_tests_RTEMS_6_GR740_ulab.elf
+    leon_tests_RTEMS_6_GR740_leon_perf.elf
+    leon_tests_RTEMS_6_GR740_perfbench.elf
+
+Alongside these files are corresponding .exp files, which is the expected output
+of the executable when it is run.
+
+Run the elf files on the desired target hardware (or even with a LEON simulator)
+and caputure the output.  A full run on GR740 hardware takes about 25 minutes.
+
+The actual output can then be compared with the expected output by using the
+remote-tests-report.py script (it needs to decode the hexlified output of the
+executable).  Pass the expected file first, then the actual.  For example:
+
+    $ cd leon-tests
+    $ ./remote-tests-report.py leon_tests_RTEMS_6_GR740_CORE_BASICS.exp \
+        leon_tests_RTEMS_6_GR740_CORE_BASICS.out
+
+To check all output at once, try:
+
+    for file in leon_tests_*.exp; do
+        ./remote-tests-report.py $file `basename $file .exp`.out
+    done
+
+The report will indicate which tests passed and which failed.  For failing tests
+it will show a diff of the expected and actual output.
+
+================================================================================
+Running the performance benchmark test suite
+================================================================================
+
+The performance benchmark test suite is run as part of the all-tests.sh script.
+It can also be run separately via:
+
+    $ cd leon-tests
+    $ ./run-perfbench.sh
+
+Again, this will use the MICROPY_RTEMS_VER setting to determine what LEON
+simulator to use.
+
+The output is one line per test, consisting of:
+- the name of the test is first;
+- the time in microseconds for one test run;
+- the timing error (0 for LEON);
+- a score for the test (higher is more performant);
+- the score error (0 for LEON).
+
+To compare the output of two separate runs of the benchmark suite, capture the
+output of the separate runs and then use the tests/run-perfbench.py script to
+compare them (this script is from the main MicroPython repository, while
+leon-tests/run-perfbench.sh is specific to the LEON port).  For example, if
+the output is in the files perf0 and perf1 then do:
+
+    $ cd tests
+    $ ./run-perfbench.py -s perf0 perf1
+
+That will produce a report measure the change in score from perf0 to perf1.
+Pass "-t" instead of "-s" to report on the time (the inverse of the score).
+
+To run the performance suite on remote hardware, pass the "-r"/"--remote"
+argument to the run-perfbench.sh script.  This will prepare a stand-alone elf
+executable to run on hardware (or a LEON simulator).  After running, capture the
+output and pipe it through leon-tests/unhexlify.py to decode the output.  The
+test name will not be included in this output so needs to be added by hand if
+the output is to be passed to tests/run-perfbench.py.
 
 ================================================================================
 Code size
