@@ -1,0 +1,104 @@
+Code coverage results from x86-64 unix port running full test suite.
+Only files from the py/ directory are reported here.
+
+  %hit  #miss   #hit #lines filename
+ 83.33      1      5      6 nlrx64.c.gcov
+ 90.48      4     38     42 scheduler.c.gcov
+ 91.07      5     51     56 objmodule.c.gcov
+ 91.67      5     55     60 reader.c.gcov
+ 92.79      8    103    111 objstringio.c.gcov
+ 93.58      7    102    109 qstr.c.gcov
+ 95.00      1     19     20 objcell.c.gcov
+ 95.39     10    207    217 modbuiltins.c.gcov
+ 95.65      7    154    161 objexcept.c.gcov
+ 95.74      2     45     47 argcheck.c.gcov
+ 96.09      9    221    230 obj.c.gcov
+ 96.12      4     99    103 persistentcode.c.gcov
+ 96.15      1     25     26 modsys.c.gcov
+ 96.88      1     31     32 objclosure.c.gcov
+ 96.92      2     63     65 modio.c.gcov
+ 97.22      1     35     36 nativeglue.c.gcov
+ 97.56      1     40     41 asmbase.c.gcov
+ 97.68      6    253    259 stream.c.gcov
+ 98.08      5    256    261 asmx64.c.gcov
+ 98.58      2    139    141 vstr.c.gcov
+ 98.80      1     82     83 modthread.c.gcov
+ 98.86      2    173    175 builtinimport.c.gcov
+ 99.19      1    123    124 repl.c.gcov
+ 99.30      4    567    571 vm.c.gcov
+ 99.42      2    342    344 showbc.c.gcov
+ 99.43      1    174    175 formatfloat.c.gcov
+ 99.66      1    294    295 gc.c.gcov
+ 99.84      1    629    630 runtime.c.gcov
+100.00      0    109    109 bc.c.gcov
+100.00      0    220    220 binary.c.gcov
+100.00      0     51     51 builtinevex.c.gcov
+100.00      0     65     65 builtinhelp.c.gcov
+100.00      0   1789   1789 compile.c.gcov
+100.00      0    562    562 emitbc.c.gcov
+100.00      0     26     26 emitcommon.c.gcov
+100.00      0     44     44 emitglue.c.gcov
+100.00      0     56     56 frozenmod.c.gcov
+100.00      0    332    332 lexer.c.gcov
+100.00      0     52     52 malloc.c.gcov
+100.00      0    200    200 map.c.gcov
+100.00      0      3      3 misc.h.gcov
+100.00      0     34     34 modcmath.c.gcov
+100.00      0     27     27 modgc.c.gcov
+100.00      0     81     81 modmath.c.gcov
+100.00      0     41     41 modmicropython.c.gcov
+100.00      0    115    115 modstruct.c.gcov
+100.00      0      5      5 moduerrno.c.gcov
+100.00      0    275    275 mpprint.c.gcov
+100.00      0    668    668 mpz.c.gcov
+100.00      0      3      3 mpz.h.gcov
+100.00      0      9      9 nlr.c.gcov
+100.00      0    242    242 objarray.c.gcov
+100.00      0     31     31 objattrtuple.c.gcov
+100.00      0     23     23 objbool.c.gcov
+100.00      0     38     38 objboundmeth.c.gcov
+100.00      0    120    120 objcomplex.c.gcov
+100.00      0     52     52 objdeque.c.gcov
+100.00      0    279    279 objdict.c.gcov
+100.00      0     15     15 objenumerate.c.gcov
+100.00      0     16     16 objfilter.c.gcov
+100.00      0    129    129 objfloat.c.gcov
+100.00      0    130    130 objfun.c.gcov
+100.00      0     98     98 objgenerator.c.gcov
+100.00      0     18     18 objgetitemiter.c.gcov
+100.00      0      9      9 obj.h.gcov
+100.00      0    132    132 objint.c.gcov
+100.00      0    205    205 objint_mpz.c.gcov
+100.00      0    260    260 objlist.c.gcov
+100.00      0     19     19 objmap.c.gcov
+100.00      0      2      2 objmodule.h.gcov
+100.00      0     77     77 objnamedtuple.c.gcov
+100.00      0      5      5 objnone.c.gcov
+100.00      0     11     11 objobject.c.gcov
+100.00      0      3      3 objpolyiter.c.gcov
+100.00      0     26     26 objproperty.c.gcov
+100.00      0     93     93 objrange.c.gcov
+100.00      0     16     16 objreversed.c.gcov
+100.00      0    264    264 objset.c.gcov
+100.00      0      4      4 objsingleton.c.gcov
+100.00      0     34     34 objslice.c.gcov
+100.00      0   1025   1025 objstr.c.gcov
+100.00      0    123    123 objstrunicode.c.gcov
+100.00      0    133    133 objtuple.c.gcov
+100.00      0    506    506 objtype.c.gcov
+100.00      0     20     20 objzip.c.gcov
+100.00      0     12     12 opmethods.c.gcov
+100.00      0    481    481 parse.c.gcov
+100.00      0      4      4 parse.h.gcov
+100.00      0     29     29 parsenumbase.c.gcov
+100.00      0    133    133 parsenum.c.gcov
+100.00      0      9      9 pystack.h.gcov
+100.00      0      5      5 runtime.h.gcov
+100.00      0     14     14 runtime_utils.c.gcov
+100.00      0     64     64 scope.c.gcov
+100.00      0    126    126 sequence.c.gcov
+100.00      0     25     25 smallint.c.gcov
+100.00      0     15     15 stackctrl.c.gcov
+100.00      0     70     70 unicode.c.gcov
+100.00      0     11     11 warning.c.gcov
+ 99.30    100  14248  14348
