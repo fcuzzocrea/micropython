@@ -27,6 +27,7 @@ CFLAGS += $(INC) -Wall -Werror $(COPT)
 # Debugging/Optimization
 ifeq ($(DEBUG), 1)
 CFLAGS += -O0 -ggdb
+LDFLAGS += -Wl,-Map=build-RTEMS_6_MPFS/firmware.map
 else
 CFLAGS += -Os -DNDEBUG
 endif
@@ -42,9 +43,9 @@ $(BUILD)/firmware.elf: $(OBJ)
 	$(Q)$(LD) $(OBJ) $(LDFLAGS) -o $@ $(LIBS)
 	$(Q)$(SIZE) $@
 
-$(BUILD)/firmware_combined.elf: $(BUILD)/firmware.elf
-	$(Q)touch $(BUILD)/scripts.bin
-	$(Q)$(OBJCOPY) --add-section .scripts=$(BUILD)/scripts.bin --change-section-address .scripts=$(MICROPY_RTEMS_MPY_MEM_BASE) --set-section-flags .scripts=contents,alloc,load,data $< $@
+#$(BUILD)/firmware_combined.elf: $(BUILD)/firmware.elf
+#	$(Q)touch $(BUILD)/scripts.bin
+#	$(Q)$(OBJCOPY) --add-section .scripts=$(BUILD)/scripts.bin --change-section-address .scripts=$(MICROPY_RTEMS_MPY_MEM_BASE) --set-section-flags .scripts=contents,alloc,load,data $< $@
 
 # General rule to build .mpy files from .py files, via mpy-cross.
 $(BUILD)/%.mpy: %.py
@@ -53,6 +54,6 @@ $(BUILD)/%.mpy: %.py
 	$(Q)../mpy-cross/mpy-cross -o $@ $<
 
 # Build scripts.h from a set of specified .py files in $(SRC_PY).
-$(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
-	$(ECHO) "GEN $@"
-	$(Q)$(MPFS_COMMON_FROM_HERE)/mpy_package.py tohdr $^ > $@
+#$(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
+#	$(ECHO) "GEN $@"
+#	$(Q)$(MPFS_COMMON_FROM_HERE)/mpy_package.py tohdr $^ > $@

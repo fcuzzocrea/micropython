@@ -20,8 +20,7 @@ RTEMS_API = 6
 RTEMS_CPU = riscv
 RTEMS_BSP = mpfs64imafdc
 RTEMS_BASE = $(MICROPY_RTEMS_ROOT)/$(RTEMS_CPU)-rtems$(RTEMS_API)/$(RTEMS_BSP)/lib
-CFLAGS += -std=gnu17
-LDFLAGS += -lc # remove in future
+CFLAGS += -std=c99
 endif
 
 ################################################################################
