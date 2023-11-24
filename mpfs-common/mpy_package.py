@@ -17,7 +17,7 @@ def convert_mpy_to_c_header(filenames):
         scripts.append(data)
 
     print('static const size_t mpy_script_num = %u;' % len(scripts))
-    print('static const size_t mpy_script_len[] = {',
+    print('static volatile const size_t mpy_script_len[] = {',
         ', '.join(str(len(script)) for script in scripts), '};')
     print('static const uint8_t *mpy_script_data[] = {')
     for script in scripts:

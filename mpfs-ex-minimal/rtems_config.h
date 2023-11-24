@@ -1,7 +1,7 @@
 #include "mpfs-common/rtems_config_common.h"
 
 #define MICROPY_RTEMS_NUM_TASKS             (1)
-#define MICROPY_RTEMS_HEAP_SIZE             (16 * 1024)
+#define MICROPY_RTEMS_HEAP_SIZE             (2000 * 1024)
 #define MICROPY_RTEMS_PYSTACK_WORD_SIZE     (512)
 
 #define MICROPY_RTEMS_TASK_ATTRIBUTES (RTEMS_APPLICATION_TASK)

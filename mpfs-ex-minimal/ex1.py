@@ -69,7 +69,7 @@ def loop(sensors, indicators):
 
 def main():
     sensors, indicators = create()
-    micropython.heap_lock()
+    #micropython.heap_lock()
     print('MicroPython script 1')
     print('RTEMS script id:', rtems.script_id())
     loop(sensors, indicators)

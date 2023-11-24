@@ -1,13 +1,12 @@
 /*
- * This file is part of the MicroPython port to LEON platforms
- * Copyright (c) 2015-2016 George Robotics Limited
+ * This file is part of the MicroPython port to MPFS platforms
  *
- * Provided to the European Space Agency as part of the project "Porting of
- * MicroPython to LEON platforms", contract number 4000114080/15/NL/FE/as.
+ * Based on LEON port originally made by George Robotics
+ *
+ * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
  */
 
 // include common options for MPFS
-#define MICROPY_USE_64BIT_NAN_BOXING (1)
 #include "mpfs-common/mpconfigport_common.h"
 
 // options to control how MicroPython is built

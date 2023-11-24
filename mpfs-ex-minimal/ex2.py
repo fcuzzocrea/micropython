@@ -13,7 +13,7 @@ ex3.foo(1)
 def main():
     tod = 6 * [0]
 
-    micropython.heap_lock()
+    #micropython.heap_lock()
 
     print('MicroPython script 2')
     print('RTEMS script id:', rtems.script_id())

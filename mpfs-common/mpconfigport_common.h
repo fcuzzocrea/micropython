@@ -24,10 +24,9 @@
 #define UINT_FMT "%u"
 #define INT_FMT "%d"
 
-// Configuration for LP64D
-typedef long mp_int_t; // must be pointer size
-typedef unsigned long mp_uint_t; // must be pointer size
-typedef long long mp_off_t;
+typedef int64_t mp_int_t; // must be pointer size
+typedef uint64_t mp_uint_t; // must be pointer size
+typedef long mp_off_t;
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
