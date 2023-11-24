@@ -1,6 +1,9 @@
 /*
- * This file is part of the MicroPython port to LEON platforms
- * Copyright (c) 2017 George Robotics Limited
+ * This file is part of the MicroPython port to MPFS platforms
+ *
+ * Based on LEON port originally made by George Robotics
+ *
+ * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
  */
 #ifndef INCLUDED_MPFS_COMMON_RTEMSSEM_H
 #define INCLUDED_MPFS_COMMON_RTEMSSEM_H

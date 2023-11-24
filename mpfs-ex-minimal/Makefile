@@ -30,7 +30,7 @@ OBJ += $(addprefix $(BUILD)/,$(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/,$(MPFS_COMMON_OBJ))
 
 # Require scripts.h, containing the SRC_PY files compiled to bytecode.
-#main.c: $(BUILD)/scripts.h
+main.c: $(BUILD)/scripts.h
 
 # Include MPFS convenience rules to build the MicroPython RTEMS application.
 include $(MPFS_COMMON_FROM_HERE)/mkapp.mk

@@ -1,9 +1,9 @@
 /*
- * This file is part of the MicroPython port to LEON platforms
- * Copyright (c) 2016 George Robotics Limited
+ * This file is part of the MicroPython port to MPFS platforms
  *
- * Provided to the European Space Agency as part of the project "Porting of
- * MicroPython to LEON platforms", contract number 4000114080/15/NL/FE/as.
+ * Based on LEON port originally made by George Robotics
+ *
+ * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
  */
 
 #pragma once

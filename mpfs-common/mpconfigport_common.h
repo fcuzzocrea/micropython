@@ -1,6 +1,9 @@
 /*
- * This file is part of the MicroPython port to LEON platforms
- * Copyright (c) 2015-2017 George Robotics Limited
+ * This file is part of the MicroPython port to MPFS platforms
+ *
+ * Based on LEON port originally made by George Robotics
+ *
+ * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
  */
 
 #include <stdint.h>
@@ -15,52 +18,29 @@
 #define MICROPY_RTEMS_ENABLE_DATAPOOL (0)
 #endif
 
-// definitions specific to SPARC
-#define MP_ENDIANNESS_BIG (1)
-#define MICROPY_MAKE_POINTER_CALLABLE(p) ((void*)p)
-#define MICROPY_SPARC_NUM_REG_WINDOWS (8)
-
-#if defined(MICROPY_USE_64BIT_NAN_BOXING) && MICROPY_USE_64BIT_NAN_BOXING
+#define MICROPY_MAKE_POINTER_CALLABLE(p) ((void *)((mp_uint_t)(p) | 1))
 
 // configuration for 64-bit NaN boxing
-#define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_D)
-#define UINT_FMT "%llu"
-#define INT_FMT "%lld"
-typedef int64_t mp_int_t;
-typedef uint64_t mp_uint_t;
+#define UINT_FMT "%u"
+#define INT_FMT "%d"
 
-#else
-
-// configuration for object size the same as machine pointer size
-#define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_A)
-typedef intptr_t mp_int_t;
-typedef uintptr_t mp_uint_t;
-
-#endif
-
-typedef long mp_off_t;
+// Configuration for LP64D
+typedef long mp_int_t; // must be pointer size
+typedef unsigned long mp_uint_t; // must be pointer size
+typedef long long mp_off_t;
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
-
-// INFINITY is not defined by toolchain
-#ifndef INFINITY
-#define INFINITY (__builtin_inff())
-#endif
-
-// LEON ports provide their own version of mp_raw_code_load_file
+// MPFS ports provide their own version of mp_raw_code_load_file
 #define MICROPY_CUSTOM_MP_RAW_CODE_LOAD_FILE (1)
 
-// For RTEMS 5 and RTEMS 6 it's possible to use the built-in setjmp/longjmp functions
-// for MicroPython NLR handling.
-#if !defined(MICROPY_NLR_SPARC) && !defined(MICROPY_NLR_SETJMP)
+// For RTEMS 6 it's possible to use the built-in setjmp/longjmp functions for MicroPython NLR handling.
 #define MICROPY_NLR_SETJMP (1)
 
-// For RTEMS 5 and RTEMS 6 these thread-local-state functions are defined as real functions
+// For RTEMS 6 these thread-local-state functions are defined as real functions
 void *mp_state_ptr(void);
 void mp_state_ptr_set(void *value);
-#endif
 
 // We define our own state accessor macros, to use a thread-local-state pointer in the RTEMS task
 #define MP_STATE_PTR ((mp_state_ctx_t*)mp_state_ptr())
@@ -68,10 +48,6 @@ void mp_state_ptr_set(void *value);
 #define MP_STATE_MEM(x) (MP_STATE_PTR->mem.x)
 #define MP_STATE_THREAD(x) (MP_STATE_PTR->thread.x)
 #define MP_STATE_PORT MP_STATE_VM
-
-// The static analyser doesn't understand __builtin_expect so don't use it
-#define MP_LIKELY(x) (x)
-#define MP_UNLIKELY(x) (x)
 
 // Enable math function workarounds for cases that do not conform to IEEE floating point behaviour.
 #define MICROPY_PY_BUILTINS_ROUND_POW_CHECK_DOMAIN (1)

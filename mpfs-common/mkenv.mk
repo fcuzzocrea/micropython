@@ -26,8 +26,9 @@ endif
 ################################################################################
 # General settings
 
-# Configure the RAM address for loading .mpy files leave 2MiB for firmware)
-MICROPY_RTEMS_MPY_MEM_BASE = 0x1000001000
+# Configure the RAM address for loading .mpy files. ~4 mb after base address)
+MICROPY_RTEMS_MPY_MEM_BASE = 0x1000400000
+CFLAGS += -DMICROPY_RTEMS_MPY_MEM_BASE=$(MICROPY_RTEMS_MPY_MEM_BASE)
 
 ifneq ($(RTEMS_BASE),)
 LDFLAGS += -B$(RTEMS_BASE)/ -qrtems 

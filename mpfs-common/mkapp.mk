@@ -36,16 +36,24 @@ CFLAGS += $(CFLAGS_EXTRA)
 
 LIBS += -lm
 
-all: $(BUILD)/firmware.elf
+all: $(BUILD)/firmware.elf $(BUILD)/firmware.srec $(BUILD)/firmware.tab
 
 $(BUILD)/firmware.elf: $(OBJ)
 	$(ECHO) "LINK $@"
 	$(Q)$(LD) $(OBJ) $(LDFLAGS) -o $@ $(LIBS)
 	$(Q)$(SIZE) $@
 
-#$(BUILD)/firmware_combined.elf: $(BUILD)/firmware.elf
-#	$(Q)touch $(BUILD)/scripts.bin
-#	$(Q)$(OBJCOPY) --add-section .scripts=$(BUILD)/scripts.bin --change-section-address .scripts=$(MICROPY_RTEMS_MPY_MEM_BASE) --set-section-flags .scripts=contents,alloc,load,data $< $@
+$(BUILD)/firmware.srec: $(BUILD)/firmware.elf
+	$(ECHO) "SREC $@"
+	$(Q)$(OBJCOPY) -O srec $< $@
+
+$(BUILD)/firmware.tab: $(BUILD)/firmware.elf
+	$(ECHO) "TAB $@"
+	$(Q)$(OBJDUMP) --syms $< > $@
+
+$(BUILD)/firmware_combined.elf: $(BUILD)/firmware.elf
+	$(Q)touch $(BUILD)/scripts.bin
+	$(Q)$(OBJCOPY) --add-section .scripts=$(BUILD)/scripts.bin --change-section-address .scripts=$(MICROPY_RTEMS_MPY_MEM_BASE) --set-section-flags .scripts=contents,alloc,load,data $< $@
 
 # General rule to build .mpy files from .py files, via mpy-cross.
 $(BUILD)/%.mpy: %.py
@@ -54,6 +62,12 @@ $(BUILD)/%.mpy: %.py
 	$(Q)../mpy-cross/mpy-cross -o $@ $<
 
 # Build scripts.h from a set of specified .py files in $(SRC_PY).
-#$(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
-#	$(ECHO) "GEN $@"
-#	$(Q)$(MPFS_COMMON_FROM_HERE)/mpy_package.py tohdr $^ > $@
+$(BUILD)/scripts.h: $(addprefix $(BUILD)/, $(SRC_PY:.py=.mpy))
+	$(ECHO) "GEN $@"
+	$(Q)$(MPFS_COMMON_FROM_HERE)/mpy_package.py tohdr $^ > $@
+
+# Rule to preprocess all the source files, producing .pp output in the $(BUILD) dir.
+# We first build all the object files so that qstrs etc are generated correctly.
+PREPROC_IGNORE = py/emitn%.pp mpfs-common/sparcjmp.pp mpfs-common/gchelper.pp
+.PHONY: preprocess
+preprocess: $(OBJ) $(filter-out $(addprefix $(BUILD)/,$(PREPROC_IGNORE)),$(OBJ:.o=.pp))
