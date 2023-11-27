@@ -1,3 +1,9 @@
+# This file is part of the MicroPython port to MPFS platforms
+#
+# Based on LEON port originally made by George Robotics
+#
+# Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
+#
 # This Makefile builds an example of a minimal MPFS port.
 
 # The location of the MicroPython MPFS support code.
