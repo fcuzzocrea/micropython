@@ -102,9 +102,9 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
         }
         if (num_tasks_complete == MICROPY_RTEMS_NUM_TASKS) {
             printf("\nemu_terminate\n");
-            #if MICROPY_RTEMS_USE_FATAL
+#if MICROPY_RTEMS_USE_FATAL
             rtems_fatal(RTEMS_FATAL_SOURCE_EXIT, 0);
-            #endif
+#endif
         }
     }
 }
