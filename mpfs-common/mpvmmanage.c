@@ -29,10 +29,10 @@
 
 void mp_vm_worker_init(mp_state_ctx_t *worker_ctx) {
     // sem_in is for the manager to signal the worker
-    int ret = mp_sem_new(&worker_ctx->vm.rtems_worker_sem_in, 0, (uint32_t)worker_ctx);
+    int ret = mp_sem_new(&worker_ctx->vm.rtems_worker_sem_in, 0, (uint64_t)worker_ctx);
 
     // sem_out is for the worker to signal the manager
-    ret = mp_sem_new(&worker_ctx->vm.rtems_worker_sem_out, 0, (uint32_t)worker_ctx + 1);
+    ret = mp_sem_new(&worker_ctx->vm.rtems_worker_sem_out, 0, (uint64_t)worker_ctx + 1);
     (void)ret;
     // TODO check that sem_init succeeded
 }
@@ -118,7 +118,7 @@ rtems_status_code mp_vm_manager_start_mpy(mp_state_ctx_t *worker_ctx, const uint
     mp_sem_wait(&worker_ctx->vm.rtems_worker_sem_out);
 
     // store the mpy pointer and length in the worker's state
-    worker_ctx->vm.rtems_worker_info0 = (uint32_t)buf;
+    worker_ctx->vm.rtems_worker_info0 = (uint64_t)buf;
     worker_ctx->vm.rtems_worker_info1 = len;
 
     // signal that there is a new mpy
