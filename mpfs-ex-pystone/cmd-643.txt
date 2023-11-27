@@ -1,0 +1,7 @@
+load /srec "build-643/firmware.srec"
+load /symtab "build-643/firmware.tab"
+bre %code(emu_terminate) /TAG=_emu_terminate /CMD={ bre /exit/stop }
+set pc=0x40000000
+set i6=0x41000000
+set o6=0x40FFFE80
+step 200000000
