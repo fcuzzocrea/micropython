@@ -139,9 +139,7 @@ rtems_task mp_manager_task(rtems_task_argument ignored) {
 
     // terminate emulator
     printf("\nemu_terminate\n");
-#if MICROPY_RTEMS_USE_FATAL
-    rtems_fatal(RTEMS_FATAL_SOURCE_EXIT, 0);
-#endif
+
     rtems_task_delete(RTEMS_SELF);
 }
 
