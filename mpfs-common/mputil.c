@@ -236,9 +236,9 @@ uint32_t mp_exec_mpy(const byte *buf, size_t len) {
 #if MICROPY_ENABLE_MPY_MODULES
 
 typedef struct _mp_mpy_module_t {
-    char *filename;              // 1 byte
-    mp_raw_code_t *raw_code;     // 49 byte
-    struct _mp_mpy_module_t *next;  // 50 byte
+    char *filename;
+    mp_raw_code_t *raw_code;
+    struct _mp_mpy_module_t *next;
 } mp_mpy_module_t;
 
 void mp_mpy_modules_init(void) {
@@ -248,8 +248,6 @@ void mp_mpy_modules_init(void) {
 void mp_mpy_modules_register(const byte *buf, size_t len) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
-        volatile uint32_t  dannata = sizeof(mp_mpy_module_t);
-        (void) dannata;
         mp_mpy_module_t *rf = m_new_obj(mp_mpy_module_t);
         rf->raw_code = mp_raw_code_load_mem(buf, len);
         mp_obj_t f = mp_make_function_from_raw_code(rf->raw_code, MP_OBJ_NULL, MP_OBJ_NULL);
