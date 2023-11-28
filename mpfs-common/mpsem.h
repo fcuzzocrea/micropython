@@ -1,18 +1,13 @@
 /*
- * This file is part of the MicroPython port to MPFS platforms
- *
- * Based on LEON port originally made by George Robotics
- *
- * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
+ * This file is part of the MicroPython port to LEON platforms
+ * Copyright (c) 2017 George Robotics Limited
  */
-#ifndef INCLUDED_MPFS_COMMON_RTEMSSEM_H
-#define INCLUDED_MPFS_COMMON_RTEMSSEM_H
+#ifndef INCLUDED_LEON_COMMON_RTEMSSEM_H
+#define INCLUDED_LEON_COMMON_RTEMSSEM_H
 
 #include <rtems.h>
 #include <rtems/rtems/sem.h>
 
-// RTEMS 4.8 Edisoft doesn't have a working errno.h so we provide definitions
-// for just the constants we need (and their values don't really matter).
 #ifndef EINVAL
 #define EINVAL (22)
 #endif
@@ -23,7 +18,6 @@
 typedef rtems_id mp_sem_t;
 
 static inline void mp_sem_init(uint32_t max_sem) {
-
 }
 
 static inline int mp_sem_new(mp_sem_t *sem, uint32_t value, uint32_t id) {
@@ -74,4 +68,4 @@ static inline int mp_sem_timedwait(mp_sem_t *sem, uint32_t timeout_ticks) {
     }
 }
 
-#endif // INCLUDED_MPFS_COMMON_RTEMSSEM_H
+#endif // INCLUDED_LEON_COMMON_RTEMSSEM_H

@@ -25,7 +25,7 @@ typedef enum {
     DATAPOOL_INTERNAL_ERROR,
 } datapool_result_t;
 
-typedef uint32_t datapool_t;
+typedef uint64_t datapool_t;
 
 void datapool_heap_lock(void);
 void datapool_heap_unlock(void);

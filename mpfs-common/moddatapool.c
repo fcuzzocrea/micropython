@@ -18,7 +18,7 @@
 
 #if MICROPY_RTEMS_ENABLE_DATAPOOL
 
-#define DATAPOOL_OBJ_TO_ID(o) ((uint32_t)MP_OBJ_TO_PTR(o))
+#define DATAPOOL_OBJ_TO_ID(o) ((uint64_t)MP_OBJ_TO_PTR(o))
 #define DATAPOOL_OBJ_FROM_ID(id) (MP_OBJ_FROM_PTR((void*)(id)))
 
 STATIC rtems_id datapool_sem = 0;

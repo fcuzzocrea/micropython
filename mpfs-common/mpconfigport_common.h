@@ -41,6 +41,8 @@ typedef long mp_off_t;
 void *mp_state_ptr(void);
 void mp_state_ptr_set(void *value);
 
+#define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_D)
+
 // We define our own state accessor macros, to use a thread-local-state pointer in the RTEMS task
 #define MP_STATE_PTR ((mp_state_ctx_t*)mp_state_ptr())
 #define MP_STATE_VM(x) (MP_STATE_PTR->vm.x)
