@@ -18,15 +18,13 @@
 #define MICROPY_RTEMS_ENABLE_DATAPOOL (0)
 #endif
 
-#define MICROPY_MAKE_POINTER_CALLABLE(p) ((void *)((mp_uint_t)(p) | 1))
+// configuration for object size the same as machine pointer size - we are a 64 bit machine
+#define UINT_FMT "%llu"
+#define INT_FMT "%lld"
+typedef int64_t mp_int_t;
+typedef uint64_t mp_uint_t;
 
-// configuration for 64-bit NaN boxing
-#define UINT_FMT "%u"
-#define INT_FMT "%d"
-
-typedef int64_t mp_int_t; // must be pointer size
-typedef uint64_t mp_uint_t; // must be pointer size
-typedef long mp_off_t;
+typedef int64_t mp_off_t;
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>

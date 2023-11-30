@@ -20,16 +20,7 @@ void mp_hal_stdout_tx_strn(const char *str, size_t len) {
 // Send "cooked" string of length, where every occurance of
 // LF character is replaced with CR LF.
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
-    static int start_of_line = 1;
-
     while (len--) {
-        if (start_of_line) {
-            mp_hal_stdout_tx_strn(": ", 2);
-            start_of_line = 0;
-        }
-        if (*str == '\n') {
-            start_of_line = 1;
-        }
         mp_hal_stdout_tx_strn(str++, 1);
     }
 }

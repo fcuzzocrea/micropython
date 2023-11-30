@@ -26,7 +26,7 @@ static inline void mp_sem_init(uint32_t max_sem) {
 
 }
 
-static inline int mp_sem_new(mp_sem_t *sem, uint32_t value, uint32_t id) {
+static inline int mp_sem_new(mp_sem_t *sem, uint32_t value, uint64_t id) {
     rtems_name name = rtems_build_name('R', 'S', id & 0xff, (id >> 8) & 0xff);
     rtems_status_code ret = rtems_semaphore_create(name, value, 0, 0, sem);
     if (ret == RTEMS_SUCCESSFUL) {

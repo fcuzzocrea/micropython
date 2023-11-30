@@ -1,0 +1,221 @@
+/*
+ * This file is part of the MicroPython port to MPFS platforms
+ *
+ * Based on LEON port originally made by George Robotics
+ *
+ * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
+ */
+
+#include <stdio.h>
+#include <rtems.h>
+#include "mpfs-common/moddatapool.h"
+#include "mpfs-common/mpsem.h"
+#include "mpfs-common/mpvmmanage.h"
+#include "mpfs-common/rtems_util.h"
+#include "obcp.h"
+
+rtems_task mp_manager_task(rtems_task_argument unused);
+rtems_task mp_worker_task(rtems_task_argument unused);
+
+static uint8_t datapool_heap[DATAPOOL_HEAP_SIZE];
+static double start_time;
+
+void set_start_time(void) {
+    struct timeval t;
+    rtems_clock_get_tod_timeval(&t);
+    start_time = t.tv_sec + 1e-6 * t.tv_usec;
+}
+
+double get_time(void) {
+    struct timeval t;
+    rtems_clock_get_tod_timeval(&t);
+    return t.tv_sec + 1e-6 * t.tv_usec - start_time;
+}
+
+/******************************************************************************/
+// RTEMS initialisation task
+// this task runs at highest priority and is non-preemptive
+
+rtems_task Init(rtems_task_argument ignored) {
+    // set the time
+    rtems_time_of_day time;
+    time.year = 2016;
+    time.month = 1;
+    time.day = 1;
+    time.hour = 0;
+    time.minute = 0;
+    time.second = 0;
+    time.ticks = 0;
+    rtems_clock_set(&time);
+
+    // initialise semaphores
+    mp_sem_init(VM_WORKER_NUM_TASKS * 2);
+
+    // print a message to indicate start-up
+    printf("\nOBCP program started\n");
+
+    // create the TM queue
+    {
+        rtems_id q_id;
+        rtems_name name = rtems_build_name('T', 'L', 'M', 'Q');
+        rtems_status_code status = rtems_message_queue_create(name, 4, sizeof(TM_t), RTEMS_DEFAULT_ATTRIBUTES, &q_id);
+        if (status != RTEMS_SUCCESSFUL) {
+            // error
+        }
+    }
+
+    // create the TC queue
+    {
+        rtems_id q_id;
+        rtems_name name = rtems_build_name('T', 'C', 'Q', ' ');
+        rtems_status_code status = rtems_message_queue_create(name, 4, sizeof(TC_t), RTEMS_DEFAULT_ATTRIBUTES, &q_id);
+        if (status != RTEMS_SUCCESSFUL) {
+            // error
+        }
+    }
+
+    // create the power threshold queue
+    {
+        rtems_id q_id;
+        rtems_name name = rtems_build_name('P', 'W', 'T', 'H');
+        rtems_status_code status = rtems_message_queue_create(name, 4, sizeof(TC_t), RTEMS_DEFAULT_ATTRIBUTES, &q_id);
+        if (status != RTEMS_SUCCESSFUL) {
+            // error
+        }
+    }
+
+    // bring up the datapool
+    {
+        datapool_init(datapool_heap, DATAPOOL_HEAP_SIZE);
+
+        datapool_t dp;
+        datapool_create("DATAPOOL", &dp);
+
+        // initial values for datapool entries
+        static const double init_volt_thresh[20] =
+            {10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13};
+        static const double init_curr_thresh[20] =
+            {30e-3,40e-3,30e-3,40e-3,30e-3,40e-3,30e-3,40e-3,30e-3,40e-3,
+                30e-3,40e-3,30e-3,40e-3,30e-3,40e-3,30e-3,40e-3,30e-3,40e-3};
+        static const double init_temp[30] =
+            {273,273,273,273,273,273,273,273,273,273,273,273,273,273,273,
+                273,273,273,273,273,273,273,273,273,273,273,273,273,273,273};
+        static const double init_temp_thresh[60] =
+            {263,283,263,283,263,283,263,283,263,283,263,283,263,283,263,283,
+                263,283,263,283,263,283,263,283,263,283,263,283,263,283,263,283,
+                263,283,263,283,263,283,263,283,263,283,263,283,263,283,263,283,
+                263,283,263,283,263,283,263,283,263,283,263,283};
+
+        datapool_set_buf(dp, K_DP_VOLT_THRESH_10, init_volt_thresh, 20 * sizeof(double));
+        datapool_set_buf(dp, K_DP_CURR_THRESH_10, init_curr_thresh, 20 * sizeof(double));
+        datapool_set_buf(dp, K_DP_TEMP_VAL_30, init_temp, 30 * sizeof(double));
+        datapool_set_buf(dp, K_DP_TEMP_THRESH_30, init_temp_thresh, 60 * sizeof(double));
+
+        // from now on the datapool is fixed, nothing can be added (but values can be changed)
+        datapool_heap_lock();
+    }
+
+    // spawn all MicroPython worker tasks
+    for (int i = 0; i < VM_WORKER_NUM_TASKS; ++i) {
+        rtems_status_code status;
+        rtems_name task_name = rtems_build_name('M', 'P', 'W', '0' + i);
+        rtems_id task_id;
+        status = rtems_task_create(
+            task_name, 1, VM_WORKER_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            VM_WORKER_TASK_ATTRIBUTES, &task_id
+        );
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error creating VM task #%u: %u\n", i, status);
+            return;
+        }
+        mp_vm_worker_init(get_vm_worker_ctx(i));
+        status = rtems_task_start(task_id, obcp_task_mp_worker, i);
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error starting VM task #%u: %u\n", i, status);
+            return;
+        }
+    }
+
+    // start the TM task
+    {
+        rtems_name task_name = rtems_build_name('O', 'B', 'T', 'M');
+        rtems_id task_id;
+        rtems_status_code status;
+        status = rtems_task_create(
+            task_name, 1, NATIVE_TASK_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            NATIVE_TASK_ATTRIBUTES, &task_id
+        );
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error creating TM task: %u\n", status);
+            return;
+        }
+        status = rtems_task_start(task_id, obcp_task_tm, 0);
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error starting TM task: %u\n", status);
+            return;
+        }
+    }
+
+    // start the TC task
+    {
+        rtems_name task_name = rtems_build_name('O', 'B', 'T', 'C');
+        rtems_id task_id;
+        rtems_status_code status;
+        status = rtems_task_create(
+            task_name, 1, NATIVE_TASK_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            NATIVE_TASK_ATTRIBUTES, &task_id
+        );
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error creating TC task: %u\n", status);
+            return;
+        }
+        status = rtems_task_start(task_id, obcp_task_tc, 0);
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error starting TC task: %u\n", status);
+            return;
+        }
+    }
+
+    // start the TEMP task
+    {
+        rtems_name task_name = rtems_build_name('O', 'B', 'T', 'P');
+        rtems_id task_id;
+        rtems_status_code status;
+        status = rtems_task_create(
+            task_name, 1, NATIVE_TASK_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            NATIVE_TASK_ATTRIBUTES, &task_id
+        );
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error creating TEMP task: %u\n", status);
+            return;
+        }
+        status = rtems_task_start(task_id, obcp_task_temp, 0);
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error starting TEMP task: %u\n", status);
+            return;
+        }
+    }
+
+    // start the GND task
+    {
+        rtems_name task_name = rtems_build_name('O', 'B', 'T', 'G');
+        rtems_id task_id;
+        rtems_status_code status;
+        status = rtems_task_create(
+            task_name, 1, NATIVE_TASK_STACK_SIZE, RTEMS_DEFAULT_MODES,
+            NATIVE_TASK_ATTRIBUTES, &task_id
+        );
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error creating GND task: %u\n", status);
+            return;
+        }
+        status = rtems_task_start(task_id, obcp_task_ground, 0);
+        if (status != RTEMS_SUCCESSFUL) {
+            printf("Error starting GND task: %u\n", status);
+            return;
+        }
+    }
+
+    // delete current task so that all child tasks can start running
+    rtems_task_delete(RTEMS_SELF);
+}

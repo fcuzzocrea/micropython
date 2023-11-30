@@ -6,8 +6,9 @@
  * Copyright (c) 2023 Francescodario Cuzzocrea <bosconovic@gmail.com>
  */
 
-// include common options for MPFS
+// include common options for LEON/SPARC
 #define MICROPY_USE_64BIT_NAN_BOXING (1)
+#define MICROPY_RTEMS_ENABLE_VM_MANAGER (1)
 #include "mpfs-common/mpconfigport_common.h"
 
 // options to control how MicroPython is built
@@ -22,7 +23,6 @@
 #define MICROPY_ENABLE_GC           (1)
 #define MICROPY_ENABLE_IMMORTAL_GC  (1)
 #define MICROPY_ENABLE_FINALISER    (0)
-#define MICROPY_ENABLE_PYSTACK      (1)
 #define MICROPY_STACK_CHECK         (1)
 #define MICROPY_ENABLE_SOURCE_LINE  (1)
 #define MICROPY_ENABLE_DOC_STRING   (0)
@@ -56,19 +56,33 @@
 #define MICROPY_PY_STRUCT           (1)
 #define MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF (1)
 #define MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE (256)
-#define MICROPY_ENABLE_MPY_MODULES  (1)
 
 // builtin modules
-extern const struct _mp_obj_module_t mp_module_time;
 extern const struct _mp_obj_module_t mp_module_rtems;
 extern const struct _mp_obj_module_t mp_module_mem;
 #define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_time) }, \
     { MP_ROM_QSTR(MP_QSTR_rtems), MP_ROM_PTR(&mp_module_rtems) }, \
     { MP_ROM_QSTR(MP_QSTR_mem), MP_ROM_PTR(&mp_module_mem) }, \
 
 // Root pointers
+#include "mpfs-common/mpsem.h"
 #define MICROPY_PORT_ROOT_POINTERS \
     mp_obj_t rtems_script_id; \
-    struct _mp_mpy_module_t *mpy_modules; \
+    mp_sem_t rtems_worker_sem_in; \
+    mp_sem_t rtems_worker_sem_out; \
+    uint64_t rtems_worker_signal; \
+    uint64_t rtems_worker_info0; \
+    uint64_t rtems_worker_info1; \
 
+// Hook for the VM
+#define MICROPY_VM_HOOK_COUNT (1)
+#define MICROPY_VM_HOOK_INIT uint vm_hook_count = MICROPY_VM_HOOK_COUNT;
+#define MICROPY_VM_HOOK_LOOP \
+    if (--vm_hook_count == 0) { \
+        vm_hook_count = MICROPY_VM_HOOK_COUNT; \
+        MARK_EXC_IP_SELECTIVE(); \
+        mp_vm_hook(code_state); \
+    }
+
+struct _mp_code_state_t;
+void mp_vm_hook(const struct _mp_code_state_t *code_state);
