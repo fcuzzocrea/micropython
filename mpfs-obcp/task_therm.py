@@ -37,7 +37,7 @@ def main():
     buf = bytearray(26)
 
     # from now on we are deterministic
-    micropython.heap_lock()
+    #micropython.heap_lock()
 
     # control loop runs at 1Hz
     while True:
@@ -50,7 +50,7 @@ def main():
         # check thresholds
         for i in range(N_TEMP):
             if not temp_thresh[2 * i] <= temp_val[i] <= temp_thresh[2 * i + 1]:
-                struct.pack_into('>BBddd', buf, 0, K_TM_TEMP_RANGE, i,
+                struct.pack_into('<BBddd', buf, 0, K_TM_TEMP_RANGE, i,
                     temp_thresh[2 * i], temp_thresh[2 * i + 1], temp_val[i])
                 tm_q.send(buf, rtems.WAIT)
 

@@ -68,7 +68,7 @@ def main():
     pwth_st = uctypes.struct(uctypes.addressof(pwth_buf), pwth_descr)
 
     # from now on we are deterministic
-    micropython.heap_lock()
+    #micropython.heap_lock()
 
     # control loop runs at 10Hz
     while True:
