@@ -1,0 +1,45 @@
+#include <rtems.h>
+#include "rtems_util.h"
+
+// Configuration for: RTEMS 6.
+#define CONFIGURE_MAXIMUM_PROCESSORS 4
+#define CONFIGURE_MAXIMUM_BARRIERS 3
+#ifndef CONFIGURE_MAXIMUM_MESSAGE_QUEUES
+#define CONFIGURE_MAXIMUM_MESSAGE_QUEUES 3
+#endif
+#define CONFIGURE_MAXIMUM_PARTITIONS 3
+#define CONFIGURE_MAXIMUM_PERIODS 3
+#ifndef CONFIGURE_MAXIMUM_SEMAPHORES
+#define CONFIGURE_MAXIMUM_SEMAPHORES 3
+#endif
+#ifndef CONFIGURE_MAXIMUM_TASKS
+#define CONFIGURE_MAXIMUM_TASKS 3
+#endif
+#define CONFIGURE_MINIMUM_TASKS_WITH_USER_PROVIDED_STORAGE CONFIGURE_MAXIMUM_TASKS
+#define CONFIGURE_MAXIMUM_TIMERS 3
+#define CONFIGURE_MAXIMUM_USER_EXTENSIONS 3
+#define CONFIGURE_APPLICATION_DISABLE_FILESYSTEM
+#define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
+#define CONFIGURE_DISABLE_NEWLIB_REENTRANCY
+#define CONFIGURE_INIT
+#define CONFIGURE_INIT_TASK_ATTRIBUTES MICROPY_RTEMS_TASK_ATTRIBUTES
+#define CONFIGURE_INIT_TASK_CONSTRUCT_STORAGE_SIZE TASK_STORAGE_SIZE
+#define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_DEFAULT_MODES
+#define CONFIGURE_MAXIMUM_FILE_DESCRIPTORS 0
+#define CONFIGURE_MAXIMUM_THREAD_LOCAL_STORAGE_SIZE MAX_TLS_SIZE
+#define CONFIGURE_MICROSECONDS_PER_TICK 1000
+#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
+
+#include <rtems/confdefs.h>
+
+// Thread-local-state accessor functions.
+void *mp_state_ptr(void);
+void mp_state_ptr_set(void *value);
+
+void *mp_state_ptr(void) {
+    return ((void*)_Thread_Get_executing()->Start.Entry.Kinds.Numeric.argument);
+}
+
+void mp_state_ptr_set(void *value) {
+    _Thread_Get_executing()->Start.Entry.Kinds.Numeric.argument = (uintptr_t) value;
+}
